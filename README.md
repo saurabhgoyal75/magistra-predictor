@@ -168,7 +168,7 @@ If you use this methodology or data in research, please cite:
   title = {Magistra Predictor: A Dual-Track Framework for GLP-1 Side Effect Estimation},
   year = {2026},
   publisher = {Magistra Health B.V.},
-  url = {https://github.com/magistra/magistra-predictor},
+  url = {https://github.com/saurabhgoyal75/magistra-predictor},
   version = {4.0}
 }
 ```

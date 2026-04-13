@@ -11,7 +11,7 @@ type: software
 version: "4.0"
 date-released: "2026-04-12"
 license: Apache-2.0
-repository-code: "https://github.com/magistra/magistra-predictor"
+repository-code: "https://github.com/saurabhgoyal75/magistra-predictor"
 url: "https://magistra.health"
 keywords:
   - "GLP-1"

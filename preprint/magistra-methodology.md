@@ -245,7 +245,7 @@ All statistical code, extraction prompts, and model configuration are available 
 - Methodology page: https://magistra.health/en/methodology
 - Public API: https://magistra.health/api/data?q=help
 - LLM-readable summary: https://magistra.health/llms.txt
-- Source code repository: https://github.com/[forthcoming]
+- Source code repository: https://github.com/saurabhgoyal75/magistra-predictor
 
 ## Appendix B: Correspondence
 
