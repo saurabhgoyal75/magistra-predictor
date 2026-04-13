@@ -13,6 +13,11 @@ date-released: "2026-04-12"
 license: Apache-2.0
 repository-code: "https://github.com/saurabhgoyal75/magistra-predictor"
 url: "https://magistra.health"
+doi: 10.5281/zenodo.19559749
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.19559749
+    description: "Preprint on Zenodo"
 keywords:
   - "GLP-1"
   - "semaglutide"

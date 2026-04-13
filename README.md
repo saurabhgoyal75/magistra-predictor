@@ -2,6 +2,7 @@
 
 **A dual-track framework for GLP-1 side effect estimation, separating clinical evidence from real-world patient reports.**
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19559749.svg)](https://doi.org/10.5281/zenodo.19559749)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 [![Methodology](https://img.shields.io/badge/methodology-v4.0-green.svg)](https://magistra.health/en/methodology)
 [![Live](https://img.shields.io/badge/live-magistra.health-purple.svg)](https://magistra.health/en/predictor)
@@ -162,14 +163,17 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v4.0). Zenodo. https://doi.org/10.5281/zenodo.19559749
+
 ```bibtex
-@software{goyal2026magistra,
-  author = {Goyal, Saurabh},
-  title = {Magistra Predictor: A Dual-Track Framework for GLP-1 Side Effect Estimation},
-  year = {2026},
-  publisher = {Magistra Health B.V.},
-  url = {https://github.com/saurabhgoyal75/magistra-predictor},
-  version = {4.0}
+@misc{goyal2026magistra,
+  author       = {Goyal, Saurabh},
+  title        = {A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports},
+  year         = {2026},
+  publisher    = {Zenodo},
+  version      = {4.0},
+  doi          = {10.5281/zenodo.19559749},
+  url          = {https://doi.org/10.5281/zenodo.19559749}
 }
 ```
 
