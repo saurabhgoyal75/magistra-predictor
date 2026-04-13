@@ -1,0 +1,39 @@
+cff-version: 1.2.0
+message: "If you use this software or methodology in research, please cite it as below."
+title: "Magistra Predictor: A Dual-Track Framework for GLP-1 Side Effect Estimation"
+abstract: "An open, continuously updated system that estimates GLP-1 medication side effect risk by reporting two parallel estimates per effect: clinical trial evidence and real-world patient reports, displayed side by side without blending. Implements DerSimonian-Laird random-effects confidence intervals, FDR-corrected empirical modifier estimation, and a self-evolving parameter update pipeline with safety guardrails."
+authors:
+  - family-names: Goyal
+    given-names: Saurabh
+    email: saurabh@magistra.health
+    affiliation: "Magistra Health B.V."
+type: software
+version: "4.0"
+date-released: "2026-04-12"
+license: Apache-2.0
+repository-code: "https://github.com/magistra/magistra-predictor"
+url: "https://magistra.health"
+keywords:
+  - "GLP-1"
+  - "semaglutide"
+  - "tirzepatide"
+  - "side effects"
+  - "pharmacovigilance"
+  - "real-world evidence"
+  - "meta-analysis"
+  - "DerSimonian-Laird"
+  - "patient-reported outcomes"
+  - "FDR correction"
+  - "open methodology"
+preferred-citation:
+  type: article
+  title: "A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports"
+  authors:
+    - family-names: Goyal
+      given-names: Saurabh
+      email: saurabh@magistra.health
+      affiliation: "Magistra Health B.V."
+  year: 2026
+  month: 4
+  url: "https://magistra.health/en/methodology"
+  abstract: "Patients starting GLP-1 receptor agonist therapy face a persistent information gap: clinical trial side effect frequencies often diverge substantially from the experiences described in patient communities, but existing resources typically report only one or the other. We describe a dual-track estimation framework that collects, extracts, and reports two parallel risk estimates per side effect—one derived exclusively from peer-reviewed clinical trial and regulatory data, the other from real-world patient community reports—without blending them."

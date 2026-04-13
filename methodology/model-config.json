@@ -1,0 +1,2033 @@
+{
+  "version": 1,
+  "generatedAt": "2026-04-12T16:52:40.840Z",
+  "inputParameters": [
+    {
+      "id": "molecule",
+      "type": "select",
+      "options": [
+        {
+          "value": "semaglutide",
+          "label": {
+            "en": "Semaglutide (Ozempic / Wegovy)",
+            "nl": "Semaglutide (Ozempic / Wegovy)"
+          }
+        },
+        {
+          "value": "tirzepatide",
+          "label": {
+            "en": "Tirzepatide (Mounjaro / Zepbound)",
+            "nl": "Tirzepatide (Mounjaro / Zepbound)"
+          }
+        },
+        {
+          "value": "liraglutide",
+          "label": {
+            "en": "Liraglutide (Saxenda / Victoza)",
+            "nl": "Liraglutide (Saxenda / Victoza)"
+          }
+        }
+      ],
+      "label": {
+        "en": "Molecule",
+        "nl": "Molecuul"
+      },
+      "required": true,
+      "default": "semaglutide",
+      "evidenceLevel": "strong",
+      "dataPointCount": 217,
+      "section": "core",
+      "displayOrder": 1,
+      "status": "retired",
+      "activeSince": "2026-04-12",
+      "tabs": [
+        "sideEffects",
+        "weight",
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "sex",
+      "type": "select",
+      "options": [
+        {
+          "value": "female",
+          "label": {
+            "en": "Female",
+            "nl": "Vrouw"
+          }
+        },
+        {
+          "value": "male",
+          "label": {
+            "en": "Male",
+            "nl": "Man"
+          }
+        }
+      ],
+      "label": {
+        "en": "Sex",
+        "nl": "Geslacht"
+      },
+      "required": true,
+      "default": "female",
+      "evidenceLevel": "strong",
+      "dataPointCount": 39,
+      "section": "core",
+      "displayOrder": 3,
+      "status": "active",
+      "activeSince": "2026-03-01",
+      "tabs": [
+        "sideEffects",
+        "weight",
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "age",
+      "type": "number",
+      "min": 18,
+      "max": 100,
+      "label": {
+        "en": "Age",
+        "nl": "Leeftijd"
+      },
+      "required": true,
+      "default": 35,
+      "evidenceLevel": "strong",
+      "dataPointCount": 217,
+      "section": "core",
+      "displayOrder": 4,
+      "status": "active",
+      "activeSince": "2026-03-01",
+      "tabs": [
+        "sideEffects",
+        "weight",
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "hasGiHistory",
+      "type": "boolean",
+      "label": {
+        "en": "Previous stomach/intestinal issues",
+        "nl": "Eerdere maag-/darmproblemen"
+      },
+      "required": false,
+      "default": false,
+      "evidenceLevel": "strong",
+      "dataPointCount": 45,
+      "section": "core",
+      "displayOrder": 7,
+      "status": "active",
+      "activeSince": "2026-03-01",
+      "tabs": [
+        "sideEffects"
+      ]
+    },
+    {
+      "id": "hasDiabetes",
+      "type": "boolean",
+      "label": {
+        "en": "Type 2 diabetes",
+        "nl": "Diabetes type 2"
+      },
+      "required": false,
+      "default": false,
+      "evidenceLevel": "strong",
+      "dataPointCount": 30,
+      "section": "core",
+      "displayOrder": 8,
+      "status": "active",
+      "activeSince": "2026-03-01",
+      "tabs": [
+        "sideEffects",
+        "weight",
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "isFirstMonth",
+      "type": "select",
+      "options": [
+        {
+          "value": "true",
+          "label": {
+            "en": "First month",
+            "nl": "Eerste maand"
+          }
+        },
+        {
+          "value": "false",
+          "label": {
+            "en": "After 1+ months",
+            "nl": "Na 1+ maanden"
+          }
+        }
+      ],
+      "label": {
+        "en": "Time period",
+        "nl": "Tijdsperiode"
+      },
+      "required": true,
+      "default": "true",
+      "evidenceLevel": "strong",
+      "dataPointCount": 50,
+      "section": "core",
+      "displayOrder": 6,
+      "status": "active",
+      "activeSince": "2026-03-01",
+      "tabs": [
+        "sideEffects"
+      ]
+    },
+    {
+      "id": "startingWeightKg",
+      "type": "number",
+      "min": 40,
+      "max": 300,
+      "label": {
+        "en": "Starting weight (kg)",
+        "nl": "Startgewicht (kg)"
+      },
+      "required": true,
+      "default": 90,
+      "evidenceLevel": "strong",
+      "dataPointCount": 217,
+      "section": "core",
+      "displayOrder": 10,
+      "status": "active",
+      "activeSince": "2026-04-01",
+      "tabs": [
+        "weight",
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "heightCm",
+      "type": "number",
+      "min": 120,
+      "max": 230,
+      "label": {
+        "en": "Height (cm)",
+        "nl": "Lengte (cm)"
+      },
+      "required": true,
+      "default": 170,
+      "evidenceLevel": "strong",
+      "dataPointCount": 217,
+      "section": "core",
+      "displayOrder": 11,
+      "status": "active",
+      "activeSince": "2026-04-01",
+      "tabs": [
+        "weight",
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "exerciseLevel",
+      "type": "select",
+      "options": [
+        {
+          "value": "sedentary",
+          "label": {
+            "en": "Sedentary",
+            "nl": "Zittend"
+          }
+        },
+        {
+          "value": "light",
+          "label": {
+            "en": "Light",
+            "nl": "Licht"
+          }
+        },
+        {
+          "value": "moderate",
+          "label": {
+            "en": "Moderate",
+            "nl": "Matig"
+          }
+        },
+        {
+          "value": "active",
+          "label": {
+            "en": "Active",
+            "nl": "Actief"
+          }
+        }
+      ],
+      "label": {
+        "en": "Exercise level",
+        "nl": "Beweegniveau"
+      },
+      "required": false,
+      "default": "light",
+      "evidenceLevel": "moderate",
+      "dataPointCount": 0,
+      "section": "core",
+      "displayOrder": 12,
+      "status": "active",
+      "activeSince": "2026-04-01",
+      "tabs": [
+        "weight",
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "resistanceTraining",
+      "type": "boolean",
+      "label": {
+        "en": "Resistance training (2+ times/week)",
+        "nl": "Krachttraining (2+ keer/week)"
+      },
+      "required": false,
+      "default": false,
+      "evidenceLevel": "strong",
+      "dataPointCount": 0,
+      "section": "core",
+      "displayOrder": 13,
+      "status": "active",
+      "activeSince": "2026-04-01",
+      "tabs": [
+        "muscle",
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "proteinIntakeG",
+      "type": "number",
+      "min": 20,
+      "max": 300,
+      "label": {
+        "en": "Protein intake (g/day)",
+        "nl": "Eiwitinname (g/dag)"
+      },
+      "required": false,
+      "evidenceLevel": "strong",
+      "dataPointCount": 0,
+      "section": "core",
+      "displayOrder": 14,
+      "status": "active",
+      "activeSince": "2026-04-01",
+      "tabs": [
+        "muscle"
+      ]
+    },
+    {
+      "id": "currentWeekInProgramme",
+      "type": "number",
+      "min": 1,
+      "max": 200,
+      "label": {
+        "en": "Current week in programme",
+        "nl": "Huidige week in programma"
+      },
+      "required": false,
+      "evidenceLevel": "moderate",
+      "dataPointCount": 0,
+      "section": "core",
+      "displayOrder": 15,
+      "status": "active",
+      "activeSince": "2026-04-01",
+      "tabs": [
+        "discontinuation"
+      ]
+    },
+    {
+      "id": "ethnicity",
+      "type": "select",
+      "options": [
+        {
+          "value": "white",
+          "label": {
+            "en": "White / European",
+            "nl": "Wit / Europees"
+          }
+        },
+        {
+          "value": "black",
+          "label": {
+            "en": "Black / African",
+            "nl": "Zwart / Afrikaans"
+          }
+        },
+        {
+          "value": "hispanic",
+          "label": {
+            "en": "Hispanic / Latino",
+            "nl": "Hispanisch / Latino"
+          }
+        },
+        {
+          "value": "asian",
+          "label": {
+            "en": "Asian",
+            "nl": "Aziatisch"
+          }
+        },
+        {
+          "value": "middle_eastern",
+          "label": {
+            "en": "Middle Eastern",
+            "nl": "Midden-Oosters"
+          }
+        },
+        {
+          "value": "mixed",
+          "label": {
+            "en": "Mixed / Other",
+            "nl": "Gemengd / Anders"
+          }
+        }
+      ],
+      "label": {
+        "en": "Ethnicity (optional)",
+        "nl": "Etniciteit (optioneel)"
+      },
+      "required": false,
+      "evidenceLevel": "insufficient",
+      "dataPointCount": 5,
+      "section": "extended",
+      "displayOrder": 20,
+      "status": "candidate",
+      "tabs": [
+        "sideEffects",
+        "weight"
+      ]
+    },
+    {
+      "id": "bmi",
+      "type": "number",
+      "min": 15,
+      "max": 70,
+      "label": {
+        "en": "BMI",
+        "nl": "BMI"
+      },
+      "required": false,
+      "evidenceLevel": "insufficient",
+      "dataPointCount": 0,
+      "section": "extended",
+      "displayOrder": 21,
+      "status": "candidate",
+      "tabs": [
+        "sideEffects",
+        "weight"
+      ]
+    },
+    {
+      "id": "diet",
+      "type": "select",
+      "options": [
+        {
+          "value": "western",
+          "label": {
+            "en": "Western",
+            "nl": "Westers"
+          }
+        },
+        {
+          "value": "mediterranean",
+          "label": {
+            "en": "Mediterranean",
+            "nl": "Mediterraan"
+          }
+        },
+        {
+          "value": "vegetarian",
+          "label": {
+            "en": "Vegetarian",
+            "nl": "Vegetarisch"
+          }
+        }
+      ],
+      "label": {
+        "en": "Diet type (optional)",
+        "nl": "Dieettype (optioneel)"
+      },
+      "required": false,
+      "evidenceLevel": "insufficient",
+      "dataPointCount": 0,
+      "section": "extended",
+      "displayOrder": 22,
+      "status": "candidate",
+      "tabs": [
+        "sideEffects",
+        "weight",
+        "muscle"
+      ]
+    },
+    {
+      "id": "bloodType",
+      "type": "select",
+      "options": [
+        {
+          "value": "A",
+          "label": {
+            "en": "A",
+            "nl": "A"
+          }
+        },
+        {
+          "value": "B",
+          "label": {
+            "en": "B",
+            "nl": "B"
+          }
+        },
+        {
+          "value": "AB",
+          "label": {
+            "en": "AB",
+            "nl": "AB"
+          }
+        },
+        {
+          "value": "O",
+          "label": {
+            "en": "O",
+            "nl": "O"
+          }
+        }
+      ],
+      "label": {
+        "en": "Blood type (optional)",
+        "nl": "Bloedgroep (optioneel)"
+      },
+      "required": false,
+      "evidenceLevel": "insufficient",
+      "dataPointCount": 0,
+      "section": "extended",
+      "displayOrder": 23,
+      "status": "candidate",
+      "tabs": [
+        "sideEffects"
+      ]
+    }
+  ],
+  "effects": [
+    {
+      "id": "nausea",
+      "name": {
+        "en": "Nausea",
+        "nl": "Misselijkheid"
+      },
+      "description": {
+        "en": "Feeling sick to your stomach, sometimes with the urge to vomit. The most commonly reported side effect.",
+        "nl": "Je maag voelt onrustig, soms met neiging tot braken. De meest gerapporteerde bijwerking."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.15,
+        "medium": 0.28,
+        "high": 0.4
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.223,
+          "oddsRatio": 1.25,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": -0.105,
+          "oddsRatio": 0.9,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0.336,
+          "oddsRatio": 1.4,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": -0.163,
+          "oddsRatio": 0.85,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.916,
+          "oddsRatio": 2.5,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.45,
+      "userReportedSeverity": {
+        "en": "Most users describe it as 'manageable' — like mild car sickness. Usually worst in week 1-2, then fades.",
+        "nl": "De meeste gebruikers omschrijven het als 'hanteerbaar' — zoals milde wagenziekte. Meestal het ergst in week 1-2, daarna neemt het af."
+      },
+      "onsetDays": {
+        "en": "1-3 days after starting or dose increase",
+        "nl": "1-3 dagen na starten of dosisverhoging"
+      },
+      "durationWeeks": {
+        "en": "Typically resolves within 2-4 weeks",
+        "nl": "Verdwijnt meestal binnen 2-4 weken"
+      },
+      "managementTip": {
+        "en": "Eat smaller meals, avoid fatty food, stay hydrated. Take the injection in the evening so you sleep through the worst.",
+        "nl": "Eet kleinere maaltijden, vermijd vet eten, drink voldoende. Neem de injectie 's avonds zodat je door het ergste heen slaapt."
+      },
+      "sources": [
+        {
+          "name": "SURMOUNT-5 Trial (NEJM 2025)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2416394",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/loseit & r/Mounjaro user reports (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "RAND Corporation side effects study (2025)",
+          "type": "news",
+          "url": "https://www.rand.org/pubs/research_reports/RRA4153-1.html",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 36,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "diarrhea",
+      "name": {
+        "en": "Diarrhoea",
+        "nl": "Diarree"
+      },
+      "description": {
+        "en": "Loose or watery stools, sometimes with urgency. Second most common GI side effect.",
+        "nl": "Dunne of waterige ontlasting, soms met urgentie. Op één na meest voorkomende maag-darmbijwerking."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.1,
+        "medium": 0.18,
+        "high": 0.25
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0.405,
+          "oddsRatio": 1.5,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.693,
+          "oddsRatio": 2,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.3,
+      "userReportedSeverity": {
+        "en": "Users report it varies widely — some experience it daily for 1-2 weeks, others barely notice. Severity seems dose-dependent.",
+        "nl": "Gebruikers melden dat het sterk varieert — sommigen ervaren het dagelijks gedurende 1-2 weken, anderen merken het nauwelijks. Ernst lijkt dosisafhankelijk."
+      },
+      "onsetDays": {
+        "en": "2-5 days after starting",
+        "nl": "2-5 dagen na starten"
+      },
+      "durationWeeks": {
+        "en": "Usually resolves within 1-3 weeks",
+        "nl": "Verdwijnt meestal binnen 1-3 weken"
+      },
+      "managementTip": {
+        "en": "Stay very hydrated. Avoid dairy and high-fibre foods initially. If it persists beyond 3 weeks, contact your doctor.",
+        "nl": "Blijf goed gehydrateerd. Vermijd zuivel en vezelrijk eten in het begin. Neem contact op met je arts als het langer dan 3 weken aanhoudt."
+      },
+      "sources": [
+        {
+          "name": "SURMOUNT-5 Trial (NEJM 2025)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2416394",
+          "weight": 0.3
+        },
+        {
+          "name": "Trustpilot reviews of weight management services (2025-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "Washington University side effects study (2025)",
+          "type": "news",
+          "url": "https://medicine.washu.edu/news/study-identifies-benefits-risks-linked-to-popular-weight-loss-drugs/",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 28,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "constipation",
+      "name": {
+        "en": "Constipation",
+        "nl": "Verstopping"
+      },
+      "description": {
+        "en": "Difficulty passing stools or less frequent bowel movements. Caused by slowed stomach emptying.",
+        "nl": "Moeite met stoelgang of minder frequente ontlasting. Veroorzaakt door vertraagde maagontlediging."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.05,
+        "medium": 0.12,
+        "high": 0.18
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.262,
+          "oddsRatio": 1.3,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.336,
+          "oddsRatio": 1.4,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0.262,
+          "oddsRatio": 1.3,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.405,
+          "oddsRatio": 1.5,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.22,
+      "userReportedSeverity": {
+        "en": "Often underreported in studies. Forum users mention it more than clinical data suggests. Fibre supplements help most people.",
+        "nl": "Wordt vaak ondergerapporteerd in studies. Forumgebruikers melden het vaker dan klinische data suggereren. Vezelsupplementen helpen de meeste mensen."
+      },
+      "onsetDays": {
+        "en": "3-7 days after starting",
+        "nl": "3-7 dagen na starten"
+      },
+      "durationWeeks": {
+        "en": "May persist during treatment — manageable with diet",
+        "nl": "Kan aanhouden tijdens behandeling — beheersbaar met voeding"
+      },
+      "managementTip": {
+        "en": "Increase water intake, add fibre-rich foods gradually, consider a mild fibre supplement. Regular movement helps.",
+        "nl": "Verhoog je waterinname, voeg geleidelijk vezelrijk eten toe, overweeg een mild vezelsupplement. Regelmatige beweging helpt."
+      },
+      "sources": [
+        {
+          "name": "Real-world evidence systematic review (PMC 2025)",
+          "type": "clinical",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12000858/",
+          "weight": 0.3
+        },
+        {
+          "name": "Viva Forum NL weight loss discussions (2025-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "PCOM Safety review (2025)",
+          "type": "news",
+          "url": "https://www.pcom.edu/south-georgia/news/safety-benefits-and-side-effects-of-glp-1-weight-loss-medications.html",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 20,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "reduced_appetite",
+      "name": {
+        "en": "Reduced appetite",
+        "nl": "Verminderde eetlust"
+      },
+      "description": {
+        "en": "Significantly less hunger and interest in food. This is actually the intended effect — but can feel unsettling at first.",
+        "nl": "Aanzienlijk minder honger en interesse in eten. Dit is eigenlijk het beoogde effect — maar kan in het begin onwennig voelen."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.08,
+        "medium": 0.15,
+        "high": 0.22
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": -0.105,
+          "oddsRatio": 0.9,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.588,
+          "oddsRatio": 1.8,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.55,
+      "userReportedSeverity": {
+        "en": "Users frequently describe this as 'food noise disappearing' — the constant thinking about food stops. Most view this as positive, not a side effect.",
+        "nl": "Gebruikers beschrijven dit vaak als 'voedselruis die verdwijnt' — het constante denken aan eten stopt. De meesten zien dit als positief, niet als bijwerking."
+      },
+      "onsetDays": {
+        "en": "3-7 days after starting",
+        "nl": "3-7 dagen na starten"
+      },
+      "durationWeeks": {
+        "en": "Continues throughout treatment (this is the goal)",
+        "nl": "Houdt aan gedurende de behandeling (dit is het doel)"
+      },
+      "managementTip": {
+        "en": "Make sure you still eat enough protein (at least 60g/day) to prevent muscle loss. Set reminders to eat if needed.",
+        "nl": "Zorg dat je genoeg eiwit eet (minimaal 60g/dag) om spierverlies te voorkomen. Stel herinneringen in om te eten indien nodig."
+      },
+      "sources": [
+        {
+          "name": "Long-term GLP-1 meta-analysis (PMC 2025)",
+          "type": "clinical",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12361690/",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/Mounjaro & r/Ozempic user experiences (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "NAM Understanding GLP-1 Drugs (2025)",
+          "type": "news",
+          "url": "https://nam.edu/news-and-insights/understanding-glp-1-drugs/",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 22,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "headache",
+      "name": {
+        "en": "Headache",
+        "nl": "Hoofdpijn"
+      },
+      "description": {
+        "en": "Mild to moderate headaches, especially in the first 1-2 weeks.",
+        "nl": "Milde tot matige hoofdpijn, vooral in de eerste 1-2 weken."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.08,
+        "medium": 0.12,
+        "high": 0.14
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.693,
+          "oddsRatio": 2,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.18,
+      "userReportedSeverity": {
+        "en": "Generally mild and short-lived. Users report it's most common in the first week and during dose increases.",
+        "nl": "Over het algemeen mild en van korte duur. Gebruikers melden dat het het vaakst voorkomt in de eerste week en bij dosisverhoging."
+      },
+      "onsetDays": {
+        "en": "1-3 days after starting",
+        "nl": "1-3 dagen na starten"
+      },
+      "durationWeeks": {
+        "en": "Typically resolves within 1 week",
+        "nl": "Verdwijnt meestal binnen 1 week"
+      },
+      "managementTip": {
+        "en": "Stay hydrated — dehydration from reduced food intake is often the real cause. Regular paracetamol is safe to take.",
+        "nl": "Blijf gehydrateerd — uitdroging door minder eten is vaak de echte oorzaak. Gewone paracetamol is veilig om te nemen."
+      },
+      "sources": [
+        {
+          "name": "SURMOUNT-5 Trial (NEJM 2025)",
+          "type": "clinical",
+          "weight": 0.3
+        },
+        {
+          "name": "Weight loss medication user forums (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "AAMC GLP-1 overview (2025)",
+          "type": "news",
+          "url": "https://www.aamc.org/news/glp-1-pills-weight-loss-are-here-how-will-they-change-obesity-care",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 15,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "pancreatitis",
+      "name": {
+        "en": "Pancreatitis (rare)",
+        "nl": "Alvleesklierontsteking (zeldzaam)"
+      },
+      "description": {
+        "en": "Inflammation of the pancreas. RARE but SERIOUS. Stop treatment immediately and seek medical help.",
+        "nl": "Ontsteking van de alvleesklier. ZELDZAAM maar SERIEUS. Stop direct met behandeling en zoek medische hulp."
+      },
+      "severity": "severe",
+      "baseRates": {
+        "low": 0.005,
+        "medium": 0.008,
+        "high": 0.012
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.405,
+          "oddsRatio": 1.5,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 1.099,
+          "oddsRatio": 3,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0.262,
+          "oddsRatio": 1.3,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.01,
+      "userReportedSeverity": {
+        "en": "Very rarely reported by users, but when it occurs it is described as extremely painful.",
+        "nl": "Zeer zelden gerapporteerd door gebruikers, maar als het voorkomt wordt het omschreven als extreem pijnlijk."
+      },
+      "onsetDays": {
+        "en": "Can occur at any point during treatment",
+        "nl": "Kan op elk moment tijdens de behandeling optreden"
+      },
+      "durationWeeks": {
+        "en": "Requires immediate medical attention",
+        "nl": "Vereist onmiddellijke medische hulp"
+      },
+      "managementTip": {
+        "en": "If you experience severe stomach pain radiating to your back: STOP the medication immediately and go to the emergency room.",
+        "nl": "Bij ernstige buikpijn die naar je rug uitstraalt: STOP direct met de medicatie en ga naar de spoedeisende hulp."
+      },
+      "sources": [
+        {
+          "name": "Washington University comprehensive study (2025)",
+          "type": "clinical",
+          "url": "https://medicine.washu.edu/news/study-identifies-benefits-risks-linked-to-popular-weight-loss-drugs/",
+          "weight": 0.3
+        },
+        {
+          "name": "FDA adverse event reports (2024-2025)",
+          "type": "news",
+          "weight": 0.3
+        },
+        {
+          "name": "Patient advocacy forums reporting (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        }
+      ],
+      "dataPointCount": 5,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "fatigue",
+      "name": {
+        "en": "Fatigue / Low energy",
+        "nl": "Vermoeidheid / Lage energie"
+      },
+      "description": {
+        "en": "Feeling tired or having less energy than usual, especially in the first weeks.",
+        "nl": "Je moe voelen of minder energie hebben dan normaal, vooral in de eerste weken."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.06,
+        "medium": 0.1,
+        "high": 0.14
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.14,
+          "oddsRatio": 1.15,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.262,
+          "oddsRatio": 1.3,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.588,
+          "oddsRatio": 1.8,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.25,
+      "userReportedSeverity": {
+        "en": "Commonly reported but often linked to eating significantly less. Users say it improves after 2-3 weeks.",
+        "nl": "Vaak gemeld maar meestal gekoppeld aan significant minder eten. Gebruikers zeggen dat het verbetert na 2-3 weken."
+      },
+      "onsetDays": {
+        "en": "5-10 days after starting",
+        "nl": "5-10 dagen na starten"
+      },
+      "durationWeeks": {
+        "en": "Usually improves within 2-3 weeks",
+        "nl": "Verbetert meestal binnen 2-3 weken"
+      },
+      "managementTip": {
+        "en": "Ensure you're eating enough protein and calories — fatigue often means you're eating too little. Light exercise actually helps more than resting.",
+        "nl": "Zorg dat je genoeg eiwit en calorieën eet — vermoeidheid betekent vaak dat je te weinig eet. Lichte beweging helpt meer dan rusten."
+      },
+      "sources": [
+        {
+          "name": "Real-world evidence review (PMC 2025)",
+          "type": "clinical",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit & Weegclub NL user discussions (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "British Journal of Pharmacology warning (2024)",
+          "type": "news",
+          "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11144546/",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 18,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "vomiting",
+      "name": {
+        "en": "Vomiting",
+        "nl": "Braken"
+      },
+      "description": {
+        "en": "Actively throwing up, beyond just feeling nauseous. Usually dose-dependent.",
+        "nl": "Daadwerkelijk overgeven, voorbij alleen misselijkheid. Meestal dosisafhankelijk."
+      },
+      "severity": "moderate",
+      "baseRates": {
+        "low": 0.03,
+        "medium": 0.05,
+        "high": 0.08
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.262,
+          "oddsRatio": 1.3,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0.405,
+          "oddsRatio": 1.5,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": -0.105,
+          "oddsRatio": 0.9,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.916,
+          "oddsRatio": 2.5,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.2,
+      "userReportedSeverity": {
+        "en": "Users who experience vomiting say it typically happens after eating too much or too quickly.",
+        "nl": "Gebruikers die braken ervaren zeggen dat het meestal gebeurt na te veel of te snel eten."
+      },
+      "onsetDays": {
+        "en": "1-3 days after starting or dose increase",
+        "nl": "1-3 dagen na starten of dosisverhoging"
+      },
+      "durationWeeks": {
+        "en": "Usually resolves within 2-4 weeks as the body adjusts",
+        "nl": "Verdwijnt meestal binnen 2-4 weken naarmate het lichaam went"
+      },
+      "managementTip": {
+        "en": "Eat very small portions slowly. Avoid lying down after eating. If persistent, contact your doctor — dose reduction may help.",
+        "nl": "Eet heel kleine porties en eet langzaam. Ga niet liggen na het eten. Bij aanhoudend braken, neem contact op met je arts."
+      },
+      "sources": [
+        {
+          "name": "STEP-1 Trial (Wilding et al., NEJM 2021)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2032183",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/Ozempic & r/Mounjaro vomiting threads (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "SURMOUNT-1 Trial (Jastreboff et al., NEJM 2022)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2206038",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 12,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "abdominal_pain",
+      "name": {
+        "en": "Abdominal pain",
+        "nl": "Buikpijn"
+      },
+      "description": {
+        "en": "Upper abdominal pain or discomfort. Usually mild but persistent pain should be investigated.",
+        "nl": "Pijn of ongemak in de bovenbuik. Meestal mild, maar aanhoudende pijn moet worden onderzocht."
+      },
+      "severity": "moderate",
+      "baseRates": {
+        "low": 0.03,
+        "medium": 0.05,
+        "high": 0.07
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.14,
+          "oddsRatio": 1.15,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0.588,
+          "oddsRatio": 1.8,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.588,
+          "oddsRatio": 1.8,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.18,
+      "userReportedSeverity": {
+        "en": "Users describe it as a dull ache in the upper stomach, especially after eating.",
+        "nl": "Gebruikers omschrijven het als een doffe pijn in de bovenbuik, vooral na het eten."
+      },
+      "onsetDays": {
+        "en": "2-7 days after starting or dose increase",
+        "nl": "2-7 dagen na starten of dosisverhoging"
+      },
+      "durationWeeks": {
+        "en": "Typically improves within 2-3 weeks",
+        "nl": "Verbetert meestal binnen 2-3 weken"
+      },
+      "managementTip": {
+        "en": "Eat smaller meals, avoid spicy and fatty foods. If pain is severe or radiates to the back, see a doctor immediately.",
+        "nl": "Eet kleinere maaltijden, vermijd pittig en vet eten. Bij ernstige pijn die naar de rug uitstraalt, ga direct naar de arts."
+      },
+      "sources": [
+        {
+          "name": "STEP-1 Trial (Wilding et al., NEJM 2021)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2032183",
+          "weight": 0.3
+        },
+        {
+          "name": "STEP-2 Trial (Davies et al., Lancet 2021)",
+          "type": "clinical",
+          "url": "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(21)00213-0/fulltext",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/Ozempic user reports on stomach pain (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        }
+      ],
+      "dataPointCount": 10,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "acid_reflux",
+      "name": {
+        "en": "Acid reflux (GERD)",
+        "nl": "Zuurbranden (reflux)"
+      },
+      "description": {
+        "en": "Stomach acid flowing back into the oesophagus, causing heartburn. GLP-1 drugs slow gastric emptying, which can worsen pre-existing reflux.",
+        "nl": "Maagzuur dat terugstroomt naar de slokdarm. GLP-1-medicijnen vertragen de maagontlediging, wat bestaande reflux kan verergeren."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.03,
+        "medium": 0.05,
+        "high": 0.08
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.262,
+          "oddsRatio": 1.3,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0.693,
+          "oddsRatio": 2,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.405,
+          "oddsRatio": 1.5,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.2,
+      "userReportedSeverity": {
+        "en": "Users with pre-existing GERD report significant worsening. Sleeping elevated and avoiding late meals helps.",
+        "nl": "Gebruikers met bestaand reflux melden duidelijke verergering. Slapen met het hoofd omhoog en late maaltijden vermijden helpt."
+      },
+      "onsetDays": {
+        "en": "3-7 days after starting",
+        "nl": "3-7 dagen na starten"
+      },
+      "durationWeeks": {
+        "en": "May persist during treatment — manageable with lifestyle changes",
+        "nl": "Kan aanhouden tijdens behandeling — beheersbaar met leefstijlaanpassingen"
+      },
+      "managementTip": {
+        "en": "Avoid eating 3+ hours before bed. Sleep with your head slightly elevated. An OTC antacid can help.",
+        "nl": "Eet niet binnen 3 uur voor het slapen. Slaap met je hoofd licht verhoogd. Een vrij verkrijgbaar antacidum kan helpen."
+      },
+      "sources": [
+        {
+          "name": "STEP-3 Trial (Wadden et al., JAMA 2021)",
+          "type": "clinical",
+          "url": "https://jamanetwork.com/journals/jama/fullarticle/2776462",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/GERD & r/Ozempic cross-posts (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "Washington University GI side effects study (2025)",
+          "type": "news",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 8,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "gallstones",
+      "name": {
+        "en": "Gallstones (cholelithiasis)",
+        "nl": "Galstenen (cholelithiasis)"
+      },
+      "description": {
+        "en": "Formation of gallstones. Associated with rapid weight loss. Requires medical attention.",
+        "nl": "Vorming van galstenen. Geassocieerd met snel gewichtsverlies. Vereist medische aandacht."
+      },
+      "severity": "severe",
+      "baseRates": {
+        "low": 0.008,
+        "medium": 0.015,
+        "high": 0.026
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.47,
+          "oddsRatio": 1.6,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.336,
+          "oddsRatio": 1.4,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0.262,
+          "oddsRatio": 1.3,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": -0.693,
+          "oddsRatio": 0.5,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.04,
+      "userReportedSeverity": {
+        "en": "Users who develop gallstones describe sudden, intense upper right abdominal pain. Some required surgery.",
+        "nl": "Gebruikers die galstenen ontwikkelen beschrijven plotselinge, intense pijn rechtsboven in de buik. Sommigen hadden een operatie nodig."
+      },
+      "onsetDays": {
+        "en": "Typically months into treatment, correlates with significant weight loss",
+        "nl": "Meestal maanden na start behandeling, correleert met significant gewichtsverlies"
+      },
+      "durationWeeks": {
+        "en": "Requires medical intervention — does not resolve on its own",
+        "nl": "Vereist medisch ingrijpen — gaat niet vanzelf over"
+      },
+      "managementTip": {
+        "en": "If you experience sudden sharp pain in the upper right abdomen, seek medical attention. Losing weight gradually reduces risk.",
+        "nl": "Bij plotselinge scherpe pijn rechtsboven in de buik, zoek medische hulp. Geleidelijk afvallen vermindert het risico."
+      },
+      "sources": [
+        {
+          "name": "STEP-1 Trial (Wilding et al., NEJM 2021)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2032183",
+          "weight": 0.3
+        },
+        {
+          "name": "FDA safety communication on GLP-1 and gallbladder events (2024)",
+          "type": "news",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/Ozempic gallbladder removal posts (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        }
+      ],
+      "dataPointCount": 6,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "hair_loss",
+      "name": {
+        "en": "Hair loss (thinning)",
+        "nl": "Haarverlies (dunner wordend haar)"
+      },
+      "description": {
+        "en": "Noticeable hair thinning or shedding. Likely caused by nutritional deficiency from rapid weight loss, not a direct drug effect.",
+        "nl": "Merkbaar dunner wordend haar of haaruitval. Waarschijnlijk veroorzaakt door voedingstekorten door snel gewichtsverlies."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.01,
+        "medium": 0.02,
+        "high": 0.03
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.336,
+          "oddsRatio": 1.4,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": -1.204,
+          "oddsRatio": 0.3,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.15,
+      "userReportedSeverity": {
+        "en": "Much more commonly reported by users than clinical trials suggest. Usually stabilises once weight loss plateaus.",
+        "nl": "Veel vaker gerapporteerd door gebruikers dan klinische studies suggereren. Stabiliseert meestal als het gewichtsverlies een plateau bereikt."
+      },
+      "onsetDays": {
+        "en": "Typically 2-4 months after starting (delayed onset)",
+        "nl": "Meestal 2-4 maanden na starten (vertraagd begin)"
+      },
+      "durationWeeks": {
+        "en": "Usually temporary — 3-6 months, then regrowth",
+        "nl": "Meestal tijdelijk — 3-6 maanden, daarna hergroei"
+      },
+      "managementTip": {
+        "en": "Ensure adequate protein intake (60-80g/day), consider a multivitamin with biotin, iron, and zinc.",
+        "nl": "Zorg voor voldoende eiwitinname (60-80g/dag), overweeg een multivitamine met biotine, ijzer en zink."
+      },
+      "sources": [
+        {
+          "name": "SELECT Trial (Lincoff et al., NEJM 2023)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2307563",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/Ozempic hair loss megathread (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "RAND Corporation side effects study (2025)",
+          "type": "news",
+          "url": "https://www.rand.org/pubs/research_reports/RRA4153-1.html",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 14,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "injection_site_reaction",
+      "name": {
+        "en": "Injection site reaction",
+        "nl": "Reactie op de injectieplaats"
+      },
+      "description": {
+        "en": "Redness, itching, swelling, or mild pain at the injection site. Usually mild and self-resolving.",
+        "nl": "Roodheid, jeuk, zwelling of milde pijn op de injectieplaats. Meestal mild en verdwijnt vanzelf."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.03,
+        "medium": 0.04,
+        "high": 0.05
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.405,
+          "oddsRatio": 1.5,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.12,
+      "userReportedSeverity": {
+        "en": "Generally mild. Small red bumps or slight itching that resolve within 1-2 days. Rotating sites helps.",
+        "nl": "Over het algemeen mild. Kleine rode bultjes of lichte jeuk die binnen 1-2 dagen verdwijnt. Wisselen van injectieplaats helpt."
+      },
+      "onsetDays": {
+        "en": "Within hours of injection",
+        "nl": "Binnen enkele uren na injectie"
+      },
+      "durationWeeks": {
+        "en": "Resolves within 1-3 days per injection",
+        "nl": "Verdwijnt binnen 1-3 dagen per injectie"
+      },
+      "managementTip": {
+        "en": "Rotate injection sites (thigh, abdomen, upper arm). Let the pen reach room temperature before injecting.",
+        "nl": "Wissel van injectieplaats (bovenbeen, buik, bovenarm). Laat de pen op kamertemperatuur komen voor het injecteren."
+      },
+      "sources": [
+        {
+          "name": "STEP-1 Trial (Wilding et al., NEJM 2021)",
+          "type": "clinical",
+          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2032183",
+          "weight": 0.3
+        },
+        {
+          "name": "SURMOUNT-2 Trial (Garvey et al., Lancet 2023)",
+          "type": "clinical",
+          "url": "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(23)01200-X/fulltext",
+          "weight": 0.3
+        },
+        {
+          "name": "Diabetes forum injection site discussions (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        }
+      ],
+      "dataPointCount": 11,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "dizziness",
+      "name": {
+        "en": "Dizziness",
+        "nl": "Duizeligheid"
+      },
+      "description": {
+        "en": "Feeling lightheaded or unsteady. Often related to dehydration or blood pressure changes.",
+        "nl": "Je licht in het hoofd of onvast voelen. Vaak gerelateerd aan uitdroging of bloeddrukveranderingen."
+      },
+      "severity": "mild",
+      "baseRates": {
+        "low": 0.02,
+        "medium": 0.03,
+        "high": 0.05
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.14,
+          "oddsRatio": 1.15,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0.405,
+          "oddsRatio": 1.5,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.588,
+          "oddsRatio": 1.8,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.14,
+      "userReportedSeverity": {
+        "en": "Users link it mostly to not drinking enough water or standing up too quickly.",
+        "nl": "Gebruikers koppelen het vooral aan te weinig water drinken of te snel opstaan."
+      },
+      "onsetDays": {
+        "en": "2-7 days after starting or dose increase",
+        "nl": "2-7 dagen na starten of dosisverhoging"
+      },
+      "durationWeeks": {
+        "en": "Usually resolves within 1-2 weeks with adequate hydration",
+        "nl": "Verdwijnt meestal binnen 1-2 weken bij voldoende hydratatie"
+      },
+      "managementTip": {
+        "en": "Drink at least 2 litres of water daily. Stand up slowly. If on BP medication, ask your doctor about adjusting dose.",
+        "nl": "Drink minstens 2 liter water per dag. Sta langzaam op. Als je bloeddrukmedicatie gebruikt, vraag je arts over dosisaanpassing."
+      },
+      "sources": [
+        {
+          "name": "STEP-2 Trial (Davies et al., Lancet 2021)",
+          "type": "clinical",
+          "url": "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(21)00213-0/fulltext",
+          "weight": 0.3
+        },
+        {
+          "name": "Reddit r/Ozempic dizziness reports (2024-2026)",
+          "type": "user_report",
+          "weight": 0.4
+        },
+        {
+          "name": "PCOM Safety review (2025)",
+          "type": "news",
+          "weight": 0.3
+        }
+      ],
+      "dataPointCount": 8,
+      "lastUpdated": "2026-04-12"
+    },
+    {
+      "id": "emotional_blunting",
+      "name": {
+        "en": "Emotional blunting / Reduced pleasure",
+        "nl": "Emotionele afvlakking / Verminderd plezier"
+      },
+      "description": {
+        "en": "Reduced emotional response to pleasurable experiences. GLP-1 receptors in the brain's reward pathway may dampen dopamine-mediated pleasure. Not well-studied in clinical trials.",
+        "nl": "Verminderde emotionele reactie op plezierige ervaringen. GLP-1-receptoren in het beloningscentrum van de hersenen kunnen dopamine-gemedieerd plezier dempen. Nog weinig onderzocht."
+      },
+      "severity": "moderate",
+      "baseRates": {
+        "low": 0.02,
+        "medium": 0.03,
+        "high": 0.05
+      },
+      "modifiers": {
+        "sex:female": {
+          "logOdds": 0.095,
+          "oddsRatio": 1.1,
+          "pValue": null,
+          "n": 39,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "age:65plus": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 12,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasGiHistory": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 45,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "hasDiabetes": {
+          "logOdds": 0,
+          "oddsRatio": 1,
+          "pValue": null,
+          "n": 30,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        },
+        "isFirstMonth": {
+          "logOdds": 0.182,
+          "oddsRatio": 1.2,
+          "pValue": null,
+          "n": 50,
+          "source": "clinical_literature",
+          "lastUpdated": "2026-04-12"
+        }
+      },
+      "userReportedRate": 0.12,
+      "userReportedSeverity": {
+        "en": "Widely discussed on Reddit but absent from clinical trial data. Users describe feeling 'flat'.",
+        "nl": "Veel besproken op Reddit maar afwezig in klinische studiedata. Gebruikers beschrijven zich 'vlak' voelen."
+      },
+      "onsetDays": {
+        "en": "Gradual onset over 2-6 weeks",
+        "nl": "Geleidelijk begin over 2-6 weken"
+      },
+      "durationWeeks": {
+        "en": "May persist during treatment — unclear if it resolves",
+        "nl": "Kan aanhouden tijdens behandeling — onduidelijk of het verdwijnt"
+      },
+      "managementTip": {
+        "en": "If you notice reduced enjoyment of activities you used to love, talk to your doctor. Maintaining social connections and exercise can help.",
+        "nl": "Als je minder plezier ervaart in activiteiten waar je van hield, bespreek dit met je arts. Sociale contacten en beweging kunnen helpen."
+      },
+      "sources": [
+        {
+          "name": "Reddit r/Ozempic emotional blunting megathread (2024-2026)",
+          "type": "user_report",
+          "weight": 0.5
+        },
+        {
+          "name": "GLP-1 receptor CNS expression review (Neuroscience & Biobehavioral Reviews 2024)",
+          "type": "clinical",
+          "weight": 0.25
+        },
+        {
+          "name": "NYT 'Ozempic Changed My Personality' investigation (2025)",
+          "type": "news",
+          "weight": 0.25
+        }
+      ],
+      "dataPointCount": 10,
+      "lastUpdated": "2026-04-12"
+    }
+  ],
+  "candidateParameters": [
+    {
+      "id": "ethnicity",
+      "currentN": 5,
+      "requiredN": 30,
+      "significantEffects": [],
+      "firstSeen": "2026-04-01",
+      "notes": "Only 5 data points with ethnicity specified. Insufficient for analysis."
+    },
+    {
+      "id": "bmi",
+      "currentN": 0,
+      "requiredN": 30,
+      "significantEffects": [],
+      "firstSeen": "2026-04-01",
+      "notes": "No data points with BMI specified yet. Can be auto-calculated from weight+height in journey tabs."
+    },
+    {
+      "id": "diet",
+      "currentN": 0,
+      "requiredN": 30,
+      "significantEffects": [],
+      "firstSeen": "2026-04-12",
+      "notes": "No data points with diet specified yet."
+    },
+    {
+      "id": "bloodType",
+      "currentN": 0,
+      "requiredN": 30,
+      "significantEffects": [],
+      "firstSeen": "2026-04-12",
+      "notes": "No data points with blood type specified yet."
+    }
+  ],
+  "changelog": [
+    {
+      "version": 1,
+      "date": "2026-04-12",
+      "changes": [
+        {
+          "type": "effect_added",
+          "reason": "Initial seed from static SIDE_EFFECTS data — 15 effects, 6 active parameters, 4 candidate parameters"
+        }
+      ],
+      "autoApplied": false
+    }
+  ],
+  "thresholds": {
+    "autoApplyModifier": {
+      "minN": 30,
+      "maxPValue": 0.01,
+      "maxOddsRatioChange": 0.3
+    },
+    "flagForReview": {
+      "minN": 20,
+      "maxPValue": 0.05
+    },
+    "promoteParameter": {
+      "minN": 30,
+      "minSignificantEffects": 2,
+      "maxPValue": 0.05
+    },
+    "demoteParameter": {
+      "maxN": 10,
+      "minDaysSinceLastEvidence": 90
+    }
+  }
+}

@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# Environment and secrets (NEVER commit)
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+.vercel/
+.aws/
+credentials.json
+service-account.json
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs and temp
+*.log
+logs/
+tmp/
+temp/
+
+# Private data
+data/side-effects-db.json
+data/daily-ops-logs/
+data/model-config-history/
+data/pending-model-changes.json
+
+# Build output
+dist/
+build/
+.next/
+out/
