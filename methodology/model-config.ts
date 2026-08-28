@@ -1,3 +1,8 @@
+// SNAPSHOT — do not edit here. Copied from `src/lib/model-config.ts` in the Magistra
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-28.
+// Published for peer review: this is the code that computes what the live
+// API returns. It is not runnable standalone — import paths assume the
+// application tree. Report a defect at https://magistra.health/en/contact.
 // Model Config — Single source of truth for the self-evolving predictor
 // The daily pipeline writes this config; the engine + frontend read it.
 

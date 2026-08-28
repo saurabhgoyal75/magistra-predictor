@@ -6,6 +6,11 @@
 
 import fs from "fs";
 import path from "path";
+// Same eligibility rules the engine, the public API and the audit script use.
+// Empirical modifiers are auto-applied to the live predictor, so they must not
+// be derived from points the site refuses to publish (2026-08-14). See
+// `rate-base.ts` in this directory for the rules themselves.
+import { classifyRatePoint, studyWeight } from "./rate-base.ts";
 
 // Configure paths via environment variables or adapt to your project structure.
 // The reference implementation reads from local JSON files; production uses Vercel KV.
@@ -81,14 +86,14 @@ function computeOddsRatio(group1Rates, group1Weights, group0Rates, group0Weights
  * Split data points by a dimension and compute OR for each effect
  */
 function analyzeParameterForEffect(points, effectId, splitFn) {
-  const effectPoints = points.filter(p => p.sideEffect === effectId && p.extractedRate !== null && p.extractedRate >= 0 && p.extractedRate <= 1);
+  const effectPoints = points.filter(p => p.sideEffect === effectId && classifyRatePoint(p) === null);
 
   const group1 = [], group1W = [], group0 = [], group0W = [];
 
   for (const p of effectPoints) {
     const split = splitFn(p);
     if (split === null) continue; // skip "unspecified"
-    const w = (p.extractedSampleSize || 1) * confidenceWeight(p.extractionConfidence);
+    const w = studyWeight(p) * confidenceWeight(p.extractionConfidence);
     if (split) { group1.push(p.extractedRate); group1W.push(w); }
     else { group0.push(p.extractedRate); group0W.push(w); }
   }

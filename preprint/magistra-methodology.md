@@ -1,21 +1,34 @@
 # A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports
 
 **Saurabh Goyal**
-Magistra Health B.V.
+Phlo Systems BV
 saurabh@magistra.health
 https://magistra.health
 
-**Version:** 4.0
-**Date:** April 2026
+**Version:** 5.0
+**Date:** August 2026 (v4.0: April 2026 — superseded; see "Changes from v4.0")
 **Classification:** q-bio.QM (Quantitative Methods) / stat.AP (Applications)
 
 ---
 
 ## Abstract
 
-Patients starting GLP-1 receptor agonist therapy (semaglutide, tirzepatide, liraglutide) for weight management face a persistent information gap: clinical trial side effect frequencies often diverge substantially from the experiences described in patient communities, but existing resources typically report only one or the other. We describe a dual-track estimation framework that collects, extracts, and reports two parallel risk estimates per side effect — one derived exclusively from peer-reviewed clinical trial and regulatory data, the other from real-world patient community reports — without blending them. The framework is implemented as a live, continuously updated system (magistra.health) that ingests from 18 data sources daily, uses LLM-assisted structured extraction with confidence weighting, and applies random-effects meta-analytic confidence intervals (DerSimonian-Laird) with capped log-odds modifier stacking. A self-evolving pipeline computes empirical odds ratios for all parameter × effect combinations daily, applies Benjamini-Hochberg FDR correction across the full test battery, and updates model parameters under pre-registered thresholds. We illustrate the framework with representative gaps (hair loss: clinical ~3% vs real-world ~15%; emotional blunting: clinical ~3% vs real-world ~12%) and discuss its limitations honestly, including demographic bias, modest data volume (n=217 points at time of writing), and the absence of formal calibration against independent outcome data. The system is open: its methodology is public, its code is available, and it actively solicits peer critique via a structured feedback channel. We argue that the dual-track approach is more informative and more honest than blended or single-source estimates, and that the gap between tracks is itself a clinically meaningful signal worth displaying.
+Patients starting GLP-1 receptor agonist therapy (semaglutide, tirzepatide, liraglutide) for weight management face a persistent information gap: clinical trial side effect frequencies often diverge substantially from the experiences described in patient communities, but existing resources typically report only one or the other. We describe a dual-track estimation framework that collects, extracts, and reports two parallel signals per side effect — a clinical incidence estimate derived exclusively from peer-reviewed clinical trial and regulatory data, and a community reporting frequency (the share of distinct community reports that mention the effect) — without blending them, and without presenting them as comparable quantities. The framework is implemented as a live, continuously updated system (magistra.health) that ingests daily from public clinical, regulatory, community, and news sources, uses LLM-assisted structured extraction with confidence weighting, applies random-effects meta-analytic confidence intervals (DerSimonian-Laird) with capped log-odds modifier stacking to the clinical track, and Wilson score intervals to the community track. Published estimates are restricted to an eligibility-screened base: every rate must have a citable external origin, each distinct source contributes at most one rate per effect, and spontaneous-report shares are never averaged into incidence. At the time of writing (August 2026) the corpus holds 1,345 collected data points, of which 300 state a rate; 136 rates from 60 distinct sources are eligible to support published estimates, and the community denominator is 185 distinct reports. A self-evolving pipeline computes empirical odds ratios for all parameter × effect combinations daily, applies Benjamini-Hochberg FDR correction across the full test battery, and updates model parameters under pre-registered thresholds. We discuss limitations honestly, including demographic bias, a frozen community collector (Reddit has served the scraper an HTTP 403 block page since May 2026), and the absence of formal calibration — which the eligible base is currently too small to support at all. The system is open: its methodology is public, its code is available, and it actively solicits peer critique via a structured feedback channel. We argue that displaying both signals with their provenance is more informative and more honest than blended or single-source estimates.
 
 **Keywords:** GLP-1 receptor agonists, semaglutide, tirzepatide, pharmacovigilance, real-world evidence, meta-analysis, DerSimonian-Laird, patient-reported outcomes, LLM extraction, self-evolving models, open methodology
+
+---
+
+## Changes from v4.0 (August 2026)
+
+v4.0 (April 2026) described a method and a data-source inventory that internal audits between 2026-08-13 and 2026-08-17 found the live system either no longer matched or should never have published. v5.0 corrects the text rather than annotating it; the four substantive corrections, in the order they were found:
+
+1. **Rate eligibility (2026-08-13).** v4.0 weighted every rate-bearing data point. The system now excludes rates that cannot support a published estimate: rates without a citable external origin (including 78 April-2026 seed points whose source URL pointed at our own site — retained, labelled, and excluded from every public total); spontaneous-report *shares* (FAERS reports the share of adverse-event reports mentioning an effect — averaging that into incidence is a category error, and at n=82,377 it silently dominated every estimate it touched); multiple rates from a single source (now collapsed to one entry per distinct source per effect); and sample sizes extracted from social posts (one X/Twitter post carried n=500,000 — a follower count, not a cohort — and drove a "14× hair loss" discordance claim, now withdrawn). What v4.0 presented as resting on ~1,200 data points rests, after screening, on the eligible base stated in the abstract.
+2. **The real-world track is a reporting frequency, not an incidence (2026-08-14).** v4.0's "real-world" track averaged self-reported percentages scraped from individual community posts; a personal anecdote has no rate. The track now reports the share of distinct community reports (deduplicated by source URL) that mention each effect, with Wilson intervals. Consequently v4.0's clinical-vs-real-world "convergence" framing — including the illustrative gap table and the abstract's hair-loss example — is withdrawn as a category error: a mention frequency and an incidence rate are not comparable quantities (see §3.3).
+3. **The published data-source inventory was wrong (2026-08-17).** v4.0's Table 1 listed sources (Google Scholar, 1mg.com, PvPI, Trustpilot) that had never contributed a single corpus point, and described every source as collected daily while Reddit had been blocked since 2026-05-28. Table 1 is now derived from the corpus and served live at the public API; a source that has contributed nothing cannot appear in it.
+4. **Source-type labels were assigned by scraper keyword, not by publisher (2026-08-14, fully landed 2026-08-17).** 44 points typed clinical or regulatory and branded "WHO/…", "MHRA/…", "EMA/…" or "Cochrane/…" were Google News search-result blurbs whose actual publisher was never the named agency; a further 78 points branded "Quora —" or "Twitter/X —" were likewise Google News results, not platform collections. All were relabelled by their real mechanism in both the repository and production stores. None carried an eligible rate, so no published estimate changed.
+
+All corpus figures printed in this version are a dated snapshot (2026-08-20); the live figures are served at https://magistra.health/api/data?q=overview and https://magistra.health/en/methodology, both of which compute the eligible base at request time.
 
 ---
 
@@ -31,9 +44,9 @@ Existing consumer-facing resources handle this gap in one of three ways: (a) rep
 
 ### 1.2 Our approach: don't blend, display both
 
-We propose and implement a dual-track framework: for every side effect, compute two parallel estimates using disjoint data streams, then display them side by side with their respective confidence intervals and an explicit indication of the data sources feeding each. The user sees both numbers and the gap between them becomes visible rather than hidden. The convergence of the two tracks over time (as clinical data accumulates and community reports get integrated into formal pharmacovigilance) is itself a measurable quantity worth tracking.
+We propose and implement a dual-track framework: for every side effect, compute two parallel signals using disjoint data streams, then display them side by side with their respective confidence intervals and an explicit indication of the data sources feeding each. The clinical track is an incidence estimate; the community track is a reporting frequency — the share of distinct community reports that mention the effect. These are different quantities: a mention frequency is not an incidence rate, cannot be compared to one, and is labelled accordingly wherever it appears. (v4.0 treated the two tracks as comparable and tracked their "convergence"; that framing is withdrawn — see "Changes from v4.0.")
 
-This framework makes no attempt to decide which estimate is "correct." It presents both, labels their provenance, and leaves interpretation to the patient and their clinician. We argue this is more honest and more informative than blending.
+This framework makes no attempt to blend the two signals or decide which better reflects a patient's prospective risk. It presents both, labels their provenance, and leaves interpretation to the patient and their clinician. We argue this is more honest and more informative than blending.
 
 ### 1.3 Scope of this paper
 
@@ -45,22 +58,26 @@ This paper describes the methodology, not the clinical implications. We cover: (
 
 ### 2.1 Data collection
 
-The system ingests from 18 distinct data sources organized into four categories (Table 1). Each data point retains its source provenance for the full lifetime of the record, allowing downstream filtering into tracks.
+The system attempts collection from a wider set of scrapers than have actually produced data; Table 1 lists only the source families that have contributed at least one corpus point, with their contribution counts and collection status as of 2026-08-20. This inventory is derived from the corpus itself and served live, with per-source counts and last-seen dates, at https://magistra.health/api/data?q=overview — a source that has contributed nothing cannot appear in it. (v4.0's hand-maintained inventory listed four sources with zero contributed points and described every source as collected daily; see "Changes from v4.0.") Each data point retains its source provenance for the full lifetime of the record, allowing downstream filtering into tracks.
 
-**Table 1.** Data sources by category.
+**Table 1.** Data sources by corpus contribution (snapshot 2026-08-20; live version at the public API).
 
-| Category | Sources | Frequency |
-|---|---|---|
-| Clinical | PubMed (NCBI E-utilities, 35 rotating queries), ClinicalTrials.gov API v2, Google Scholar, Cochrane Library, WHO adverse event database, preprint servers | Daily |
-| Regulatory | FDA FAERS (OpenFDA API, 9 drug variants), EMA adverse events, MHRA yellow card data, CDSCO/PvPI India bulletins | Daily |
-| User reports | Reddit (13 subreddits: r/Ozempic, r/Mounjaro, r/Zepbound, r/loseit, r/WegovyWeightLoss, r/semaglutide, r/tirzepatide, r/GLP1_Drugs, r/ObesityScience, r/BodyRecomposition, r/PCOS, r/diabetes, r/intermittentfasting), Trustpilot, Drugs.com, Quora, 1mg.com India | Daily |
-| News & guidelines | Google News RSS (5 rotating queries), professional society guidelines, health news aggregators | Daily |
+| Source | Points | Most recent | Status |
+|---|---|---|---|
+| Reddit (13 subreddits) | 684 | 2026-05-28 | blocked (HTTP 403 since 2026-05-28) |
+| Health news (Google News RSS) | 180 | 2026-08-19 | active |
+| PubMed / PMC (NCBI E-utilities, 35 rotating queries) | 115 | 2026-08-17 | active |
+| FDA FAERS (openFDA API, 9 drug variants) | 80 | 2026-08-13 | active |
+| Drugs.com patient reviews | 71 | 2026-08-12 | active |
+| Journal & institutional pages | 68 | 2026-04-12 | dormant |
+| ClinicalTrials.gov (API v2, incl. results sections) | 65 | 2026-08-20 | active |
+| medRxiv / bioRxiv preprints | 4 | 2026-06-01 | dormant |
 
-Raw text is retained as a 500-character excerpt for each data point to allow post-hoc auditing and reprocessing with improved extraction prompts.
+Raw text is retained as a 500-character excerpt for each data point to allow post-hoc auditing and reprocessing with improved extraction prompts (the extraction step itself reads the full fetched text, up to 3,000 characters).
 
 ### 2.2 LLM-assisted structured extraction
 
-Raw scraped text is processed by Claude Haiku (Anthropic) via a pre-specified extraction prompt that captures: the side effect mentioned, the drug name (normalized to generic), the extracted incidence rate (if explicitly stated), dose tier, demographic fields (sex, age range, ethnicity, BMI range), lifestyle fields (exercise level, diet, blood type), sample size (if reported), and an extraction confidence label (high / medium / low).
+Raw scraped text is processed by a Claude model (Anthropic; the specific model tier is pinned in the pipeline configuration and validated against production text before any change) via a pre-specified extraction prompt that captures: the side effect mentioned, the drug name (normalized to generic), the extracted incidence rate (if explicitly stated), dose tier, demographic fields (sex, age range, ethnicity, BMI range), lifestyle fields (exercise level, diet, blood type), sample size (if reported), and an extraction confidence label (high / medium / low).
 
 The extraction is deliberately conservative: the prompt specifies that rates must be explicitly stated in the source text, not inferred. Items with no extractable rate are stored with `extractedRate = null` and contribute only to qualitative analysis. Confidence labels are used downstream as multiplicative weights (high = 1.0, medium = 0.7, low = 0.3) on sample-size-based weighting.
 
@@ -68,9 +85,11 @@ Deduplication is performed on the composite key (sourceUrl, sideEffect). The ext
 
 ### 2.3 Dual-track estimation
 
-For a target patient profile P and side effect e, the system produces two parallel estimates.
+For a target patient profile P and side effect e, the system produces two parallel signals.
 
-**Track C (Clinical).** Let D_C(P, e) be the set of data points with sideEffect = e, sourceType ∈ {clinical, regulatory}, and profile filters (sex, dose, ethnicity, exercise) matching P or marked "unspecified". The clinical estimate is computed as:
+**Rate eligibility (applied before either track).** A rate-bearing data point may support a published estimate only if: (i) its source URL is a citable external origin — points whose provenance is our own site, a synthetic aggregate ("Aggregated user reports"), or a search-aggregator result page are retained and labelled but excluded from every public total and estimate; (ii) it is not a spontaneous-report *share* (e.g. the share of FAERS adverse-event reports mentioning an effect), which is a different quantity from incidence and is kept as a separate labelled signal, never averaged into a rate; (iii) it is that source's single entry for the effect — a paper contributing several rates collapses to one entry per distinct source, so one publication cannot masquerade as multiple independent observations; and (iv) sample sizes extracted from social posts are ignored for weighting. As of 2026-08-20 these rules admit 136 rates from 60 distinct sources out of 300 rate-bearing points; effects whose eligible base is empty publish a clearly-labelled static figure from named published trials instead of a computed estimate.
+
+**Track C (Clinical).** Let D_C(P, e) be the set of eligible data points with sideEffect = e, sourceType ∈ {clinical, regulatory}, and profile filters (sex, dose, ethnicity, exercise) matching P or marked "unspecified". The clinical estimate is computed as:
 
 1. Weighted mean rate, with weights w_i = max(1, n_i) · q_i where n_i is the reported sample size and q_i is the extraction confidence weight.
 2. Winsorization at the 5th/95th percentile when |D_C| > 10.
@@ -79,9 +98,9 @@ For a target patient profile P and side effect e, the system produces two parall
 5. Cumulative modifier shift is capped at |ΣΔlogOdds| ≤ 2.5 to prevent implausible stacking.
 6. Random-effects 95% confidence interval on the log-odds scale using DerSimonian-Laird τ² estimation and delta-method standard error.
 
-**Track R (Real-world).** Analogous to Track C but with D_R(P, e) restricted to sourceType ∈ {user_report, news}. No blending with Track C. If |D_R| < 1, a fallback is used: the aggregate user-reported baseline rate from the static reference data, adjusted by modifiers and clearly labeled as "aggregate baseline, not personalized."
+**Track R (Community reporting frequency).** The community track does not estimate incidence. Let R be the set of distinct community reports — one row per source URL, restricted to reports hosted on a community platform itself (Reddit, Drugs.com; news-aggregator search results are excluded) — and R_e ⊆ R the subset that mentions effect e. The track reports |R_e| / |R| as a **reporting frequency** with a Wilson score 95% interval. As of 2026-08-20, |R| = 185; because the Reddit collector has been blocked since 2026-05-28, this denominator is frozen and every published reporting frequency is a fixed number cited with its as-of date. (v4.0's Track R averaged self-reported percentages scraped from individual posts; that procedure is withdrawn — a personal anecdote has no rate, and averaging forum-scraped percentages is not a measurement.)
 
-Both tracks share the same statistical machinery; only the input data differs. Crucially, the two tracks are never blended, never averaged, and never substituted. They are displayed as independent estimates with their own sample sizes, confidence intervals, and data source attributions.
+The two tracks are never blended, never averaged, and never substituted — and, being different quantities (an incidence estimate and a mention frequency), they are never presented as directly comparable. Each is displayed with its own denominator, interval, and data source attribution.
 
 ### 2.4 Log-odds modifier framework
 
@@ -130,7 +149,7 @@ Every model configuration is versioned; the previous 30 versions are retained fo
 
 ### 2.7 Implementation
 
-The system runs on Node.js with a Next.js frontend and Vercel KV for persistence. The full pipeline (collection → extraction → analysis → config update → sync) executes in under 5 minutes per day on a single server. The statistical code is implemented in plain JavaScript without external dependencies beyond the standard normal CDF approximation (Abramowitz-Stegun).
+The system runs on Node.js with a Next.js frontend and Vercel KV for persistence. The full pipeline (collection → extraction → analysis → config update → sync) executes once daily on a single machine. The statistical code is implemented in plain JavaScript without external dependencies beyond the standard normal CDF approximation (Abramowitz-Stegun).
 
 ---
 
@@ -138,31 +157,31 @@ The system runs on Node.js with a Next.js frontend and Vercel KV for persistence
 
 ### 3.1 Current database state
 
-At the time of writing (April 2026), the database contains 217 extracted data points across 15 side effects and 9 drug variants. The distribution across source categories is approximately 6% clinical, 3% regulatory, 60% user reports, and 31% news/other. Female representation among points with specified sex is 87% — reflecting the demographic bias of patient communities and clinical trial populations.
+As of 2026-08-20 the corpus holds 1,345 collected data points, of which 1,267 are published (78 April-2026 seed points without a citable external origin are retained, labelled, and excluded from all public totals), across 9 drug variants. Fifteen curated side effects are tracked publicly; extraction has produced 28 distinct effect labels in total. The published source mix is 223 clinical, 80 regulatory, 758 user reports, and 206 news. Of the 300 rate-bearing points, 136 rates from 60 distinct sources are eligible to support a published estimate (§2.3); 14 of the 28 extracted effect labels have no eligible clinical rate and publish a labelled static figure from named published trials instead.
 
-The model health status is "degraded" per the automated review, reflecting insufficient data volume per effect (median n per effect ≈ 14, target ≥ 100).
+The model health status is "degraded" per the automated review, reflecting insufficient eligible data volume per effect.
 
-### 3.2 Illustrative dual-track gaps
+### 3.2 Current evidentiary base per effect
 
-For a reference profile (female, 35 years old, medium dose, first month of treatment, no GI history, no diabetes), Table 2 shows the clinical and real-world estimates for 7 representative side effects.
+Table 2 shows, for the effects with the strongest eligible clinical bases, the number of eligible clinical rates and distinct sources, the resulting confidence grade, and the community reporting frequency (share of the 185 distinct community reports mentioning the effect). The computed incidence estimates themselves — weighted means with modifier adjustments and random-effects intervals — are served live by the predictor and public API rather than frozen into this document, since they change as the corpus grows.
 
-**Table 2.** Dual-track estimates for reference profile.
+**Table 2.** Eligible evidentiary base and community reporting frequency (snapshot 2026-08-20).
 
-| Side effect | Clinical (%) | Real-world (%) | Gap (pp) |
+| Side effect | Eligible clinical rates (distinct sources) | Confidence | Reporting frequency (of 185 reports) |
 |---|---|---|---|
-| Nausea | 28 | 49 | 21 |
-| Diarrhoea | 11 | 31 | 20 |
-| Fatigue | 10 | 25 | 15 |
-| Headache | 7 | 21 | 14 |
-| Hair loss (alopecia) | 3 | 15 | 12 |
-| Constipation | 6 | 17 | 11 |
-| Emotional blunting | 3 | 12 | 9 |
+| Nausea | 29 (18) | high | 24.9% |
+| Constipation | 12 (7) | moderate | 18.9% |
+| Vomiting | 11 (7) | moderate | 20.0% |
+| Reduced appetite | 11 (8) | moderate | 11.9% |
+| Diarrhoea | 10 (5) | moderate | 18.9% |
+| Headache | 4 (3) | low | 5.9% |
+| Hair loss (alopecia) | 3 (1) | very low | 3.8% |
 
-The gap is consistent across effects but varies in magnitude. Gastrointestinal effects show the largest absolute gaps (15-21 pp) but also the highest baselines. Low-baseline effects like hair loss and emotional blunting show 3-5× multiplicative gaps despite lower absolute numbers.
+The two right-hand columns are different quantities and are not comparable to each other (§2.3). The table's purpose is transparency about what each published estimate rests on: nausea's estimate draws on 29 independent clinical rates from 18 distinct sources — more than any other tracked effect — while hair loss, the effect whose apparent clinical-vs-community gap motivated much of v4.0's framing, rests on 3 clinical rates from a single source and is published with a "very low confidence" grade for that reason.
 
-### 3.3 Convergence hypothesis
+### 3.3 Convergence hypothesis (withdrawn)
 
-We hypothesize (but have not yet tested) that as clinical data volume grows, the two tracks will converge for mainstream GI side effects but remain divergent for effects that clinical trials systematically under-measure (delayed, subjective, or not pre-specified). We plan to formalize this as a quantitative test once the database reaches n ≥ 100 clinical per effect.
+v4.0 hypothesized that the clinical and real-world tracks would converge for mainstream GI side effects as clinical data volume grew. This hypothesis is withdrawn as unmeasurable in the framework's corrected form: the community track is a reporting frequency, not an incidence estimate, so "convergence" between the tracks is a comparison between two different quantities and has no defined meaning. What can be tracked instead — and is, via the live API — is the growth and confidence grading of each track's own evidentiary base.
 
 ---
 
@@ -170,7 +189,9 @@ We hypothesize (but have not yet tested) that as clinical data volume grows, the
 
 We enumerate limitations explicitly because hidden weaknesses are more dangerous than visible ones.
 
-**Data volume.** The current database (n = 217) is below the threshold for robust inference on most effects. Model health is classified as "degraded" until n ≥ 100 per effect is achieved. Reported confidence intervals should be interpreted accordingly.
+**Data volume.** Although the corpus held 1,345 collected points as of 2026-08-20, the eligible base behind published estimates is far smaller (136 rates from 60 distinct sources across all effects, same date), and below the threshold for robust inference on most effects — 14 of 28 extracted effect labels have no eligible clinical rate at all. Model health is classified as "degraded" until the eligible base per effect grows substantially. Reported confidence intervals should be interpreted accordingly.
+
+**Frozen community denominator.** Reddit — the largest community source — has served the collector an HTTP 403 block page since 2026-05-28. The community corpus (185 distinct reports) is frozen at that size until a different access route exists, so every published reporting frequency is a fixed number cited with its as-of date, not a continuously updated statistic.
 
 **Demographic bias.** Both the clinical and community data sources over-represent female, white, and Western populations. Candidate parameters for ethnicity and BMI are tracked but lack sufficient data for inclusion. The system explicitly flags this as a limitation on every prediction.
 
@@ -178,11 +199,11 @@ We enumerate limitations explicitly because hidden weaknesses are more dangerous
 
 **No interaction terms.** Modifiers are applied additively on the log-odds scale, ignoring potential interactions (e.g., female × age ≥ 65). The cumulative cap at |ΣΔlogOdds| ≤ 2.5 is a partial mitigation but does not substitute for proper interaction modeling.
 
-**No formal calibration.** The system has not yet been validated against independent outcome data. A held-out validation is planned once n ≥ 500 per effect is achieved. Until then, reported confidence intervals capture sampling and between-study variance but not structural model error.
+**No formal calibration — currently unmeasurable.** The system has not been validated against independent outcome data, and applying the rate-eligibility rules (§2.3) leaves no effect with enough eligible rates to fit the logistic calibration model v4.0 described. The honest statement is "calibration cannot currently be measured; here is the n per effect" — not a calibration statistic computed on an ineligible base. A held-out validation remains planned for when the eligible base permits it.
 
-**LLM extraction accuracy.** Claude Haiku is used for structured extraction but has not been audited against human gold-standard labels on a representative sample. An audit of 50 sources per effect is planned. Until completed, reported sample sizes should be treated as noisy upper bounds.
+**LLM extraction accuracy.** A Claude model is used for structured extraction but has not been audited against human gold-standard labels on a representative sample. An audit of 50 sources per effect is planned. Until completed, reported sample sizes should be treated as noisy upper bounds.
 
-**Selection bias in community data.** Patient communities over-report severe experiences; the real-world track inherits this bias. We do not attempt to correct for it beyond separating the two tracks so the user can see both.
+**Selection bias in community data.** Patient communities over-report severe or unusual experiences; the reporting-frequency track inherits this bias — a mention share measures what a self-selected population chooses to write about, not what a cohort experiences. We do not attempt to correct for it beyond labelling the quantity for what it is and separating the two tracks so the user can see both.
 
 **Journey predictor limitations.** The weight trajectory, muscle loss, and discontinuation models embed expert-coded modifier values (dose, exercise, protein, resistance training) that are not empirically derived. These are provisional and clearly labeled as such.
 
@@ -202,7 +223,7 @@ Magistra's methodology page (https://magistra.health/en/methodology) hosts a res
 
 ### 6.1 Why dual-track is the honest choice
 
-Blended estimates have a single point of failure: the weighting scheme. If the weights are wrong, the output is wrong, and the user has no way to detect this. Dual-track estimates surface the disagreement directly. The user sees two numbers, understands they come from different data streams, and can form their own interpretation. The system is transparent by construction.
+Blended estimates have a single point of failure: the weighting scheme. If the weights are wrong, the output is wrong, and the user has no way to detect this. The dual-track display surfaces what each data stream can actually support. The user sees both signals, labelled for what they are — an incidence estimate and a reporting frequency — understands they come from different data streams measuring different things, and can form their own interpretation. The system is transparent by construction.
 
 ### 6.2 The self-evolving loop
 
@@ -210,8 +231,8 @@ The FDR-corrected parameter update pipeline provides a principled mechanism for 
 
 ### 6.3 Roadmap
 
-1. **Phase 1 (current):** dual-track framework live; open peer review solicited; data volume ~200-500 points.
-2. **Phase 2:** n ≥ 100 per effect; formal calibration testing; empirical modifier replacement for hand-coded values.
+1. **Phase 1 (current):** dual-track framework live; open peer review solicited; eligibility-screened evidentiary base published with every estimate.
+2. **Phase 2:** eligible n ≥ 100 per effect; formal calibration testing; empirical modifier replacement for hand-coded values.
 3. **Phase 3:** n ≥ 500; external validation on independent dataset; interaction term modeling.
 4. **Phase 4:** pre-registration on OSF.io; formal manuscript submission targeting Nature Medicine or JAMA Network Open.
 
@@ -250,7 +271,7 @@ All statistical code, extraction prompts, and model configuration are available 
 ## Appendix B: Correspondence
 
 Saurabh Goyal
-Magistra Health B.V.
+Phlo Systems BV
 saurabh@magistra.health
 
 All critique, collaboration proposals, and data contributions are welcome.

@@ -2,36 +2,25 @@
 
 **A dual-track framework for GLP-1 side effect estimation, separating clinical evidence from real-world patient reports.**
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.19559749.svg)](https://doi.org/10.5281/zenodo.19559749)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Methodology](https://img.shields.io/badge/methodology-v4.0-green.svg)](https://magistra.health/en/methodology)
+[![Methodology](https://img.shields.io/badge/methodology-v5.0-green.svg)](https://magistra.health/en/methodology)
 [![Live](https://img.shields.io/badge/live-magistra.health-purple.svg)](https://magistra.health/en/predictor)
 
-This repository contains the statistical methodology, extraction prompts, and model configuration behind [Magistra Health](https://magistra.health) — a free, open, continuously updated platform that estimates GLP-1 medication side effect risk using two parallel data tracks.
+This repository contains the statistical methodology and model configuration behind [Magistra Health](https://magistra.health) — a platform that estimates GLP-1 medication side effect risk using two parallel data tracks. The predictor and the public API are free and need no authentication; bulk export of the dataset is not (see the licence link below). The clinical corpus is updated daily by an automated pipeline. The community corpus is not continuously updated: Reddit blocked our collector on 2026-05-28, freezing the 684 Reddit reports that make up most of it, and the remaining platform (Drugs.com, 71 reports) was last collected 2026-08-12. Any reporting-frequency figure is therefore a fixed historical number and should be cited with its date.
 
 ---
 
 ## The idea in one sentence
 
-**We don't blend clinical trial data and patient community reports into a single number. We compute two estimates and show both, so the gap between them is visible instead of hidden.**
+**We don't blend clinical trial data and patient community reports into a single number. We compute two different quantities — a clinical incidence estimate and a community reporting frequency — and label each for what it is, instead of collapsing them into one figure.**
 
 ---
 
 ## Why this repo exists
 
-Patients starting semaglutide, tirzepatide, or liraglutide face a gap: clinical trials report one side effect rate, Reddit reports another, and neither is wrong. Existing resources pick one or average them opaquely. We keep them separate.
+Patients starting semaglutide, tirzepatide, or liraglutide face a gap: clinical trials report a side effect's incidence, patient communities report how often people mention it, and neither is wrong — they're different quantities. Existing resources pick one or blend them opaquely. We keep them separate and never present them as comparable.
 
-Representative gaps (reference profile: female, 35, medium dose, first month):
-
-| Side effect | Clinical trials | Real-world reports | Gap |
-|---|---|---|---|
-| Nausea | 28% | 49% | 21 pp |
-| Diarrhoea | 11% | 31% | 20 pp |
-| Fatigue | 10% | 25% | 15 pp |
-| Hair loss | 3% | 15% | 12 pp |
-| Emotional blunting | 3% | 12% | 9 pp |
-
-Clinical trials aren't wrong — they measure what they measure. But they systematically miss delayed effects (hair loss), subjective effects (emotional blunting), and effects that aren't pre-specified endpoints.
+Earlier versions of this repo (through v4.0) published a "gap" table comparing a clinical incidence percentage directly against a real-world percentage (e.g. "hair loss: 3% clinical vs 15% real-world, 12pp gap") and framed it as evidence of clinical trials under-measuring side effects. That framing is withdrawn as of v5.0: the real-world figure was a reporting *frequency* — the share of community posts mentioning an effect — not an incidence estimate, so subtracting the two produced a number with no defined meaning. See "Changes from v4.0" in [the preprint](preprint/magistra-methodology.md) for the full correction. The two tracks are still displayed side by side, each with its own confidence interval and source count — see the live tool or the API for current figures.
 
 ---
 
@@ -48,21 +37,21 @@ Clinical trials aren't wrong — they measure what they measure. But they system
 
 ```
 ├── README.md                    # You are here
-├── LICENSE                      # Apache 2.0
+├── LICENSE                      # Apache 2.0 (code; the DATASET is separately
+│                                #   licensed — see magistra.health/en/data#licence)
 ├── CITATION.cff                 # Academic citation metadata
 ├── CONTRIBUTING.md              # How to critique or contribute
-├── methodology/
+├── SECURITY.md                  # How to report a security issue
+├── methodology/                 # Read-only snapshots of the live code, dated
 │   ├── side-effects-engine.ts   # Dual-track risk calculator
+│   ├── rate-base.ts             # Rate eligibility rules + reporting frequency
 │   ├── model-config.ts          # Config schema (TypeScript types)
 │   ├── model-config.json        # Live model config snapshot
-│   ├── analyze-model.mjs        # Daily statistical analysis pipeline
-│   └── extraction-prompt.mjs    # LLM extraction prompt
+│   └── analyze-model.mjs        # Daily statistical analysis pipeline
 ├── examples/
-│   ├── api-examples.md          # How to query the public API
-│   ├── fetch-predictor.js       # Node.js example
-│   └── dual-track-comparison.md # Detailed walkthrough of the gap
+│   └── api-examples.md          # How to query the public API
 └── preprint/
-    └── magistra-methodology.md  # Full methodology preprint (v4.0)
+    └── magistra-methodology.md  # Full methodology preprint (v5.0)
 ```
 
 ---
@@ -98,26 +87,37 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 ### Understand the dual-track output
 
-Each effect in the predictor response has two fields: `clinical` and `realWorld`. Each contains:
+Each effect in the predictor response has two fields: `clinical` and `realWorld`. The clinical field reports an incidence estimate; the real-world field reports a reporting frequency (share of distinct community reports mentioning the effect) — a different quantity, not a second incidence estimate. The `realWorld` name is kept for backward compatibility; read its `basis` string, not its name.
+
+Live `clinical` block for nausea from the request above, captured from production on 2026-08-28:
 
 ```json
 {
-  "percentage": 28,
-  "confidenceInterval": { "low": 22, "high": 35 },
-  "confidenceLevel": "moderate",
-  "dataPointCount": 15,
-  "basis": "15 clinical studies and regulatory reports",
-  "isFallback": false
+  "percentage": 60,
+  "confidenceInterval": { "low": 21, "high": 89 },
+  "confidenceLevel": "high",
+  "dataPointCount": 70,
+  "ratePointCount": 26,
+  "rateSourceCount": 18,
+  "basis": "26 stated rates from 18 distinct sources (of 70 clinical/regulatory records). Base rate 32% → 60% after profile adjustment (sex:female ×1.25, isFirstMonth ×2.5) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
+  "isFallback": false,
+  "unadjustedPercentage": 32,
+  "modifiersApplied": [
+    { "id": "sex:female", "oddsRatio": 1.25, "provenance": "seed-2026-04-12" },
+    { "id": "isFirstMonth", "oddsRatio": 2.5, "provenance": "seed-2026-04-12" }
+  ]
 }
 ```
 
-When `realWorld.percentage > clinical.percentage` by more than 15 percentage points, the gap is flagged as "community reports higher than clinical trials" — suggesting the effect may be systematically under-measured in trials.
+Note what the response discloses about itself: the pre-adjustment rate (32%), every modifier applied to reach 60%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (21–89) is not a formatting artefact — it is the honest spread of 26 rates from 18 sources.
+
+Earlier versions computed a "gap" by subtracting `realWorld.percentage` from `clinical.percentage` and flagged large gaps as evidence of clinical under-measurement. That computation is withdrawn as of v5.0 — see "Why this repo exists" above.
 
 ---
 
 ## Methodology at a glance
 
-1. **Collection.** 18 data sources (PubMed, FDA FAERS, ClinicalTrials.gov, 13 subreddits, Drugs.com, Trustpilot, Indian pharmacovigilance sources) scraped daily.
+1. **Collection.** 8 source families have actually contributed data as of the last snapshot (Reddit — blocked since 2026-05-28, Google News, PubMed/PMC, FDA FAERS, Drugs.com, journal/institutional pages, ClinicalTrials.gov, medRxiv/bioRxiv); see Table 1 in the preprint or the live source list at https://magistra.health/api/data?q=overview for current counts. The system attempts collection from a wider set of scrapers than have produced data — only sources that have actually contributed a point are listed.
 2. **Extraction.** Claude Haiku extracts structured data points (rate, sample size, demographics, dose tier) with explicit confidence labels. Conservative: only explicitly stated rates are recorded.
 3. **Dual-track filtering.** Data points are split by `sourceType` into clinical+regulatory (Track C) and user_report+news (Track R). The two tracks are never blended.
 4. **Weighted estimation.** Weighted mean rate with sample-size and extraction-confidence weights, Winsorized at 5th/95th percentiles when n > 10.
@@ -132,8 +132,8 @@ Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodolo
 
 ## Limitations (honest list)
 
-- **Data volume:** Current database has ~217 points across 15 effects. Model health is "degraded" until n ≥ 100 per effect.
-- **Demographic bias:** 87% female representation, minimal ethnic diversity, Western-dominated sources.
+- **Data volume:** As of 2026-08-28 the database holds 1,364 collected points (1,442 including April-2026 seed points retained only for audit trail), but the eligible base behind published rates is far smaller — **144 rates from 66 distinct sources**, and 2 of the 15 published effects (fatigue, emotional blunting) have no eligible clinical rate at all, so those two fall back to a labelled literature range rather than a corpus-derived figure. Three published effects (pancreatitis, hair loss, dizziness) rest on a single distinct source each. All figures verified against https://magistra.health/api/data?q=overview on that date; the API always serves the current numbers.
+- **Demographic bias:** Both tracks over-represent female, white, and Western populations; ethnicity and BMI are tracked but lack sufficient data for inclusion.
 - **Hand-coded modifiers:** Initial values from published literature; empirical replacement in progress as data accumulates.
 - **No interaction terms.** Modifiers applied additively.
 - **No formal calibration yet.** Planned at n ≥ 500.
@@ -163,17 +163,18 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
-**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v4.0). Zenodo. https://doi.org/10.5281/zenodo.19559749
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.0). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
+
+No DOI is registered for this work — the methodology is self-published at the URL above, not deposited with a repository that mints permanent identifiers. (A DOI, 10.5281/zenodo.19559749, was asserted on this page and elsewhere until 2026-08-18; it was never actually registered and has been withdrawn.)
 
 ```bibtex
 @misc{goyal2026magistra,
   author       = {Goyal, Saurabh},
   title        = {A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports},
   year         = {2026},
-  publisher    = {Zenodo},
-  version      = {4.0},
-  doi          = {10.5281/zenodo.19559749},
-  url          = {https://doi.org/10.5281/zenodo.19559749}
+  publisher    = {Magistra, Phlo Systems BV},
+  version      = {5.0},
+  url          = {https://magistra.health/en/methodology}
 }
 ```
 
@@ -192,7 +193,7 @@ The data in the Magistra database is aggregated from public sources and is avail
 ## Contact
 
 **Saurabh Goyal**
-Founder, Magistra Health B.V.
+Founder, Phlo Systems BV
 saurabh@magistra.health
 https://magistra.health
 
