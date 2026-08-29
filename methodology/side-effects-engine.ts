@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-28.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-29.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -44,11 +44,20 @@ export type TrackEstimate = {
   basis: string;    // e.g. "Published clinical trials (STEP-1, SURMOUNT-5)"
   basisNl: string;
   isFallback: boolean;
-  /** The pooled rate BEFORE profile modifiers — i.e. the number `basis` actually
-   *  describes. `percentage` is this value after `modifiersApplied`; publishing
-   *  only the adjusted figure beside an unadjusted basis string let a verified
-   *  n lend its credibility to a number it does not stand behind. */
+  /** The rate BEFORE profile modifiers but AFTER any dose-tier rescale.
+   *  `percentage` is this value after `modifiersApplied`; publishing only the
+   *  adjusted figure beside an unadjusted basis string let a verified n lend its
+   *  credibility to a number it does not stand behind.
+   *  Corrected 2026-08-28: this previously claimed to be "the number `basis`
+   *  actually describes", which stopped being true the moment the dose rescale
+   *  went live for effectively every effect — `pooledPercentage` is that number. */
   unadjustedPercentage?: number;
+  /** The corpus's own pooled rate, before BOTH the dose rescale and the profile
+   *  modifiers — i.e. the only figure in this object that the `N stated rates from
+   *  M distinct sources` half of `basis` stands behind. Equal to
+   *  `unadjustedPercentage` when no dose rescale fired. Absent on the real-world
+   *  track and on the `isFallback: true` branch, where there is no corpus pool. */
+  pooledPercentage?: number;
   /** Profile modifiers applied to reach `percentage`. Clinical track only — the
    *  real-world track is a report count, not a personalized probability. */
   modifiersApplied?: AppliedModifier[];
@@ -222,6 +231,24 @@ function modifierNote(applied: AppliedModifier[], unadjustedPct: number, adjuste
     (seeded ? " — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus" : " — odds ratios derived from this corpus");
 }
 
+/** Human-readable disclosure of the dose-tier rescale. The multiplier is a ratio
+ *  of two STATIC published-trial figures, not a corpus-derived quantity, so an
+ *  estimate that has been through it is no longer purely "N stated rates from M
+ *  sources" — the basis string has to say so. Empty when no rescale fired
+ *  (majority dose-tagged pool, or the medium tier where the ratio is 1), so an
+ *  unrescaled estimate keeps its plain basis.
+ *  Added 2026-08-28: the same cycle's `.some()` → majority-threshold fix turned
+ *  this rescale from dormant into live for effectively every effect, which made
+ *  an undisclosed adjustment load-bearing on a public number for the first time. */
+function doseNote(pooledPct: number, rescaledPct: number, tier: string, taggedPoints: number, poolSize: number, lang: "en" | "nl"): string {
+  if (lang === "nl") {
+    return `. Gepoold corpuspercentage ${pooledPct}% → ${rescaledPct}% herschaald naar dosisniveau "${tier}"` +
+      ` — slechts ${taggedPoints} van ${poolSize} gepoolde records dragen een dosislabel, dus de verhouding komt uit de gepubliceerde trialreferentietabel, niet uit dit corpus`;
+  }
+  return `. Pooled corpus rate ${pooledPct}% → ${rescaledPct}% rescaled to the ${tier} dose tier` +
+    ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag, so the ratio is taken from the published-trial reference table, not derived from this corpus`;
+}
+
 function applyModifiers(
   baseLogOdds: number,
   profile: PatientProfile,
@@ -294,7 +321,16 @@ export async function calculateDynamicRisk(
   // suppressed the sex:female modifier on a clinical average that itself
   // carried zero sex-tagged points (found 2026-08-27, un-truncated pipeline
   // REVIEW; the realWorld/reporting-frequency track never used this signal).
-  const hasSexSpecificData = clinicalPoints.some((p) => p.extractedDemographics.sex !== "unspecified");
+  // FIXED 2026-08-28 (cloud RED TEAM, daily peer-review §2, confirmed against
+  // this source): a `.some()` gate let ONE sex-tagged point among many
+  // unspecified ones suppress the modifier for the whole pooled rate,
+  // regardless of how little of the pool it represented. Requires a majority
+  // of clinicalPoints to carry a sex tag instead — a point-count proxy for
+  // pooled weight, not a fully effectiveN-weighted version (weightedAverageRate's
+  // per-study weights aren't threaded up to this scope; that is a larger,
+  // build-verified follow-up, not this fix).
+  const sexTaggedPoints = clinicalPoints.filter((p) => p.extractedDemographics.sex !== "unspecified").length;
+  const hasSexSpecificData = clinicalPoints.length > 0 && sexTaggedPoints / clinicalPoints.length >= 0.5;
 
   // ═══════════════════════════════════════════════
   // TRACK 1: CLINICAL — trial data only, conservative
@@ -305,14 +341,24 @@ export async function calculateDynamicRisk(
 
   if (clinicalResult && clinicalResult.rates.length >= 1) {
     // We have actual clinical data
-    let rate = clinicalResult.rate;
+    const pooledRate = clinicalResult.rate;
+    let rate = pooledRate;
 
     // Dose adjustment if data lacks dose specificity
-    const hasDoseData = clinicalPoints.some((p) => p.extractedDoseTier !== "unspecified");
+    // FIXED 2026-08-28 (cloud RED TEAM, same finding as sex above, applied
+    // symmetrically): majority-of-points threshold instead of `.some()`.
+    const doseTaggedPoints = clinicalPoints.filter((p) => p.extractedDoseTier !== "unspecified").length;
+    const hasDoseData = clinicalPoints.length > 0 && doseTaggedPoints / clinicalPoints.length >= 0.5;
+    let doseRescaled = false;
     if (!hasDoseData) {
       const medianRate = staticEffect.clinicalRates.medium;
       const targetRate = staticEffect.clinicalRates[profile.doseTier];
-      if (medianRate > 0) rate = rate * (targetRate / medianRate);
+      // `targetRate !== medianRate` skips the medium tier, where the ratio is 1 —
+      // a no-op multiply must not produce a disclosure sentence claiming a rescale.
+      if (medianRate > 0 && targetRate !== medianRate) {
+        rate = rate * (targetRate / medianRate);
+        doseRescaled = true;
+      }
     }
 
     const clampedRate = Math.max(0.001, Math.min(0.999, rate));
@@ -324,9 +370,12 @@ export async function calculateDynamicRisk(
     const adjustedRate = 1 / (1 + Math.exp(-logOdds));
     const pct = Math.max(1, Math.min(95, Math.round(adjustedRate * 100)));
     const unadjustedPct = Math.max(1, Math.min(95, Math.round(clampedRate * 100)));
+    const pooledPct = Math.max(1, Math.min(95, Math.round(pooledRate * 100)));
     const ci = computeConfidenceInterval(adjustedRate, clinicalResult.rates, clinicalResult.effectiveN);
 
     const srcs = clinicalResult.sourceCount;
+    const doseNoteEn = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "en") : "";
+    const doseNoteNl = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "nl") : "";
     clinical = {
       percentage: pct,
       confidenceInterval: ci,
@@ -334,10 +383,11 @@ export async function calculateDynamicRisk(
       dataPointCount: clinicalPoints.length,
       ratePointCount: clinicalResult.pointCount,
       rateSourceCount: srcs,
-      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records)${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
-      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records)${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
+      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records)${doseNoteEn}${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
+      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records)${doseNoteNl}${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
       isFallback: false,
       unadjustedPercentage: unadjustedPct,
+      pooledPercentage: pooledPct,
       modifiersApplied: appliedMods,
     };
   } else {

@@ -103,7 +103,7 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 ```
 
 Returns an array of effects, each with TWO parallel figures. Abridged live
-response to exactly the request above, captured from production on 2026-08-28
+response to exactly the request above, captured from production on 2026-08-29
 (`attribution`, `sources` and the Dutch `*Nl` strings elided for length):
 
 ```json
@@ -124,13 +124,13 @@ response to exactly the request above, captured from production on 2026-08-28
         "isFallback": false
       },
       "realWorld": {
-        "percentage": 25,
-        "confidenceInterval": { "low": 19, "high": 32 },
-        "confidenceLevel": "very_high",
-        "dataPointCount": 46,
-        "ratePointCount": 46,
-        "rateSourceCount": 46,
-        "basis": "46 of 185 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate",
+        "percentage": 38,
+        "confidenceInterval": { "low": 22, "high": 57 },
+        "confidenceLevel": "high",
+        "dataPointCount": 10,
+        "ratePointCount": 10,
+        "rateSourceCount": 10,
+        "basis": "10 of 26 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate",
         "isFallback": false
       },
       "attribution": { ... },
@@ -231,36 +231,39 @@ for (const r of data.results.slice(0, 5)) {
 }
 ```
 
-Actual output, run against production on 2026-08-28 (top 5 effects only):
+Actual output, run against production on 2026-08-29 (top 5 effects only):
 
 ```
 Two tracks for: semaglutide 1mg
 ───────────────────────────────────────────────────────────────────────────
 Nausea
   clinical incidence      60%  (26 rates / 18 sources)
-  community reporting     25%  (46 of 185 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate)
-Constipation
-  clinical incidence      35%  (9 rates / 6 sources)
-  community reporting     19%  (35 of 185 distinct community reports (reddit.com, drugs.com) mention constipation — reporting frequency, not a measured incidence rate)
-Headache
-  clinical incidence      35%  (4 rates / 3 sources)
-  community reporting      6%  (11 of 185 distinct community reports (reddit.com, drugs.com) mention headache — reporting frequency, not a measured incidence rate)
+  community reporting     38%  (10 of 26 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate)
+Vomiting
+  clinical incidence      22%  (8 rates / 8 sources)
+  community reporting     42%  (11 of 26 distinct community reports (reddit.com, drugs.com) mention vomiting — reporting frequency, not a measured incidence rate)
 Diarrhoea
   clinical incidence      34%  (6 rates / 5 sources)
-  community reporting     19%  (35 of 185 distinct community reports (reddit.com, drugs.com) mention diarrhoea — reporting frequency, not a measured incidence rate)
-Reduced appetite
-  clinical incidence      34%  (10 rates / 9 sources)
-  community reporting     12%  (22 of 185 distinct community reports (reddit.com, drugs.com) mention reduced appetite — reporting frequency, not a measured incidence rate)
+  community reporting     35%  (9 of 26 distinct community reports (reddit.com, drugs.com) mention diarrhoea — reporting frequency, not a measured incidence rate)
+Constipation
+  clinical incidence      35%  (9 rates / 6 sources)
+  community reporting     27%  (7 of 26 distinct community reports (reddit.com, drugs.com) mention constipation — reporting frequency, not a measured incidence rate)
+Headache
+  clinical incidence      35%  (5 rates / 4 sources)
+  community reporting      4%  (1 of 26 distinct community reports (reddit.com, drugs.com) mention headache — reporting frequency, not a measured incidence rate)
 ```
 
 > **These are model outputs for one profile, not measurements — do not quote
 > them as population rates.** The clinical figure is a corpus-pooled base rate
 > adjusted by profile modifiers whose odds ratios are hand-coded, not derived
 > from this corpus; several effects rest on a handful of distinct sources
-> (headache: 3). The community figure is a reporting frequency over 185 distinct
-> reports, and that denominator is a fixed historical number rather than a live
-> one: Reddit blocked our collector on 2026-05-28, and the other platform
-> (Drugs.com) was last collected 2026-08-12. Cite it with a date.
+> (headache: 4). The community figure is a reporting frequency over just 26
+> distinct reports — on 2026-08-29 that denominator fell from 185 after we found
+> a failed subreddit restriction had let 159 off-topic posts into the pool
+> (see "Corrections in v5.1" in the preprint) — so a single report moves any
+> share by 3.8 percentage points. The denominator is a fixed historical number
+> rather than a live one: Reddit blocked our collector on 2026-05-28, and the
+> other platform (Drugs.com) was last collected 2026-08-12. Cite it with a date.
 > Earlier versions of this example printed a "gap Npp" column subtracting one
 > from the other; that computation is withdrawn and has been removed from the
 > sample code, because the two are different quantities. For the citable

@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-28.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-29.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -111,8 +111,56 @@ function isSelfReferentialUrl(url: string): boolean {
  * duplicated-filter pattern this replaces is the exact fragility LEARNINGS
  * already names for the clinical track's own self-referential check.
  */
+/**
+ * The subreddits `agents/data/src/scrapers/reddit.mjs` is configured to
+ * collect from — GLP-1, weight-management and diabetes communities. Kept in
+ * sync with SUBREDDITS there by hand; a post from anywhere else was never
+ * something we set out to collect.
+ */
+const GLP1_SUBREDDITS = new Set(
+  [
+    "Mounjaro", "Ozempic", "Zepbound", "loseit",
+    "WegovyWeightLoss", "semaglutide", "tirzepatide",
+    "PeptideSource", "compoundedtirzepatide",
+    "PCOS", "diabetes", "diabetes_t2",
+    "GLP1_Drugs", "ObesityScience", "BodyRecomposition", "intermittentfasting",
+  ].map((s) => s.toLowerCase())
+);
+
+/**
+ * A Reddit post counts as a GLP-1 community report only if it is in one of the
+ * communities we collect from.
+ *
+ * Found 2026-08-29: the scraper's `restrict_sr=1` does not hold on
+ * old.reddit's search.json, and its search terms are generic symptom words
+ * ("nausea vomiting", "gallbladder", "constipation diarrhea"). So the corpus
+ * had absorbed 159 of its 185 distinct community reports (86%) from
+ * subreddits we never configured — r/gallbladders (102 points), r/AskDocs
+ * (82), r/pregnant (26), r/HyperemesisGravidarum, r/Ovariancancer,
+ * r/Christianity — pregnancy nausea and post-cholecystectomy pain counted as
+ * GLP-1 patient reports, in the denominator AND the numerator of every
+ * published reporting frequency. The mislabelled sourceNames hid it: each
+ * point was branded with the subreddit we queried, not the one it came from,
+ * so the corpus read as if it were all GLP-1 communities. Screening here
+ * rather than at either call site, for the same reason the seed-point check
+ * moved here in August: a third caller must not be able to forget it.
+ *
+ * This is a screen on the report POPULATION, not on rates — no clinical or
+ * regulatory estimate depends on it.
+ */
+function isOnTopicCommunityUrl(url: string): boolean {
+  const sub = /reddit\.com\/r\/([A-Za-z0-9_]+)/i.exec(url);
+  if (!sub) return true; // non-Reddit community hosts (drugs.com, forums) are unaffected
+  return GLP1_SUBREDDITS.has(sub[1].toLowerCase());
+}
+
 export function isCommunityReport(url: string): boolean {
-  return reportHost(url) !== null && !isAggregatorUrl(url) && !isSelfReferentialUrl(url);
+  return (
+    reportHost(url) !== null &&
+    !isAggregatorUrl(url) &&
+    !isSelfReferentialUrl(url) &&
+    isOnTopicCommunityUrl(url)
+  );
 }
 
 // A study weight may only come from a source that reports a study population.

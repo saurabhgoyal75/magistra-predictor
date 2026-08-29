@@ -22,6 +22,8 @@ Patients starting semaglutide, tirzepatide, or liraglutide face a gap: clinical 
 
 Earlier versions of this repo (through v4.0) published a "gap" table comparing a clinical incidence percentage directly against a real-world percentage (e.g. "hair loss: 3% clinical vs 15% real-world, 12pp gap") and framed it as evidence of clinical trials under-measuring side effects. That framing is withdrawn as of v5.0: the real-world figure was a reporting *frequency* — the share of community posts mentioning an effect — not an incidence estimate, so subtracting the two produced a number with no defined meaning. See "Changes from v4.0" in [the preprint](preprint/magistra-methodology.md) for the full correction. The two tracks are still displayed side by side, each with its own confidence interval and source count — see the live tool or the API for current figures.
 
+**Correction, 29 August 2026 (v5.1).** The community reporting frequencies published through v5.0 rested on a contaminated population. Our Reddit collector's subreddit restriction was not holding and it searched generic symptom words, so 159 of the 185 "community reports" were posts from communities we never collect from — r/gallbladders, r/AskDocs, r/pregnant and others — while each was labelled with the subreddit we had *queried* rather than the one it was in, which hid the problem. The collector, the stored labels and the eligibility screen are all fixed, and **every reporting frequency has been recomputed over the screened population of 26 distinct reports**. No clinical or regulatory estimate changed. See "Corrections in v5.1" in [the preprint](preprint/magistra-methodology.md) for the full account, including the one published finding that did not survive the correction. At n=26 a single report moves any share by 3.8 points, and the denominator cannot currently grow — read these figures with their numerator, or not at all.
+
 ---
 
 ## Try it
@@ -89,7 +91,7 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 Each effect in the predictor response has two fields: `clinical` and `realWorld`. The clinical field reports an incidence estimate; the real-world field reports a reporting frequency (share of distinct community reports mentioning the effect) — a different quantity, not a second incidence estimate. The `realWorld` name is kept for backward compatibility; read its `basis` string, not its name.
 
-Live `clinical` block for nausea from the request above, captured from production on 2026-08-28:
+Live `clinical` block for nausea from the request above, captured from production on 2026-08-29:
 
 ```json
 {
@@ -132,7 +134,8 @@ Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodolo
 
 ## Limitations (honest list)
 
-- **Data volume:** As of 2026-08-28 the database holds 1,364 collected points (1,442 including April-2026 seed points retained only for audit trail), but the eligible base behind published rates is far smaller — **144 rates from 66 distinct sources**, and 2 of the 15 published effects (fatigue, emotional blunting) have no eligible clinical rate at all, so those two fall back to a labelled literature range rather than a corpus-derived figure. Three published effects (pancreatitis, hair loss, dizziness) rest on a single distinct source each. All figures verified against https://magistra.health/api/data?q=overview on that date; the API always serves the current numbers.
+- **Data volume:** As of 2026-08-29 the database holds 1,365 collected points (1,443 including April-2026 seed points retained only for audit trail), but the eligible base behind published rates is far smaller — **145 rates from 67 distinct sources**, and 2 of the 15 published effects (fatigue, emotional blunting) have no eligible clinical rate at all, so those two fall back to a labelled literature range rather than a corpus-derived figure. Three published effects (pancreatitis, hair loss, dizziness) rest on a single distinct source each. All figures verified against https://magistra.health/api/data?q=overview on that date; the API always serves the current numbers.
+- **Community denominator:** the reporting-frequency track rests on **26 distinct community reports** (screened 2026-08-29, see the correction above). It is frozen at that size — Reddit has served the collector an HTTP 403 block page since 2026-05-28 — so every reporting frequency is a fixed historical number, not a live one, and must be cited with its date.
 - **Demographic bias:** Both tracks over-represent female, white, and Western populations; ethnicity and BMI are tracked but lack sufficient data for inclusion.
 - **Hand-coded modifiers:** Initial values from published literature; empirical replacement in progress as data accumulates.
 - **No interaction terms.** Modifiers applied additively.
