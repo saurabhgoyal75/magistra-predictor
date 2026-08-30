@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-29.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-30.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -318,7 +318,7 @@ export function buildReportingFrequency(
 
 /**
  * Wilson score interval for a proportion. Appropriate for a mentions/total
- * count (what reporting frequency is) — unlike the DerSimonian-Laird interval
+ * count (what reporting frequency is) — unlike the clinical track's random-effects interval
  * in side-effects-engine.ts, which assumes pooled rate STUDIES and doesn't
  * apply to a single corpus-wide count.
  */

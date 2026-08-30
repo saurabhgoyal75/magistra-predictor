@@ -124,7 +124,7 @@ Earlier versions computed a "gap" by subtracting `realWorld.percentage` from `cl
 3. **Dual-track filtering.** Data points are split by `sourceType` into clinical+regulatory (Track C) and user_report+news (Track R). The two tracks are never blended.
 4. **Weighted estimation.** Weighted mean rate with sample-size and extraction-confidence weights, Winsorized at 5th/95th percentiles when n > 10.
 5. **Log-odds modifiers.** Sex, age ≥ 65, GI history, diabetes, first month of treatment applied on log-odds scale, with cumulative shift capped at ±2.5 (~12× max cumulative OR) to prevent implausible stacking.
-6. **Random-effects confidence intervals.** DerSimonian-Laird τ² estimation, delta-method SE on log-odds scale.
+6. **Random-effects confidence intervals.** Simplified, unweighted τ² estimation (inspired by DerSimonian-Laird, not inverse-variance weighted), delta-method SE on log-odds scale.
 7. **Self-evolving config.** Daily pipeline computes empirical odds ratios for every parameter × effect combination, applies Benjamini-Hochberg FDR correction across ~180-240 tests, auto-applies only conservative changes (n ≥ 30, p_adj ≤ 0.01, |Δ OR| ≤ 0.3).
 8. **Safety.** Versioned rollback (30 prior configs retained), canonical profile regression testing, human review queue for larger changes, max 5 auto-applied changes per day.
 

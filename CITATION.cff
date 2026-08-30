@@ -1,15 +1,15 @@
 cff-version: 1.2.0
 message: "If you use this software or methodology in research, please cite it as below."
 title: "Magistra Predictor: A Dual-Track Framework for GLP-1 Side Effect Estimation"
-abstract: "An open, continuously updated system that estimates GLP-1 medication side effect risk by reporting two parallel signals per effect: a clinical incidence estimate and a community reporting frequency, displayed side by side without blending or treating them as comparable quantities. Implements DerSimonian-Laird random-effects confidence intervals, FDR-corrected empirical modifier estimation, and a self-evolving parameter update pipeline with safety guardrails."
+abstract: "An open, continuously updated system that estimates GLP-1 medication side effect risk by reporting two parallel signals per effect: a clinical incidence estimate and a community reporting frequency, displayed side by side without blending or treating them as comparable quantities. Implements a simplified, unweighted random-effects confidence interval (inspired by DerSimonian-Laird, not inverse-variance weighted), FDR-corrected empirical modifier estimation, and a self-evolving parameter update pipeline with safety guardrails."
 authors:
   - family-names: Goyal
     given-names: Saurabh
     email: saurabh@magistra.health
     affiliation: "Phlo Systems BV"
 type: software
-version: "5.1"
-date-released: "2026-08-29"
+version: "5.2"
+date-released: "2026-08-30"
 license: Apache-2.0
 repository-code: "https://github.com/saurabhgoyal75/magistra-predictor"
 url: "https://magistra.health"
@@ -25,7 +25,7 @@ keywords:
   - "pharmacovigilance"
   - "real-world evidence"
   - "meta-analysis"
-  - "DerSimonian-Laird"
+  - "random-effects (unweighted)"
   - "patient-reported outcomes"
   - "FDR correction"
   - "open methodology"

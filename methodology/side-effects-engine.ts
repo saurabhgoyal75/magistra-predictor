@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-29.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-30.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -187,7 +187,8 @@ function computeConfidenceInterval(
   const clampedP = Math.max(0.005, Math.min(0.995, p));
   const k = studyRates.length;
 
-  // DerSimonian-Laird tau-squared
+  // Simplified (unweighted) random-effects tau-squared — inspired by DerSimonian-Laird
+  // but does not use inverse-variance weights. See decision dersimonian-laird-method-claim-2026-08-27.
   let tauSq = 0;
   if (k > 1) {
     const mean = studyRates.reduce((a, b) => a + b, 0) / k;
