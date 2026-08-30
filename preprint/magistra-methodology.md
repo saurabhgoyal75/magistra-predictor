@@ -80,7 +80,7 @@ The system attempts collection from a wider set of scrapers than have actually p
 
 | Source | Points | Most recent | Status |
 |---|---|---|---|
-| Reddit (13 subreddits) | 684 | 2026-05-28 | blocked (HTTP 403 since 2026-05-28) |
+| Reddit (16 subreddits) | 684 | 2026-05-28 | blocked (HTTP 403 since 2026-05-28) |
 | Health news (Google News RSS) | 180 | 2026-08-19 | active |
 | PubMed / PMC (NCBI E-utilities, 35 rotating queries) | 115 | 2026-08-17 | active |
 | FDA FAERS (openFDA API, 9 drug variants) | 80 | 2026-08-13 | active |

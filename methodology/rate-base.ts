@@ -370,7 +370,7 @@ const SOURCE_FAMILIES: { id: string; label: string; hosts: string[] }[] = [
   { id: "pubmed", label: "PubMed / PMC (NCBI E-utilities)", hosts: ["pubmed.ncbi.nlm.nih.gov", "pmc.ncbi.nlm.nih.gov"] },
   { id: "faers", label: "FDA FAERS (openFDA API)", hosts: ["api.fda.gov"] },
   { id: "trials", label: "ClinicalTrials.gov (API v2)", hosts: ["clinicaltrials.gov"] },
-  { id: "reddit", label: "Reddit (13 subreddits)", hosts: ["reddit.com", "old.reddit.com"] },
+  { id: "reddit", label: "Reddit (16 subreddits)", hosts: ["reddit.com", "old.reddit.com"] },
   { id: "news", label: "Health news (Google News RSS)", hosts: ["news.google.com"] },
   { id: "reviews", label: "Drugs.com patient reviews", hosts: ["drugs.com"] },
   { id: "preprints", label: "medRxiv / bioRxiv preprints", hosts: ["doi.org", "medrxiv.org", "biorxiv.org"] },
