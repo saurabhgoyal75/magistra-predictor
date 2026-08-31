@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-30.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-31.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -35,6 +35,7 @@ export type RatePoint = {
   extractedRate: number | null;
   extractedSampleSize: number | null;
   extractionConfidence: string;
+  provenance?: string;
 };
 
 export type ExclusionReason =
@@ -44,7 +45,8 @@ export type ExclusionReason =
   | "self_referential"
   | "synthetic_source"
   | "spontaneous_report_share"
-  | "aggregator_result";
+  | "aggregator_result"
+  | "seed_unverified";
 
 export type Study = {
   source: string;
@@ -178,6 +180,14 @@ function isFaers(p: RatePoint): boolean {
 
 /** Why this point may or may not support a published incidence estimate. */
 export function classifyRatePoint(p: RatePoint): ExclusionReason | null {
+  // April-2026 seed rows are our own static table restated as "extracted"
+  // points — template excerpts, placeholder sample sizes (200/300/500), and
+  // attributions to real trial URLs no extraction ever read. 78 of them were
+  // relabelled `seed-2026-04` on 2026-08-16; the 48 wearing real external
+  // URLs were missed (the URL screens below can't see them) and sat inside
+  // the published rate base until 2026-08-31. Provenance is checked here, in
+  // the shared classifier, so no caller has to remember a manual filter.
+  if (p.provenance === "seed-2026-04") return "seed_unverified";
   if (p.extractedRate === null || p.extractedRate === undefined) return "no_rate";
   if (p.extractedRate < 0 || p.extractedRate > 1) return "rate_out_of_range";
   if (/aggregat/i.test(p.sourceName || "")) return "synthetic_source";
