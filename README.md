@@ -91,17 +91,17 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 Each effect in the predictor response has two fields: `clinical` and `realWorld`. The clinical field reports an incidence estimate; the real-world field reports a reporting frequency (share of distinct community reports mentioning the effect) — a different quantity, not a second incidence estimate. The `realWorld` name is kept for backward compatibility; read its `basis` string, not its name.
 
-Live `clinical` block for nausea from the request above, captured from production on 2026-08-29:
+Live `clinical` block for nausea from the request above, captured from production on 2026-08-31:
 
 ```json
 {
   "percentage": 60,
-  "confidenceInterval": { "low": 21, "high": 89 },
+  "confidenceInterval": { "low": 20, "high": 90 },
   "confidenceLevel": "high",
   "dataPointCount": 70,
-  "ratePointCount": 26,
-  "rateSourceCount": 18,
-  "basis": "26 stated rates from 18 distinct sources (of 70 clinical/regulatory records). Base rate 32% → 60% after profile adjustment (sex:female ×1.25, isFirstMonth ×2.5) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
+  "ratePointCount": 25,
+  "rateSourceCount": 17,
+  "basis": "25 stated rates from 17 distinct sources (of 70 clinical/regulatory records). Base rate 32% → 60% after profile adjustment (sex:female ×1.25, isFirstMonth ×2.5) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
   "isFallback": false,
   "unadjustedPercentage": 32,
   "modifiersApplied": [
@@ -111,7 +111,7 @@ Live `clinical` block for nausea from the request above, captured from productio
 }
 ```
 
-Note what the response discloses about itself: the pre-adjustment rate (32%), every modifier applied to reach 60%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (21–89) is not a formatting artefact — it is the honest spread of 26 rates from 18 sources.
+Note what the response discloses about itself: the pre-adjustment rate (32%), every modifier applied to reach 60%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (20–90) is not a formatting artefact — it is the honest spread of 25 rates from 17 sources.
 
 Earlier versions computed a "gap" by subtracting `realWorld.percentage` from `clinical.percentage` and flagged large gaps as evidence of clinical under-measurement. That computation is withdrawn as of v5.0 — see "Why this repo exists" above.
 
@@ -134,7 +134,7 @@ Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodolo
 
 ## Limitations (honest list)
 
-- **Data volume:** As of 2026-08-29 the database holds 1,365 collected points (1,443 including April-2026 seed points retained only for audit trail), but the eligible base behind published rates is far smaller — **145 rates from 67 distinct sources**, and 2 of the 15 published effects (fatigue, emotional blunting) have no eligible clinical rate at all, so those two fall back to a labelled literature range rather than a corpus-derived figure. Three published effects (pancreatitis, hair loss, dizziness) rest on a single distinct source each. All figures verified against https://magistra.health/api/data?q=overview on that date; the API always serves the current numbers.
+- **Data volume:** As of 2026-08-31 the database holds 1,317 published points (1,467 including 150 April-2026 seed points retained only for audit trail), but the eligible base behind published rates is far smaller — **73 rates from 50 distinct sources** (v5.1–v5.2 stated 145/67; 72 April-2026 seed rows wearing real trial URLs were found inside the base on 2026-08-31 and excluded — see "Corrections in v5.3" in the methodology paper). 5 of the 15 published effects (pancreatitis, fatigue, hair loss, dizziness, emotional blunting) have no eligible clinical rate at all, so they fall back to a labelled literature range rather than a corpus-derived figure; four more (abdominal pain, acid reflux, gallstones, injection-site reaction) rest on a single distinct source each. All figures verified against https://magistra.health/api/data?q=overview on that date; the API always serves the current numbers.
 - **Community denominator:** the reporting-frequency track rests on **26 distinct community reports** (screened 2026-08-29, see the correction above). It is frozen at that size — Reddit has served the collector an HTTP 403 block page since 2026-05-28 — so every reporting frequency is a fixed historical number, not a live one, and must be cited with its date.
 - **Demographic bias:** Both tracks over-represent female, white, and Western populations; ethnicity and BMI are tracked but lack sufficient data for inclusion.
 - **Hand-coded modifiers:** Initial values from published literature; empirical replacement in progress as data accumulates.
