@@ -104,7 +104,9 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 Returns an array of effects, each with TWO parallel figures. Abridged live
 response to exactly the request above, captured from production on 2026-08-31
-(`attribution`, `sources` and the Dutch `*Nl` strings elided for length):
+(`attribution`, `sources` and the Dutch `*Nl` strings elided for length; field
+names updated 2026-09-01 to add the canonical `sourceDiversity` and
+`reportingFrequency` — see the note below the block — no value changed):
 
 ```json
 {
@@ -117,6 +119,7 @@ response to exactly the request above, captured from production on 2026-08-31
         "percentage": 33,
         "confidenceInterval": { "low": 7, "high": 77 },
         "confidenceLevel": "high",
+        "sourceDiversity": "high",
         "dataPointCount": 70,
         "ratePointCount": 25,
         "rateSourceCount": 17,
@@ -127,6 +130,18 @@ response to exactly the request above, captured from production on 2026-08-31
         "percentage": 38,
         "confidenceInterval": { "low": 22, "high": 57 },
         "confidenceLevel": "high",
+        "sourceDiversity": "high",
+        "dataPointCount": 10,
+        "ratePointCount": 10,
+        "rateSourceCount": 10,
+        "basis": "10 of 26 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate",
+        "isFallback": false
+      },
+      "reportingFrequency": {
+        "percentage": 38,
+        "confidenceInterval": { "low": 22, "high": 57 },
+        "confidenceLevel": "high",
+        "sourceDiversity": "high",
         "dataPointCount": 10,
         "ratePointCount": 10,
         "rateSourceCount": 10,
@@ -141,18 +156,23 @@ response to exactly the request above, captured from production on 2026-08-31
 ```
 
 **Key interpretation — read this before using both numbers.** `clinical` and
-`realWorld` are computed from disjoint data streams and are never averaged or
-blended. They are also **not the same kind of quantity, and must not be
-compared or subtracted**: `clinical` is an incidence estimate (of people
-treated, how many experienced the effect); `realWorld` is a *reporting
-frequency* (of distinct community reports, what share mention the effect).
-Through v4.0 this file described the difference between them as "the signal"
-and read a large gap as evidence of under-measurement in trials — that
-interpretation is **withdrawn**, because the subtraction has no defined
+`reportingFrequency` are computed from disjoint data streams and are never
+averaged or blended. They are also **not the same kind of quantity, and must
+not be compared or subtracted**: `clinical` is an incidence estimate (of
+people treated, how many experienced the effect); `reportingFrequency` is a
+*reporting frequency* (of distinct community reports, what share mention the
+effect). Through v4.0 this file described the difference between them as "the
+signal" and read a large gap as evidence of under-measurement in trials —
+that interpretation is **withdrawn**, because the subtraction has no defined
 meaning. Each figure is informative on its own terms, and every response
-states the n and source count behind it so you can judge either one. The
-`realWorld` field name is retained for backward compatibility; its `basis`
-string, not its name, describes what it measures.
+states the n and source count behind it so you can judge either one.
+`reportingFrequency` is the canonical field name since 2026-09-01
+(decision `rename-realworld-field-2026-08-28`); the old name `realWorld` is
+retained as a deprecated alias, same value, for one release. Likewise
+`sourceDiversity` is the canonical name for the source-count bucket within
+each track; `confidenceLevel` is kept as a deprecated same-value alias
+(decision `confidence-label-source-diversity-2026-08-29`). Read the `basis`
+string, not either field's name, for what it measures.
 
 ---
 
@@ -226,8 +246,8 @@ for (const r of data.results.slice(0, 5)) {
   console.log(`  clinical incidence     ${String(r.clinical.percentage).padStart(3)}%  ` +
     `(${r.clinical.ratePointCount} rates / ${r.clinical.rateSourceCount} sources` +
     `${r.clinical.isFallback ? ', literature fallback' : ''})`);
-  console.log(`  community reporting    ${String(r.realWorld.percentage).padStart(3)}%  ` +
-    `(${r.realWorld.basis})`);
+  console.log(`  community reporting    ${String(r.reportingFrequency.percentage).padStart(3)}%  ` +
+    `(${r.reportingFrequency.basis})`);
 }
 ```
 

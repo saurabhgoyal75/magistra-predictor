@@ -89,15 +89,16 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 ### Understand the dual-track output
 
-Each effect in the predictor response has two fields: `clinical` and `realWorld`. The clinical field reports an incidence estimate; the real-world field reports a reporting frequency (share of distinct community reports mentioning the effect) — a different quantity, not a second incidence estimate. The `realWorld` name is kept for backward compatibility; read its `basis` string, not its name.
+Each effect in the predictor response has two fields: `clinical` and `reportingFrequency`. The clinical field reports an incidence estimate; the reporting-frequency field reports a reporting frequency (share of distinct community reports mentioning the effect) — a different quantity, not a second incidence estimate. (`reportingFrequency` is the canonical name since 2026-09-01; the old name `realWorld` is kept as a deprecated alias with the same value for one release — read the `basis` string, not the field name.) Within each track, `sourceDiversity` is the canonical name for the distinct-source-count bucket; `confidenceLevel` is kept as a deprecated same-value alias.
 
-Live `clinical` block for nausea from the request above, captured from production on 2026-08-31:
+Live `clinical` block for nausea from the request above, captured from production on 2026-08-31 (field names updated 2026-09-01 to add the canonical `sourceDiversity`; no other value changed):
 
 ```json
 {
   "percentage": 60,
   "confidenceInterval": { "low": 20, "high": 90 },
   "confidenceLevel": "high",
+  "sourceDiversity": "high",
   "dataPointCount": 70,
   "ratePointCount": 25,
   "rateSourceCount": 17,
@@ -113,7 +114,7 @@ Live `clinical` block for nausea from the request above, captured from productio
 
 Note what the response discloses about itself: the pre-adjustment rate (32%), every modifier applied to reach 60%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (20–90) is not a formatting artefact — it is the honest spread of 25 rates from 17 sources.
 
-Earlier versions computed a "gap" by subtracting `realWorld.percentage` from `clinical.percentage` and flagged large gaps as evidence of clinical under-measurement. That computation is withdrawn as of v5.0 — see "Why this repo exists" above.
+Earlier versions computed a "gap" by subtracting `realWorld.percentage` (now `reportingFrequency.percentage`) from `clinical.percentage` and flagged large gaps as evidence of clinical under-measurement. That computation is withdrawn as of v5.0 — see "Why this repo exists" above.
 
 ---
 

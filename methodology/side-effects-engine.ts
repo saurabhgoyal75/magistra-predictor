@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-30.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-02.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -12,7 +12,13 @@
 //     mentioning the effect. Averaging self-reported percentages from forum
 //     posts was withdrawn 2026-08-14 (a mention share is not an incidence),
 //     as was the v4.0 "convergence"/gap framing that compared the two.
-//   The `realWorld` field name is retained for API backward compatibility.
+//   The canonical field name is `reportingFrequency` (2026-09-01, decision
+//   rename-realworld-field-2026-08-28); `realWorld` is kept as a deprecated
+//   alias, same value, for one release. Likewise `TrackEstimate.confidenceLevel`
+//   and `PooledClinicalEstimate.confidence` are source-diversity buckets, not
+//   precision statements — `sourceDiversity` is the canonical name for both
+//   (decision confidence-label-source-diversity-2026-08-29), old names kept
+//   as deprecated aliases, same value.
 
 import { getDataPoints, getMetadata, type SideEffectDataPoint } from "./side-effects-db";
 import { SIDE_EFFECTS, calculateRisk as calculateFallbackRisk } from "./side-effects-data";
@@ -35,7 +41,10 @@ export type PatientProfile = {
 export type TrackEstimate = {
   percentage: number;
   confidenceInterval: { low: number; high: number };
+  /** @deprecated use `sourceDiversity` — same value, this name stays one release for back-compat */
   confidenceLevel: "very_low" | "low" | "moderate" | "high" | "very_high";
+  /** Bucketed count of DISTINCT sources behind the estimate — not a statement about precision. Canonical name; see confidenceLevel. */
+  sourceDiversity: "very_low" | "low" | "moderate" | "high" | "very_high";
   dataPointCount: number;
   /** rate-bearing points that survived the eligibility rules (see rate-base.ts) */
   ratePointCount: number;
@@ -82,7 +91,10 @@ export type DualTrackRiskResult = {
   effectNameNl: string;
   severity: "mild" | "moderate" | "severe";
   clinical: TrackEstimate;
+  /** @deprecated use `reportingFrequency` — same value, this name stays one release for back-compat */
   realWorld: TrackEstimate;
+  /** Community reporting frequency (see file header). Canonical name; see realWorld. */
+  reportingFrequency: TrackEstimate;
   attribution: {
     clinical: { count: number; weight: number };
     userReports: { count: number; weight: number };
@@ -150,7 +162,10 @@ export type PooledClinicalEstimate = {
   ciHighPct: number;
   statedRates: number;
   distinctSources: number;
+  /** @deprecated use `sourceDiversity` — same value, this name stays one release for back-compat */
   confidence: "very_low" | "low" | "moderate" | "high" | "very_high";
+  /** Bucketed count of DISTINCT sources behind the estimate — not a statement about precision. Canonical name; see confidence. */
+  sourceDiversity: "very_low" | "low" | "moderate" | "high" | "very_high";
 };
 
 /**
@@ -166,13 +181,15 @@ export function pooledClinicalEstimate(points: SideEffectDataPoint[]): PooledCli
   const result = weightedAverageRate(clinicalPoints);
   if (!result) return null;
   const ci = computeConfidenceInterval(result.rate, result.rates, result.effectiveN);
+  const diversity = confidenceFromSources(result.sourceCount);
   return {
     ratePct: Math.round(result.rate * 1000) / 10,
     ciLowPct: ci.low,
     ciHighPct: ci.high,
     statedRates: result.pointCount,
     distinctSources: result.sourceCount,
-    confidence: confidenceFromSources(result.sourceCount),
+    confidence: diversity,
+    sourceDiversity: diversity,
   };
 }
 
@@ -381,6 +398,7 @@ export async function calculateDynamicRisk(
       percentage: pct,
       confidenceInterval: ci,
       confidenceLevel: confidenceFromSources(srcs),
+      sourceDiversity: confidenceFromSources(srcs),
       dataPointCount: clinicalPoints.length,
       ratePointCount: clinicalResult.pointCount,
       rateSourceCount: srcs,
@@ -422,11 +440,17 @@ export async function calculateDynamicRisk(
       percentage: pct,
       confidenceInterval: { low: Math.max(0, lowRate), high: Math.min(95, highRate) },
       confidenceLevel: "very_low",
+      sourceDiversity: "very_low",
       dataPointCount: 0,
       ratePointCount: 0,
       rateSourceCount: 0,
-      basis: `Published trial rate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "en")}`,
-      basisNl: `Gepubliceerd studiepercentage — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "nl")}`,
+      // "Published trial rate" until 2026-09-02: overclaimed for effects whose static
+      // source (see side-effects-data.ts `sources`) is a review/mechanism paper, not a
+      // trial reporting this rate (e.g. emotional_blunting cites a CNS receptor-expression
+      // review; fatigue cites an unURLed "real-world evidence review") — this branch has
+      // no per-effect way to know which, so the wording must hold for the weakest case.
+      basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "en")}`,
+      basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "nl")}`,
       isFallback: true,
       unadjustedPercentage: Math.round(clampedRate * 100),
       modifiersApplied: appliedMods,
@@ -454,6 +478,7 @@ export async function calculateDynamicRisk(
       percentage: pct,
       confidenceInterval: ci,
       confidenceLevel: confidenceFromSources(freq.mentions),
+      sourceDiversity: confidenceFromSources(freq.mentions),
       dataPointCount: freq.mentions,
       ratePointCount: freq.mentions,
       rateSourceCount: freq.mentions,
@@ -474,6 +499,7 @@ export async function calculateDynamicRisk(
       percentage: pct,
       confidenceInterval: { low: Math.max(0, pct - ciWidth), high: Math.min(95, pct + ciWidth) },
       confidenceLevel: "very_low",
+      sourceDiversity: "very_low",
       dataPointCount: 0,
       ratePointCount: 0,
       rateSourceCount: 0,
@@ -496,6 +522,7 @@ export async function calculateDynamicRisk(
     severity: staticEffect.severity,
     clinical,
     realWorld,
+    reportingFrequency: realWorld,
     attribution: {
       clinical: { count: clinicalPoints.filter(p => p.sourceType === "clinical").length, weight: clinicalPoints.length > 0 ? Math.round((clinicalPoints.length / totalForAttrib) * 100) : 0 },
       userReports: { count: communityPoints.filter(p => p.sourceType === "user_report").length, weight: communityPoints.filter(p => p.sourceType === "user_report").length > 0 ? Math.round((communityPoints.filter(p => p.sourceType === "user_report").length / totalForAttrib) * 100) : 0 },
