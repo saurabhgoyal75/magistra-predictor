@@ -5,8 +5,8 @@ Phlo Systems BV
 saurabh@magistra.health
 https://magistra.health
 
-**Version:** 5.3
-**Date:** 31 August 2026 (v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
+**Version:** 5.4
+**Date:** 4 September 2026 (v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
 **Classification:** q-bio.QM (Quantitative Methods) / stat.AP (Applications)
 
 ---
@@ -29,6 +29,14 @@ v4.0 (April 2026) described a method and a data-source inventory that internal a
 4. **Source-type labels were assigned by scraper keyword, not by publisher (2026-08-14, fully landed 2026-08-17).** 44 points typed clinical or regulatory and branded "WHO/…", "MHRA/…", "EMA/…" or "Cochrane/…" were Google News search-result blurbs whose actual publisher was never the named agency; a further 78 points branded "Quora —" or "Twitter/X —" were likewise Google News results, not platform collections. All were relabelled by their real mechanism in both the repository and production stores. None carried an eligible rate, so no published estimate changed.
 
 ---
+
+## Corrections in v5.4 (4 September 2026)
+
+v5.4 corrects one computation in the live predictor and changes no figure printed in this document.
+
+7. **The predictor's clinical-track interval was evaluated at the profile-adjusted rate, not at the evidence (2026-09-04).** Through v5.3, `computeConfidenceInterval` in `side-effects-engine.ts` received the profile-adjusted rate p_adjusted (§2.4, plus any dose-tier rescale) as the p in every term of §2.5 — the within-study variance p(1-p)/N, the τ² subtraction, and the delta-method Jacobian 1/(p(1-p)). §2.5 defines p as "a rate computed from k studies"; the code substituted the patient's adjusted value. Because p(1-p) is largest at 0.5, a profile whose modifiers pushed the estimate toward 50% received a systematically narrower interval than the evidence supports, and one pushed toward the extremes a wider one — the interval's width was a function of the patient's profile, not of the precision of the evidence. Measured against production on 2026-09-04 (same evidence, three profiles): vomiting, pooled 8% with interval 0–96%, displayed 42% with interval 12–79% for a female, 70, GI-history, diabetes, high-dose, first-month profile, where the evidence-anchored interval is 1–98%; diarrhoea for the same profile displayed 63% with 26–89% against 12–95%; nausea for a female, 40, low-dose profile displayed 22% with 2–77% against 4–65%. Found by the framework's own daily automated peer review (2026-09-04, Issue 1) and verified against the code and against production before the fix shipped.
+
+   Fixed 2026-09-04: v and SE_logit are now evaluated at the pooled rate p, and the resulting logit-scale half-width is applied symmetrically around logit(p_adjusted) (§2.5, "Profile-adjusted estimates"). An unadjusted estimate — every figure served by the public API's `?q=overview`, `?q=effects` and `?q=effect` endpoints, the CC BY aggregate table, the llms.txt snapshot, the sold data brief, and every predictor estimate for a profile with no modifier and no dose rescale — has p = p_adjusted and is unchanged. **No figure printed in this document changes**: Table 2 and every base count remain the 2026-08-31 snapshot, and the corpus was not re-snapshotted for this version. What changes is every live predictor interval for a modified or dose-rescaled profile — figures this document never printed, served live by the predictor and by `/api/predictor/calculate`.
 
 ## Corrections in v5.3 (31 August 2026)
 
@@ -166,6 +174,8 @@ For a rate p computed from k studies with effective sample size N, the 95% confi
 - **95% CI:** [logit⁻¹(logit(p) - 1.96·SE_logit), logit⁻¹(logit(p) + 1.96·SE_logit)]
 
 When k = 1 (only one study contributes), τ² is set to 0 and the interval reflects sampling variance only. This is flagged as "low confidence" regardless of the nominal N.
+
+**Profile-adjusted estimates (added v5.4).** When the displayed rate is a profile-adjusted p_adjusted (§2.4) or a dose-tier rescale of the pooled rate, v and SE_logit are evaluated at the pooled rate p — the value the contributing study rates are dispersed around — and the resulting logit-scale half-width 1.96·SE_logit is applied symmetrically around logit(p_adjusted). The interval's width is therefore a property of the evidence and identical for every profile; only its centre moves with the profile. Through v5.3 the implementation evaluated v and SE_logit at p_adjusted instead — see "Corrections in v5.4".
 
 ### 2.6 Self-evolving parameter updates
 

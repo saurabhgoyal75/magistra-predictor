@@ -91,20 +91,21 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 Each effect in the predictor response has two fields: `clinical` and `reportingFrequency`. The clinical field reports an incidence estimate; the reporting-frequency field reports a reporting frequency (share of distinct community reports mentioning the effect) — a different quantity, not a second incidence estimate. (`reportingFrequency` is the canonical name since 2026-09-01; the old name `realWorld` is kept as a deprecated alias with the same value for one release — read the `basis` string, not the field name.) Within each track, `sourceDiversity` is the canonical name for the distinct-source-count bucket; `confidenceLevel` is kept as a deprecated same-value alias.
 
-Live `clinical` block for nausea from the request above, captured from production on 2026-08-31 (field names updated 2026-09-01 to add the canonical `sourceDiversity`; no other value changed):
+Live `clinical` block for nausea from the request above, captured from production on 2026-09-04 (re-captured after the v5.4 interval correction — see "Corrections in v5.4" in the preprint; the interval is now anchored at the pooled rate, so it differs from the 2026-08-31 capture; `pooledPercentage` was added 2026-08-28 and the base counts have grown with the corpus):
 
 ```json
 {
-  "percentage": 60,
-  "confidenceInterval": { "low": 20, "high": 90 },
+  "percentage": 59,
+  "confidenceInterval": { "low": 18, "high": 91 },
   "confidenceLevel": "high",
   "sourceDiversity": "high",
-  "dataPointCount": 70,
-  "ratePointCount": 25,
-  "rateSourceCount": 17,
-  "basis": "25 stated rates from 17 distinct sources (of 70 clinical/regulatory records). Base rate 32% → 60% after profile adjustment (sex:female ×1.25, isFirstMonth ×2.5) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
+  "dataPointCount": 76,
+  "ratePointCount": 27,
+  "rateSourceCount": 19,
+  "basis": "27 stated rates from 19 distinct sources (of 76 clinical/regulatory records). Base rate 32% → 59% after profile adjustment (sex:female ×1.25, isFirstMonth ×2.5) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
   "isFallback": false,
   "unadjustedPercentage": 32,
+  "pooledPercentage": 32,
   "modifiersApplied": [
     { "id": "sex:female", "oddsRatio": 1.25, "provenance": "seed-2026-04-12" },
     { "id": "isFirstMonth", "oddsRatio": 2.5, "provenance": "seed-2026-04-12" }
@@ -112,7 +113,7 @@ Live `clinical` block for nausea from the request above, captured from productio
 }
 ```
 
-Note what the response discloses about itself: the pre-adjustment rate (32%), every modifier applied to reach 60%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (20–90) is not a formatting artefact — it is the honest spread of 25 rates from 17 sources.
+Note what the response discloses about itself: the pre-adjustment rate (32%), every modifier applied to reach 59%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (18–91) is not a formatting artefact — it is the honest spread of 27 rates from 19 sources, and since v5.4 its width is fixed by that evidence: the same profile-free interval (7–76 around the 32% pooled rate) is carried, on the log-odds scale, to wherever the modifiers move the centre.
 
 Earlier versions computed a "gap" by subtracting `realWorld.percentage` (now `reportingFrequency.percentage`) from `clinical.percentage` and flagged large gaps as evidence of clinical under-measurement. That computation is withdrawn as of v5.0 — see "Why this repo exists" above.
 

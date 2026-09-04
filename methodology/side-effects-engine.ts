@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-02.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-04.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -39,6 +39,9 @@ export type PatientProfile = {
 };
 
 export type TrackEstimate = {
+  /** Present (and true) on every normal estimate; absent only on the
+   *  discriminant's other branch, UnavailableEstimate — see there. */
+  available?: true;
   percentage: number;
   confidenceInterval: { low: number; high: number };
   /** @deprecated use `sourceDiversity` — same value, this name stays one release for back-compat */
@@ -72,6 +75,20 @@ export type TrackEstimate = {
   modifiersApplied?: AppliedModifier[];
 };
 
+/** The clinical track's shape when an effect has no citable clinical evidence
+ *  at all (`SideEffect.noCitableClinicalEvidence`, decision
+ *  `literature-fallback-clinical-rate-2026-08-28`, option c) — no corpus rate
+ *  AND no citable static literature fallback either, so there is no number to
+ *  publish. Distinct from `isFallback: true` on TrackEstimate, which still
+ *  publishes a percentage from a labelled literature range. Every consumer of
+ *  `DualTrackRiskResult.clinical` must check `available` before reading
+ *  `percentage`. */
+export type UnavailableEstimate = {
+  available: false;
+  basis: string;
+  basisNl: string;
+};
+
 /** One profile modifier as actually applied, with the provenance of its odds
  *  ratio. Deliberately does NOT republish `model:config`'s `n` field: those
  *  values (39/12/45/30/50) are identical for every one of the 15 effects and
@@ -90,7 +107,7 @@ export type DualTrackRiskResult = {
   effectName: string;
   effectNameNl: string;
   severity: "mild" | "moderate" | "severe";
-  clinical: TrackEstimate;
+  clinical: TrackEstimate | UnavailableEstimate;
   /** @deprecated use `reportingFrequency` — same value, this name stays one release for back-compat */
   realWorld: TrackEstimate;
   /** Community reporting frequency (see file header). Canonical name; see realWorld. */
@@ -193,15 +210,30 @@ export function pooledClinicalEstimate(points: SideEffectDataPoint[]): PooledCli
   };
 }
 
+/** 95% interval on the log-odds scale, centred on `p`.
+ *  `anchorP` is the rate the evidence is dispersed around — the pooled rate the
+ *  study rates were averaged into. Every variance term (within-study, τ², and the
+ *  delta-method Jacobian) is evaluated THERE, so the interval's width is a
+ *  property of the evidence; only its centre moves with `p`.
+ *  FIXED 2026-09-04 (daily peer review 2026-09-04, Issue 1, verified against
+ *  production): the predictor passed the profile-adjusted rate as `p` and every
+ *  term was evaluated at it, so a profile whose modifiers pushed the estimate
+ *  toward 50% got a systematically narrower interval than the evidence supports
+ *  (vomiting: pooled 8%, 0–96 → adjusted 42%, 12–79 where 1–98 is the
+ *  evidence-anchored interval) and one pushed toward the extremes a wider one.
+ *  When `anchorP` is omitted (pooled estimates: API, aggregate table) it equals
+ *  `p` and the output is unchanged. See preprint "Corrections in v5.4". */
 function computeConfidenceInterval(
   p: number,
   studyRates: number[],
   effectiveN: number,
+  anchorP: number = p,
   z = 1.96
 ): { low: number; high: number } {
   if (effectiveN === 0 || studyRates.length === 0) return { low: 0, high: 100 };
 
   const clampedP = Math.max(0.005, Math.min(0.995, p));
+  const clampedA = Math.max(0.005, Math.min(0.995, anchorP));
   const k = studyRates.length;
 
   // Simplified (unweighted) random-effects tau-squared — inspired by DerSimonian-Laird
@@ -211,13 +243,13 @@ function computeConfidenceInterval(
     const mean = studyRates.reduce((a, b) => a + b, 0) / k;
     const Q = studyRates.reduce((sum, r) => sum + (r - mean) ** 2, 0);
     const df = k - 1;
-    const withinVar = clampedP * (1 - clampedP) / Math.max(1, effectiveN / k);
+    const withinVar = clampedA * (1 - clampedA) / Math.max(1, effectiveN / k);
     tauSq = Math.max(0, (Q - df * withinVar) / (df > 0 ? df : 1));
   }
 
-  const samplingVar = clampedP * (1 - clampedP) / effectiveN;
+  const samplingVar = clampedA * (1 - clampedA) / effectiveN;
   const totalVar = samplingVar + tauSq;
-  const seLogOdds = Math.sqrt(totalVar) / (clampedP * (1 - clampedP));
+  const seLogOdds = Math.sqrt(totalVar) / (clampedA * (1 - clampedA));
 
   const logOdds = Math.log(clampedP / (1 - clampedP));
   const lowP = 1 / (1 + Math.exp(-(logOdds - z * seLogOdds)));
@@ -353,7 +385,7 @@ export async function calculateDynamicRisk(
   // ═══════════════════════════════════════════════
   // TRACK 1: CLINICAL — trial data only, conservative
   // ═══════════════════════════════════════════════
-  let clinical: TrackEstimate;
+  let clinical: TrackEstimate | UnavailableEstimate;
 
   const clinicalResult = weightedAverageRate(clinicalPoints);
 
@@ -389,7 +421,8 @@ export async function calculateDynamicRisk(
     const pct = Math.max(1, Math.min(95, Math.round(adjustedRate * 100)));
     const unadjustedPct = Math.max(1, Math.min(95, Math.round(clampedRate * 100)));
     const pooledPct = Math.max(1, Math.min(95, Math.round(pooledRate * 100)));
-    const ci = computeConfidenceInterval(adjustedRate, clinicalResult.rates, clinicalResult.effectiveN);
+    // Anchor the variance at the pooled corpus rate (the evidence), centre on the adjusted one.
+    const ci = computeConfidenceInterval(adjustedRate, clinicalResult.rates, clinicalResult.effectiveN, pooledRate);
 
     const srcs = clinicalResult.sourceCount;
     const doseNoteEn = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "en") : "";
@@ -408,6 +441,15 @@ export async function calculateDynamicRisk(
       unadjustedPercentage: unadjustedPct,
       pooledPercentage: pooledPct,
       modifiersApplied: appliedMods,
+    };
+  } else if (staticEffect.noCitableClinicalEvidence) {
+    // No corpus rate AND no citable static literature source either (decision
+    // literature-fallback-clinical-rate-2026-08-28, option c, founder-approved
+    // 2026-09-01) — publish no number rather than the withdrawn static range.
+    clinical = {
+      available: false,
+      basis: "No citable clinical evidence for this effect — the previously published literature range had no rate-stating source behind it and was withdrawn 2026-09-03. We do not publish a clinical percentage until a citable trial, registry or regulatory rate exists.",
+      basisNl: "Geen citeerbaar klinisch bewijs voor dit effect — de eerder gepubliceerde literatuurbandbreedte had geen percentage-vermeldende bron en is op 3 september 2026 ingetrokken. We publiceren geen klinisch percentage totdat er een citeerbaar percentage uit een studie, register of toezichthouder bestaat.",
     };
   } else {
     // Fallback: use published trial base rates — clearly labeled
@@ -446,9 +488,12 @@ export async function calculateDynamicRisk(
       rateSourceCount: 0,
       // "Published trial rate" until 2026-09-02: overclaimed for effects whose static
       // source (see side-effects-data.ts `sources`) is a review/mechanism paper, not a
-      // trial reporting this rate (e.g. emotional_blunting cites a CNS receptor-expression
-      // review; fatigue cites an unURLed "real-world evidence review") — this branch has
-      // no per-effect way to know which, so the wording must hold for the weakest case.
+      // trial reporting this rate (pancreatitis, hair_loss and dizziness still carry
+      // 2026-04-12 triples with no recorded derivation; fatigue's was re-sourced to
+      // the FDA Wegovy label on 2026-09-03) — this branch still reaches effects like
+      // that, so the wording holds for the weakest remaining case. The effect with NO citable
+      // source at all (emotional_blunting) no longer reaches this branch — see
+      // `noCitableClinicalEvidence` above, which returns UnavailableEstimate instead.
       basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "en")}`,
       basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "nl")}`,
       isFallback: true,
@@ -550,6 +595,9 @@ export async function calculateAllRisks(profile: PatientProfile): Promise<DualTr
     (p) => p.provenance !== "seed-2026-04"
   );
   const results = await Promise.all(effectIds.map((id) => calculateDynamicRisk(id, profile, allCommunityPoints)));
-  // Sort by the higher of the two track percentages
-  return results.sort((a, b) => Math.max(b.clinical.percentage, b.realWorld.percentage) - Math.max(a.clinical.percentage, a.realWorld.percentage));
+  // Sort by the higher of the two track percentages. `clinical.available === false`
+  // (no citable evidence at all) has no percentage to compare — treat as 0, the
+  // real-world track still sorts it correctly by its own number.
+  const clinicalPct = (r: DualTrackRiskResult) => (r.clinical.available === false ? 0 : r.clinical.percentage);
+  return results.sort((a, b) => Math.max(clinicalPct(b), b.realWorld.percentage) - Math.max(clinicalPct(a), a.realWorld.percentage));
 }
