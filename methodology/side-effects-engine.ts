@@ -524,8 +524,8 @@ export async function calculateDynamicRisk(
       // effect with NO citable source at all (emotional_blunting) no longer reaches
       // this branch — see `noCitableClinicalEvidence` above, which returns
       // UnavailableEstimate instead.
-      basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "en")}`,
-      basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "nl")}`,
+      basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "en")}${staticEffect.clinicalRatesUnitNote ? ` ${staticEffect.clinicalRatesUnitNote}` : ""}`,
+      basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "nl")}${staticEffect.clinicalRatesUnitNoteNl ? ` ${staticEffect.clinicalRatesUnitNoteNl}` : ""}`,
       isFallback: true,
       unadjustedPercentage: fallbackPct(clampedRate),
       modifiersApplied: appliedMods,
