@@ -104,9 +104,11 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 Returns an array of effects, each with TWO parallel figures. Abridged live
 response to exactly the request above, captured from production on 2026-08-31
-(`attribution`, `sources` and the Dutch `*Nl` strings elided for length; field
-names updated 2026-09-01 to add the canonical `sourceDiversity` and
-`reportingFrequency` — see the note below the block — no value changed):
+(`matchedRecords`, `sources` and the Dutch `*Nl` strings elided for length;
+field names updated 2026-09-01 to add the canonical `sourceDiversity` and
+`reportingFrequency` — see the note below the block — no value changed;
+`attribution` renamed to `matchedRecords` 2026-09-04 — same shape, still
+elided here, no value changed; see the note below the block):
 
 ```json
 {
@@ -148,7 +150,7 @@ names updated 2026-09-01 to add the canonical `sourceDiversity` and
         "basis": "10 of 26 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate",
         "isFallback": false
       },
-      "attribution": { ... },
+      "matchedRecords": { ... },
       "sources": [ ... ]
     }
   ]

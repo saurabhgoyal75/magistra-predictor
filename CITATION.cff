@@ -8,7 +8,7 @@ authors:
     email: saurabh@magistra.health
     affiliation: "Phlo Systems BV"
 type: software
-version: "5.4"
+version: "5.5"
 date-released: "2026-09-04"
 license: Apache-2.0
 repository-code: "https://github.com/saurabhgoyal75/magistra-predictor"

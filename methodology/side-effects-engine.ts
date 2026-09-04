@@ -112,7 +112,29 @@ export type DualTrackRiskResult = {
   realWorld: TrackEstimate;
   /** Community reporting frequency (see file header). Canonical name; see realWorld. */
   reportingFrequency: TrackEstimate;
+  /** @deprecated use `matchedRecords` — identical value, this name stays one
+   *  release for back-compat (same convention as `realWorld`/`confidenceLevel`
+   *  above; renaming a published field is a founder decision per LEARNINGS —
+   *  filed 2026-09-04 as `attribution-field-rename-2026-09-04`, not yet
+   *  actioned beyond adding the new name alongside this one). */
   attribution: {
+    clinical: { count: number; weight: number };
+    userReports: { count: number; weight: number };
+    regulatory: { count: number; weight: number };
+    news: { count: number; weight: number };
+  };
+  /** Composition of ALL profile-matched corpus records for this effect, by
+   *  source type — every record `relevantPoints` holds after the sex/dose/
+   *  ethnicity/exercise filter, BEFORE the eligibility screen (citable-URL,
+   *  self-referential, synthetic-source, source-collapsing) that `clinical`'s
+   *  own percentage is actually pooled from. Canonical name for what was
+   *  `attribution` (see above) — carried from the 2026-09-04 06:52 peer
+   *  review, verified real: the old name and shape (weight-of-evidence-looking
+   *  percentages) read as backing the published rate, and did not —
+   *  `clinical.basis`'s "N stated rates from M distinct sources" is the
+   *  number that does. No computation changed, only the name and this
+   *  disclosure. */
+  matchedRecords: {
     clinical: { count: number; weight: number };
     userReports: { count: number; weight: number };
     regulatory: { count: number; weight: number };
@@ -461,7 +483,13 @@ export async function calculateDynamicRisk(
       profile, false, getModifier, staticEffect.modifiers, appliedMods
     );
     const adjustedRate = 1 / (1 + Math.exp(-logOdds));
-    const pct = Math.max(1, Math.min(95, Math.round(adjustedRate * 100)));
+    // Below 1% keep one decimal instead of flooring to 1: since 2026-09-04
+    // pancreatitis's static figure is the FDA label's 0.2 per 100 patient-years
+    // (encoded 0.002), and a floor of 1 would print it 5× too high while the
+    // whole-number round printed it as 0. Everything ≥1% renders as before.
+    const fallbackPct = (r: number) =>
+      r * 100 < 1 ? Math.round(r * 1000) / 10 : Math.max(1, Math.min(95, Math.round(r * 100)));
+    const pct = fallbackPct(adjustedRate);
 
     // For fallback: CI from published trial ranges (low to high dose rate),
     // passed through the SAME modifier shift as the point estimate — otherwise a
@@ -473,7 +501,7 @@ export async function calculateDynamicRisk(
         Math.log(clamped / (1 - clamped)),
         profile, false, getModifier, staticEffect.modifiers
       );
-      return Math.round((1 / (1 + Math.exp(-lo))) * 100);
+      return fallbackPct(1 / (1 + Math.exp(-lo)));
     };
     const lowRate = shiftEndpoint(staticEffect.clinicalRates.low);
     const highRate = shiftEndpoint(staticEffect.clinicalRates.high);
@@ -487,17 +515,19 @@ export async function calculateDynamicRisk(
       ratePointCount: 0,
       rateSourceCount: 0,
       // "Published trial rate" until 2026-09-02: overclaimed for effects whose static
-      // source (see side-effects-data.ts `sources`) is a review/mechanism paper, not a
-      // trial reporting this rate (pancreatitis, hair_loss and dizziness still carry
-      // 2026-04-12 triples with no recorded derivation; fatigue's was re-sourced to
-      // the FDA Wegovy label on 2026-09-03) — this branch still reaches effects like
-      // that, so the wording holds for the weakest remaining case. The effect with NO citable
-      // source at all (emotional_blunting) no longer reaches this branch — see
-      // `noCitableClinicalEvidence` above, which returns UnavailableEstimate instead.
-      basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "en")}`,
-      basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, Math.round(clampedRate * 100), pct, "nl")}`,
+      // source (see side-effects-data.ts `sources`) was a review/mechanism paper, not a
+      // trial reporting this rate. As of 2026-09-04 every effect that reaches this
+      // branch (fatigue 2026-09-03; pancreatitis, hair_loss, dizziness 2026-09-04)
+      // carries a figure quoted from the FDA Wegovy prescribing information with a
+      // DailyMed URL and a derivation comment in side-effects-data.ts — pancreatitis's
+      // is a rate per 100 patient-years, not a proportion (see its comment). The
+      // effect with NO citable source at all (emotional_blunting) no longer reaches
+      // this branch — see `noCitableClinicalEvidence` above, which returns
+      // UnavailableEstimate instead.
+      basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "en")}`,
+      basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "nl")}`,
       isFallback: true,
-      unadjustedPercentage: Math.round(clampedRate * 100),
+      unadjustedPercentage: fallbackPct(clampedRate),
       modifiersApplied: appliedMods,
     };
   }
@@ -554,12 +584,19 @@ export async function calculateDynamicRisk(
     };
   }
 
-  // Attribution
+  // Matched-record composition — see the type's doc comment: this is the raw
+  // profile-matched pool, not the eligibility-screened base `clinical` pools from.
   const totalForAttrib = relevantPoints.length || 1;
   const citableSources = relevantPoints.filter((p) => {
     const reason = classifyRatePoint(p);
     return reason !== "self_referential" && reason !== "synthetic_source" && reason !== "no_citable_url";
   });
+  const matchedRecords = {
+    clinical: { count: clinicalPoints.filter(p => p.sourceType === "clinical").length, weight: clinicalPoints.length > 0 ? Math.round((clinicalPoints.length / totalForAttrib) * 100) : 0 },
+    userReports: { count: communityPoints.filter(p => p.sourceType === "user_report").length, weight: communityPoints.filter(p => p.sourceType === "user_report").length > 0 ? Math.round((communityPoints.filter(p => p.sourceType === "user_report").length / totalForAttrib) * 100) : 0 },
+    regulatory: { count: clinicalPoints.filter(p => p.sourceType === "regulatory").length, weight: clinicalPoints.filter(p => p.sourceType === "regulatory").length > 0 ? Math.round((clinicalPoints.filter(p => p.sourceType === "regulatory").length / totalForAttrib) * 100) : 0 },
+    news: { count: communityPoints.filter(p => p.sourceType === "news").length, weight: communityPoints.filter(p => p.sourceType === "news").length > 0 ? Math.round((communityPoints.filter(p => p.sourceType === "news").length / totalForAttrib) * 100) : 0 },
+  };
 
   return {
     effectId,
@@ -568,12 +605,8 @@ export async function calculateDynamicRisk(
     clinical,
     realWorld,
     reportingFrequency: realWorld,
-    attribution: {
-      clinical: { count: clinicalPoints.filter(p => p.sourceType === "clinical").length, weight: clinicalPoints.length > 0 ? Math.round((clinicalPoints.length / totalForAttrib) * 100) : 0 },
-      userReports: { count: communityPoints.filter(p => p.sourceType === "user_report").length, weight: communityPoints.filter(p => p.sourceType === "user_report").length > 0 ? Math.round((communityPoints.filter(p => p.sourceType === "user_report").length / totalForAttrib) * 100) : 0 },
-      regulatory: { count: clinicalPoints.filter(p => p.sourceType === "regulatory").length, weight: clinicalPoints.filter(p => p.sourceType === "regulatory").length > 0 ? Math.round((clinicalPoints.filter(p => p.sourceType === "regulatory").length / totalForAttrib) * 100) : 0 },
-      news: { count: communityPoints.filter(p => p.sourceType === "news").length, weight: communityPoints.filter(p => p.sourceType === "news").length > 0 ? Math.round((communityPoints.filter(p => p.sourceType === "news").length / totalForAttrib) * 100) : 0 },
-    },
+    attribution: matchedRecords,
+    matchedRecords,
     onsetDays: staticEffect.onsetDays, onsetDaysNl: staticEffect.onsetDaysNl,
     durationWeeks: staticEffect.durationWeeks, durationWeeksNl: staticEffect.durationWeeksNl,
     managementTip: staticEffect.managementTip, managementTipNl: staticEffect.managementTipNl,

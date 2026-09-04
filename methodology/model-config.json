@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "generatedAt": "2026-04-12T16:52:40.840Z",
   "inputParameters": [
     {
@@ -1011,9 +1011,9 @@
       },
       "severity": "severe",
       "baseRates": {
-        "low": 0.005,
-        "medium": 0.008,
-        "high": 0.012
+        "low": 0.002,
+        "medium": 0.002,
+        "high": 0.002
       },
       "modifiers": {
         "sex:female": {
@@ -1076,9 +1076,9 @@
       },
       "sources": [
         {
-          "name": "Washington University comprehensive study (2025)",
+          "name": "FDA Wegovy (semaglutide) prescribing information, revised 06/2026, section 5 Acute Pancreatitis: 4 adjudicated cases in Wegovy-treated adults (0.2 per 100 patient-years) vs 1 on placebo (<0.1 per 100 patient-years) — a rate per patient-year, not a proportion of patients",
           "type": "clinical",
-          "url": "https://medicine.washu.edu/news/study-identifies-benefits-risks-linked-to-popular-weight-loss-drugs/",
+          "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ee06186f-2aa3-4990-a760-757579d8f77b",
           "weight": 0.3
         },
         {
@@ -1107,9 +1107,9 @@
       },
       "severity": "mild",
       "baseRates": {
-        "low": 0.06,
-        "medium": 0.1,
-        "high": 0.14
+        "low": 0.11,
+        "medium": 0.11,
+        "high": 0.11
       },
       "modifiers": {
         "sex:female": {
@@ -1172,8 +1172,9 @@
       },
       "sources": [
         {
-          "name": "Real-world evidence review (PMC 2025)",
+          "name": "FDA Wegovy (semaglutide) prescribing information, revised 06/2026, Table 3: fatigue (includes fatigue and asthenia) 11% on 2.4 mg (N=2,116) vs 5% placebo (N=1,261)",
           "type": "clinical",
+          "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ee06186f-2aa3-4990-a760-757579d8f77b",
           "weight": 0.3
         },
         {
@@ -1589,8 +1590,8 @@
       },
       "severity": "mild",
       "baseRates": {
-        "low": 0.01,
-        "medium": 0.02,
+        "low": 0.03,
+        "medium": 0.03,
         "high": 0.03
       },
       "modifiers": {
@@ -1654,9 +1655,9 @@
       },
       "sources": [
         {
-          "name": "SELECT Trial (Lincoff et al., NEJM 2023)",
+          "name": "FDA Wegovy (semaglutide) prescribing information, revised 06/2026, Table 3: hair loss 3% on 2.4 mg (N=2,116) vs 1% placebo (N=1,261); Table 4 (7.2 mg trial): 1% / 3% / 6% for placebo / 2.4 mg / 7.2 mg",
           "type": "clinical",
-          "url": "https://www.nejm.org/doi/full/10.1056/NEJMoa2307563",
+          "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ee06186f-2aa3-4990-a760-757579d8f77b",
           "weight": 0.3
         },
         {
@@ -1783,9 +1784,9 @@
       },
       "severity": "mild",
       "baseRates": {
-        "low": 0.02,
-        "medium": 0.03,
-        "high": 0.05
+        "low": 0.08,
+        "medium": 0.08,
+        "high": 0.08
       },
       "modifiers": {
         "sex:female": {
@@ -1848,9 +1849,9 @@
       },
       "sources": [
         {
-          "name": "STEP-2 Trial (Davies et al., Lancet 2021)",
+          "name": "FDA Wegovy (semaglutide) prescribing information, revised 06/2026, Table 3: dizziness 8% on 2.4 mg (N=2,116) vs 4% placebo (N=1,261); Table 4 (7.2 mg trial): 1% / 5% / 6% for placebo / 2.4 mg / 7.2 mg",
           "type": "clinical",
-          "url": "https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(21)00213-0/fulltext",
+          "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ee06186f-2aa3-4990-a760-757579d8f77b",
           "weight": 0.3
         },
         {
@@ -2005,6 +2006,17 @@
         {
           "type": "effect_added",
           "reason": "Initial seed from static SIDE_EFFECTS data — 15 effects, 6 active parameters, 4 candidate parameters"
+        }
+      ],
+      "autoApplied": false
+    },
+    {
+      "version": 2,
+      "date": "2026-09-04",
+      "changes": [
+        {
+          "type": "base_rates_resourced",
+          "reason": "fatigue (2026-09-03, decision literature-fallback-clinical-rate-2026-08-28) and pancreatitis, hair_loss, dizziness (2026-09-04, decision pancreatitis-hairloss-dizziness-triple-derivation-2026-09-03): the April-2026 triples had no recorded derivation and their cited sources state no such figures; each is now one FDA Wegovy label (revised 06/2026) figure at every tier with table/arm/N in the source name. pancreatitis's 0.002 is the label's 0.2 acute-pancreatitis cases per 100 patient-years (section 5), an exposure-time rate, not a proportion. emotional_blunting's baseRates in this file are WITHDRAWN (2026-09-03, no rate-stating source) and are not served anywhere; left in place only to keep the shape. Note: nothing in the live engine reads baseRates from this file — src/lib/side-effects-data.ts is canonical and this file is a published snapshot (mirrored to the public methodology repo), aligned here so the two copies agree."
         }
       ],
       "autoApplied": false
