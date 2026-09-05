@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-04.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-05.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -304,7 +304,8 @@ function modifierNote(applied: AppliedModifier[], unadjustedPct: number, adjuste
 }
 
 /** Human-readable disclosure of the dose-tier rescale. The multiplier is a ratio
- *  of two STATIC published-trial figures, not a corpus-derived quantity, so an
+ *  of two STATIC reference-table figures (per-tier derivation unrecorded for every
+ *  effect where the ratio is not 1 — see side-effects-data.ts), not a corpus-derived quantity, so an
  *  estimate that has been through it is no longer purely "N stated rates from M
  *  sources" — the basis string has to say so. Empty when no rescale fired
  *  (majority dose-tagged pool, or the medium tier where the ratio is 1), so an
@@ -315,10 +316,10 @@ function modifierNote(applied: AppliedModifier[], unadjustedPct: number, adjuste
 function doseNote(pooledPct: number, rescaledPct: number, tier: string, taggedPoints: number, poolSize: number, lang: "en" | "nl"): string {
   if (lang === "nl") {
     return `. Gepoold corpuspercentage ${pooledPct}% → ${rescaledPct}% herschaald naar dosisniveau "${tier}"` +
-      ` — slechts ${taggedPoints} van ${poolSize} gepoolde records dragen een dosislabel, dus de verhouding komt uit de gepubliceerde trialreferentietabel, niet uit dit corpus`;
+      ` — slechts ${taggedPoints} van ${poolSize} gepoolde records dragen een dosislabel, dus de verhouding komt uit de statische literatuurreferentietabel (herkomst per dosisniveau niet vastgelegd voor deze bijwerking), niet uit dit corpus`;
   }
   return `. Pooled corpus rate ${pooledPct}% → ${rescaledPct}% rescaled to the ${tier} dose tier` +
-    ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag, so the ratio is taken from the published-trial reference table, not derived from this corpus`;
+    ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag, so the ratio is taken from the static literature reference table (per-tier derivation not recorded for this effect), not derived from this corpus`;
 }
 
 function applyModifiers(

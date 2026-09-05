@@ -5,8 +5,8 @@ Phlo Systems BV
 saurabh@magistra.health
 https://magistra.health
 
-**Version:** 5.5
-**Date:** 4 September 2026 (v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
+**Version:** 5.6
+**Date:** 5 September 2026 (v5.5: 4 September 2026 — see "Corrections in v5.6"; v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
 **Classification:** q-bio.QM (Quantitative Methods) / stat.AP (Applications)
 
 ---
@@ -27,6 +27,14 @@ v4.0 (April 2026) described a method and a data-source inventory that internal a
 2. **The real-world track is a reporting frequency, not an incidence (2026-08-14).** v4.0's "real-world" track averaged self-reported percentages scraped from individual community posts; a personal anecdote has no rate. The track now reports the share of distinct community reports (deduplicated by source URL) that mention each effect, with Wilson intervals. Consequently v4.0's clinical-vs-real-world "convergence" framing — including the illustrative gap table and the abstract's hair-loss example — is withdrawn as a category error: a mention frequency and an incidence rate are not comparable quantities (see §3.3).
 3. **The published data-source inventory was wrong (2026-08-17).** v4.0's Table 1 listed sources (Google Scholar, 1mg.com, PvPI, Trustpilot) that had never contributed a single corpus point, and described every source as collected daily while Reddit had been blocked since 2026-05-28. Table 1 is now derived from the corpus and served live at the public API; a source that has contributed nothing cannot appear in it.
 4. **Source-type labels were assigned by scraper keyword, not by publisher (2026-08-14, fully landed 2026-08-17).** 44 points typed clinical or regulatory and branded "WHO/…", "MHRA/…", "EMA/…" or "Cochrane/…" were Google News search-result blurbs whose actual publisher was never the named agency; a further 78 points branded "Quora —" or "Twitter/X —" were likewise Google News results, not platform collections. All were relabelled by their real mechanism in both the repository and production stores. None carried an eligible rate, so no published estimate changed.
+
+---
+
+## Corrections in v5.6 (5 September 2026)
+
+v5.6 adds one Limitations entry. No computation changes, no figure in any table of this document changes, and the corpus snapshot (2026-08-31) is not re-taken.
+
+9. **The dose-tier rescale was undisclosed as a limitation (2026-09-05).** §2.3/§2.4 describe the pooled corpus rate and the per-tier rescale the live predictor applies when fewer than half of an effect's pooled points carry a dose tag (§4, new bullet below), but this document never named that rescale as a source of bias. Found by the framework's own daily automated peer review (2026-09-05, Issue 1). No code changed and no published figure changed — this is a disclosure gap, not a computation error, and it is added to §4 rather than corrected retroactively because the rescale itself (and its per-estimate basis-string disclosure) has been live and unchanged since 2026-08-28. Quantifying how much the rescale currently shifts each affected estimate needs a live corpus read and is left for a subsequent cycle with production access (see the new §4 bullet). Same version, before first publication (5 September 2026, local review): the §4 bullet's first draft asserted the static per-tier figures "come from different trial arms"; that was an inference — for the ten gradient effects no per-tier derivation is recorded — and the published wording says so instead, with a dated point check of the rescale's live magnitude. §2.3 step 3, which still described the pre-2026-08-28 "no data point has dose specificity" trigger, is aligned to the majority-of-points threshold the code has applied since then. The live predictor's per-estimate disclosure, which called the table "published-trial", is reworded the same day.
 
 ---
 
@@ -147,7 +155,7 @@ For a target patient profile P and side effect e, the system produces two parall
 
 1. Weighted mean rate, with weights w_i = max(1, n_i) · q_i where n_i is the reported sample size and q_i is the extraction confidence weight.
 2. Winsorization at the 5th/95th percentile when |D_C| > 10.
-3. Dose adjustment applied if no data point has dose specificity: the weighted mean is scaled by the ratio of the target dose rate to the median dose rate from published baselines.
+3. Dose adjustment applied when fewer than half of the eligible points carry a dose tag (majority-of-points threshold since 2026-08-28; before that, only when no point did): the weighted mean is scaled by the ratio of the target-tier entry to the medium-tier entry of the static reference table (see §4 on that table's provenance).
 4. Log-odds transformation; addition of applicable modifier log-odds (sex, age ≥ 65, GI history, diabetes, first month of treatment); inverse transformation back to probability.
 5. Cumulative modifier shift is capped at |ΣΔlogOdds| ≤ 2.5 to prevent implausible stacking.
 6. Random-effects 95% confidence interval on the log-odds scale using a simplified, unweighted τ² estimator (inspired by DerSimonian-Laird [ref 8], not inverse-variance weighted) and delta-method standard error.
@@ -260,6 +268,8 @@ We enumerate limitations explicitly because hidden weaknesses are more dangerous
 **LLM extraction accuracy.** A Claude model is used for structured extraction but has not been audited against human gold-standard labels on a representative sample. An audit of 50 sources per effect is planned. Until completed, reported sample sizes should be treated as noisy upper bounds.
 
 **Selection bias in community data.** Patient communities over-report severe or unusual experiences; the reporting-frequency track inherits this bias — a mention share measures what a self-selected population chooses to write about, not what a cohort experiences. We do not attempt to correct for it beyond labelling the quantity for what it is and separating the two tracks so the user can see both.
+
+**Dose-tier rescale conflates dose-response with study-population differences (added v5.6).** When fewer than half of an effect's pooled clinical points carry a dose tag, the predictor rescales the pooled corpus rate by the ratio of two entries in the static per-tier reference table (§2.3's literature fallback figures) for the requested tier versus the medium tier, rather than leaving the pooled rate untouched. For the ten tracked effects whose static triples carry a low/medium/high gradient (ratios of 0.42–0.75 for the low tier and 1.17–1.73 for the high tier, relative to medium), no per-tier derivation is recorded anywhere: the triples date from the tool's first commit (6 April 2026) and each effect's listed sources are study-level references, none per dose tier, so the ratio's provenance cannot be checked. The four effects re-sourced from the FDA Wegovy label in September 2026 carry one figure at every tier, so no rescale fires for them. Figures of unrecorded origin cannot be assumed to come from a single dose-ranging study isolated from population, sample-size and follow-up differences. Applying their ratio to a corpus rate pooled from a *different* mix of studies therefore mixes a dose effect with a study-design effect; the two are not separated anywhere in the pipeline. Each affected live estimate discloses that it was rescaled, the pooled-to-rescaled values, and the dose-tag coverage in its basis string (`doseNote`, added 2026-08-28) — so a reader checking one specific number already sees the adjustment — but this document did not previously name the rescale as a limitation, and no sensitivity analysis exists beyond a point check: on 2026-09-05, against production with no patient modifiers, every gradient effect's low- and high-tier estimate differed from its pooled rate by exactly the static ratio (nausea: pooled 32% → 18% low / 46% high, with 14 of 90 pooled records dose-tagged). Flagged by the framework's own daily automated peer review (2026-09-05).
 
 **Journey predictor limitations.** The weight trajectory, muscle loss, and discontinuation models embed expert-coded modifier values (dose, exercise, protein, resistance training) that are not empirically derived. These are provisional and clearly labeled as such.
 
