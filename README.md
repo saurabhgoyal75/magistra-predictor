@@ -3,7 +3,7 @@
 **A dual-track framework for GLP-1 side effect estimation, separating clinical evidence from real-world patient reports.**
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Methodology](https://img.shields.io/badge/methodology-v5.0-green.svg)](https://magistra.health/en/methodology)
+[![Methodology](https://img.shields.io/badge/methodology-v5.6-green.svg)](https://magistra.health/en/methodology)
 [![Live](https://img.shields.io/badge/live-magistra.health-purple.svg)](https://magistra.health/en/predictor)
 
 This repository contains the statistical methodology and model configuration behind [Magistra Health](https://magistra.health) — a platform that estimates GLP-1 medication side effect risk using two parallel data tracks. The predictor and the public API are free and need no authentication; bulk export of the dataset is not (see the licence link below). The clinical corpus is updated daily by an automated pipeline. The community corpus is not continuously updated: Reddit blocked our collector on 2026-05-28, freezing the 684 Reddit reports that make up most of it, and the remaining platform (Drugs.com, 71 reports) was last collected 2026-08-12. Any reporting-frequency figure is therefore a fixed historical number and should be cited with its date.
@@ -50,10 +50,13 @@ Earlier versions of this repo (through v4.0) published a "gap" table comparing a
 │   ├── model-config.ts          # Config schema (TypeScript types)
 │   ├── model-config.json        # Live model config snapshot
 │   └── analyze-model.mjs        # Daily statistical analysis pipeline
+├── data/                        # CC BY 4.0 per-effect aggregate table (pooled
+│   ├── glp1-aggregate-rates.csv #   rate, 95% CI, stated rates, distinct sources,
+│   └── glp1-aggregate-rates.json#   reporting frequency); dated snapshot, see asOf
 ├── examples/
 │   └── api-examples.md          # How to query the public API
 └── preprint/
-    └── magistra-methodology.md  # Full methodology preprint (v5.0)
+    └── magistra-methodology.md  # Full methodology preprint (version in its header)
 ```
 
 ---
@@ -136,7 +139,7 @@ Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodolo
 
 ## Limitations (honest list)
 
-- **Data volume:** As of 2026-08-31 the database holds 1,332 published points (1,482 including 150 April-2026 seed points retained only for audit trail), but the eligible base behind published rates is far smaller — **74 rates from 51 distinct sources** (v5.1–v5.2 stated 145/67; 72 April-2026 seed rows wearing real trial URLs were found inside the base on 2026-08-31 and excluded — see "Corrections in v5.3" in the methodology paper). 5 of the 15 published effects (pancreatitis, fatigue, hair loss, dizziness, emotional blunting) have no eligible clinical rate at all, so they fall back to a labelled literature range rather than a corpus-derived figure; four more (abdominal pain, acid reflux, gallstones, injection-site reaction) rest on a single distinct source each. All figures verified against https://magistra.health/api/data?q=overview on that date; the API always serves the current numbers.
+- **Data volume:** As of 2026-09-06 the database holds 1,423 published points (1,573 including 150 April-2026 seed points retained only for audit trail), but the eligible base behind published rates is far smaller — **93 rates from 59 distinct sources** (2026-08-31: 74/51; v5.1–v5.2 stated 145/67; 72 April-2026 seed rows wearing real trial URLs were found inside the base on 2026-08-31 and excluded — see "Corrections in v5.3" in the methodology paper). The per-effect breakdown is the CC BY 4.0 table in [`data/`](data/), a dated snapshot of the same API response. 5 of the 15 published effects (pancreatitis, fatigue, hair loss, dizziness, emotional blunting) have no eligible clinical rate at all, so they fall back to a labelled literature range rather than a corpus-derived figure; four more (abdominal pain, acid reflux, gallstones, injection-site reaction) rest on a single distinct source each. All figures verified against https://magistra.health/api/data?q=overview on that date; the API always serves the current numbers.
 - **Community denominator:** the reporting-frequency track rests on **26 distinct community reports** (screened 2026-08-29, see the correction above). It is frozen at that size — Reddit has served the collector an HTTP 403 block page since 2026-05-28 — so every reporting frequency is a fixed historical number, not a live one, and must be cited with its date.
 - **Demographic bias:** Both tracks over-represent female, white, and Western populations; ethnicity and BMI are tracked but lack sufficient data for inclusion.
 - **Hand-coded modifiers:** Initial values from published literature; empirical replacement in progress as data accumulates.
@@ -168,7 +171,7 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
-**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.0). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.6). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
 
 No DOI is registered for this work — the methodology is self-published at the URL above, not deposited with a repository that mints permanent identifiers. (A DOI, 10.5281/zenodo.19559749, was asserted on this page and elsewhere until 2026-08-18; it was never actually registered and has been withdrawn.)
 
@@ -178,7 +181,7 @@ No DOI is registered for this work — the methodology is self-published at the 
   title        = {A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports},
   year         = {2026},
   publisher    = {Magistra, Phlo Systems BV},
-  version      = {5.0},
+  version      = {5.6},
   url          = {https://magistra.health/en/methodology}
 }
 ```
@@ -191,7 +194,7 @@ See [`CITATION.cff`](CITATION.cff) for the machine-readable citation file.
 
 Apache 2.0. See [LICENSE](LICENSE).
 
-The data in the Magistra database is aggregated from public sources and is available free for research and non-commercial use with attribution. Commercial/bulk access: contact saurabh@magistra.health.
+The point-level dataset behind the API is free for research and journalism with attribution (Magistra, magistra.health); redistribution of the dataset is not permitted, and bulk export and commercial use go through the research subscription — terms at https://magistra.health/en/data#licence, offer at https://magistra.health/en/data-api. The per-effect aggregate table in [`data/`](data/) is the exception: it is licensed **CC BY 4.0** and may be redistributed with attribution (its `asOf` field dates the snapshot; the live copy is at https://magistra.health/data/glp1-aggregate-rates.json).
 
 ---
 

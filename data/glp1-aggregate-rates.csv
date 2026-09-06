@@ -1,0 +1,16 @@
+effect,effectName,severity,clinicalPooledRatePct,clinicalCiLowPct,clinicalCiHighPct,clinicalStatedRates,clinicalDistinctSources,clinicalSourceDiversity,communityReportingFrequencyPct,communityMentions,communityTotalReports
+nausea,Nausea,mild,32,9,70,35,24,high,38.5,10,26
+diarrhea,Diarrhoea,mild,19.9,3,64,16,10,high,34.6,9,26
+constipation,Constipation,mild,28.2,13,51,10,7,moderate,26.9,7,26
+reduced_appetite,Reduced appetite,mild,20.9,3,72,10,9,moderate,30.8,8,26
+headache,Headache,mild,18.4,14,23,5,4,moderate,3.8,1,26
+pancreatitis,Pancreatitis (rare),severe,,,,0,0,,0,0,26
+fatigue,Fatigue / Low energy,mild,,,,0,0,,11.5,3,26
+vomiting,Vomiting,moderate,8.1,0,94,10,10,high,42.3,11,26
+abdominal_pain,Abdominal pain,moderate,12.5,4,32,1,1,very_low,15.4,4,26
+acid_reflux,Acid reflux (GERD),mild,33.3,23,45,1,1,very_low,23.1,6,26
+gallstones,Gallstones (cholelithiasis),severe,3.5,3,4,1,1,very_low,11.5,3,26
+hair_loss,Hair loss (thinning),mild,,,,0,0,,3.8,1,26
+injection_site_reaction,Injection site reaction,mild,14.3,2,58,1,1,very_low,23.1,6,26
+dizziness,Dizziness,mild,,,,0,0,,7.7,2,26
+emotional_blunting,Emotional blunting / Reduced pleasure,moderate,,,,0,0,,0,0,26
