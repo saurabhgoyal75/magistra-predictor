@@ -108,7 +108,8 @@ response to exactly the request above, captured from production on 2026-08-31
 field names updated 2026-09-01 to add the canonical `sourceDiversity` and
 `reportingFrequency` — see the note below the block — no value changed;
 `attribution` renamed to `matchedRecords` 2026-09-04 — same shape, still
-elided here, no value changed; see the note below the block):
+elided here, no value changed; the deprecated `attribution` alias was served
+alongside it until 2026-09-07 and is no longer returned):
 
 ```json
 {

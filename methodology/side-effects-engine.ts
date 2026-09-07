@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-05.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-07.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -112,23 +112,13 @@ export type DualTrackRiskResult = {
   realWorld: TrackEstimate;
   /** Community reporting frequency (see file header). Canonical name; see realWorld. */
   reportingFrequency: TrackEstimate;
-  /** @deprecated use `matchedRecords` — identical value, this name stays one
-   *  release for back-compat (same convention as `realWorld`/`confidenceLevel`
-   *  above; renaming a published field is a founder decision per LEARNINGS —
-   *  filed 2026-09-04 as `attribution-field-rename-2026-09-04`, not yet
-   *  actioned beyond adding the new name alongside this one). */
-  attribution: {
-    clinical: { count: number; weight: number };
-    userReports: { count: number; weight: number };
-    regulatory: { count: number; weight: number };
-    news: { count: number; weight: number };
-  };
   /** Composition of ALL profile-matched corpus records for this effect, by
    *  source type — every record `relevantPoints` holds after the sex/dose/
    *  ethnicity/exercise filter, BEFORE the eligibility screen (citable-URL,
    *  self-referential, synthetic-source, source-collapsing) that `clinical`'s
    *  own percentage is actually pooled from. Canonical name for what was
-   *  `attribution` (see above) — carried from the 2026-09-04 06:52 peer
+   *  `attribution` (alias served 2026-09-04 → 2026-09-07, then dropped under
+   *  decision `attribution-field-rename-2026-09-04`) — carried from the 2026-09-04 06:52 peer
    *  review, verified real: the old name and shape (weight-of-evidence-looking
    *  percentages) read as backing the published rate, and did not —
    *  `clinical.basis`'s "N stated rates from M distinct sources" is the
@@ -606,7 +596,6 @@ export async function calculateDynamicRisk(
     clinical,
     realWorld,
     reportingFrequency: realWorld,
-    attribution: matchedRecords,
     matchedRecords,
     onsetDays: staticEffect.onsetDays, onsetDaysNl: staticEffect.onsetDaysNl,
     durationWeeks: staticEffect.durationWeeks, durationWeeksNl: staticEffect.durationWeeksNl,
