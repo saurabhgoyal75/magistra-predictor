@@ -131,7 +131,7 @@ Earlier versions computed a "gap" by subtracting `realWorld.percentage` (now `re
 5. **Log-odds modifiers.** Sex, age ≥ 65, GI history, diabetes, first month of treatment applied on log-odds scale, with cumulative shift capped at ±2.5 (~12× max cumulative OR) to prevent implausible stacking.
 6. **Random-effects confidence intervals.** Simplified, unweighted τ² estimation (inspired by DerSimonian-Laird, not inverse-variance weighted), delta-method SE on log-odds scale.
 7. **Self-evolving config.** Daily pipeline computes empirical odds ratios for every parameter × effect combination, applies Benjamini-Hochberg FDR correction across ~180-240 tests, auto-applies only conservative changes (n ≥ 30, p_adj ≤ 0.01, |Δ OR| ≤ 0.3).
-8. **Safety.** Versioned rollback (the outgoing config is archived by version number whenever a change is applied; the in-config changelog keeps its last 30 entries — an earlier wording here said "30 prior configs retained", which was that changelog cap misread as a retention count), canonical profile regression testing, human review queue for larger changes, max 5 auto-applied changes per day.
+8. **Safety.** Versioned rollback (the outgoing config is archived by version number whenever a change is applied or flagged for review; the in-config changelog keeps its last 30 entries — an earlier wording here said "30 prior configs retained", which was that changelog cap misread as a retention count), canonical profile regression testing, human review queue for larger changes, max 5 auto-applied changes per day.
 
 Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodology.md) or at https://magistra.health/en/methodology.
 
