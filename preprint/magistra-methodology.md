@@ -5,8 +5,8 @@ Phlo Systems BV
 saurabh@magistra.health
 https://magistra.health
 
-**Version:** 5.6
-**Date:** 5 September 2026 (v5.5: 4 September 2026 — see "Corrections in v5.6"; v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
+**Version:** 5.7
+**Date:** 7 September 2026 (v5.6: 5 September 2026 — see "Corrections in v5.7"; v5.5: 4 September 2026 — see "Corrections in v5.6"; v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
 **Classification:** q-bio.QM (Quantitative Methods) / stat.AP (Applications)
 
 ---
@@ -27,6 +27,14 @@ v4.0 (April 2026) described a method and a data-source inventory that internal a
 2. **The real-world track is a reporting frequency, not an incidence (2026-08-14).** v4.0's "real-world" track averaged self-reported percentages scraped from individual community posts; a personal anecdote has no rate. The track now reports the share of distinct community reports (deduplicated by source URL) that mention each effect, with Wilson intervals. Consequently v4.0's clinical-vs-real-world "convergence" framing — including the illustrative gap table and the abstract's hair-loss example — is withdrawn as a category error: a mention frequency and an incidence rate are not comparable quantities (see §3.3).
 3. **The published data-source inventory was wrong (2026-08-17).** v4.0's Table 1 listed sources (Google Scholar, 1mg.com, PvPI, Trustpilot) that had never contributed a single corpus point, and described every source as collected daily while Reddit had been blocked since 2026-05-28. Table 1 is now derived from the corpus and served live at the public API; a source that has contributed nothing cannot appear in it.
 4. **Source-type labels were assigned by scraper keyword, not by publisher (2026-08-14, fully landed 2026-08-17).** 44 points typed clinical or regulatory and branded "WHO/…", "MHRA/…", "EMA/…" or "Cochrane/…" were Google News search-result blurbs whose actual publisher was never the named agency; a further 78 points branded "Quora —" or "Twitter/X —" were likewise Google News results, not platform collections. All were relabelled by their real mechanism in both the repository and production stores. None carried an eligible rate, so no published estimate changed.
+
+---
+
+## Corrections in v5.7 (7 September 2026)
+
+v5.7 corrects four statements in §2.6 and §6.2 that described the self-evolving pipeline's safeguards. No computation changes, no figure in any table of this document changes, and the corpus snapshot (2026-08-31) is not re-taken.
+
+10. **§2.6 and §6.2 described safeguards the code does not contain (2026-09-07).** Through v5.6 (and v4.0 before it) this document stated that (a) "the previous 30 versions are retained for rollback"; (b) "canonical patient profiles are evaluated against each new config and compared to the prior day's output; any prediction shift greater than 20 percentage points triggers a regression alert"; (c) base rates are checked to lie in [0.01, 0.70] before a change is committed; and (d) each run adjusts "~180-240 tests". Read against `analyze-model.mjs` (mirrored under `methodology/` in the source repository): (a) the only 30 in the code caps the in-config changelog at its last 30 entries; the outgoing configuration is archived, one file per version, whenever a change is applied or flagged, with no retention cap — and because no run has ever applied or flagged a change, that archive directory has never been created. (b) No canonical-profile evaluation, prior-day comparison or regression alert exists anywhere in the pipeline; the sentence described an intended safeguard as an implemented one, and it is withdrawn. (c) The only value bound enforced is on odds ratios ([0.1, 5.0]); no base-rate bound is checked. (d) The number of tests per run is the number of (dimension × effect) cells with enough eligible evidence in both comparison groups; the daily logs from 2026-04-13 to 2026-09-07 record between 0 and 15 tests per run, never more (5 on 2026-09-07). §6.2's "most auto-applies to date have been zero" is sharpened the same way: every logged run has auto-applied 0 and flagged 0 changes. The decision table's thresholds, the odds-ratio bound and the 5-per-day cap were each confirmed against the code and are unchanged. Found by the operator's scheduled red-team pass reading §2.6 against the code path, one day after the same pass had corrected the "30 versions" wording in the source repository's README and left the regression-testing clause standing in the same sentence.
 
 ---
 
@@ -197,7 +205,7 @@ When k = 1 (only one study contributes), τ² is set to 0 and the interval refle
 
 A daily analysis pipeline computes empirical odds ratios for every (parameter dimension × effect) combination using the current data pool. For each test, the pipeline computes the log-odds ratio between the two groups (e.g., female vs male; age ≥ 65 vs < 65), its standard error via the delta method, and a two-sided z-test p-value.
 
-Because this creates a large multiple-testing problem (~180-240 tests per run), the full p-value battery is adjusted using the Benjamini-Hochberg procedure to control the false discovery rate at q = 0.05.
+Because this creates a multiple-testing problem, the full p-value battery from each run is adjusted using the Benjamini-Hochberg procedure to control the false discovery rate at q = 0.05. The number of tests per run is the number of (dimension × effect) cells with enough eligible evidence in both comparison groups; the daily logs from 2026-04-13 to 2026-09-07 record between 0 and 15 tests per run (5 on 2026-09-07). Through v5.6 this sentence said "~180-240 tests per run", a figure no logged run has approached — see "Corrections in v5.7".
 
 Decision logic (using FDR-adjusted p-values):
 
@@ -207,9 +215,9 @@ Decision logic (using FDR-adjusted p-values):
 | N ≥ 20, p_adj ≤ 0.05, |Δ OR| > 0.3 | Flag for human review |
 | New parameter: N ≥ 30, significant for ≥ 2 effects | Promote from "candidate" to "active"; flag for review |
 
-Additional sanity checks are applied before any change is committed: odds ratios must lie in [0.1, 5.0], base rates must lie in [0.01, 0.70], and the total number of auto-applied changes per day is capped at 5.
+Additional sanity checks are applied before any change is committed: odds ratios must lie in [0.1, 5.0] (an auto-applied change that would leave a modifier outside that range is reverted), and the total number of auto-applied changes per day is capped at 5, with the excess moved to the review queue. (Through v5.6 this sentence also said that base rates must lie in [0.01, 0.70]; no such check exists in the code and the claim is withdrawn — see "Corrections in v5.7".)
 
-Every model configuration is versioned; the previous 30 versions are retained for rollback. Canonical patient profiles are evaluated against each new config and compared to the prior day's output; any prediction shift greater than 20 percentage points triggers a regression alert.
+Every applied or flagged change increments the configuration version and archives the outgoing configuration, one file per version, before the new one is written; the archive has no retention cap, and the in-config changelog keeps its last 30 entries. No run has yet applied or flagged a change, so no archived version exists. (Through v5.6 this paragraph said "the previous 30 versions are retained for rollback" and that canonical patient profiles are re-evaluated against each new configuration with a regression alert on any shift above 20 percentage points; the first misread the changelog cap as a retention count, and no such regression test exists in the pipeline — both are withdrawn, see "Corrections in v5.7".)
 
 ### 2.7 Implementation
 
@@ -293,7 +301,7 @@ Blended estimates have a single point of failure: the weighting scheme. If the w
 
 ### 6.2 The self-evolving loop
 
-The FDR-corrected parameter update pipeline provides a principled mechanism for model evolution without requiring a human in the loop for every update. Safeguards (threshold gating, auto-apply caps, versioned rollback, canonical profile regression testing) are designed to make this safe. In practice, most auto-applies to date have been zero because the data volume is insufficient to meet the thresholds; this is a feature, not a bug.
+The FDR-corrected parameter update pipeline provides a principled mechanism for model evolution without requiring a human in the loop for every update. Safeguards (threshold gating, the odds-ratio bound, the daily auto-apply cap, a human review queue for larger changes, and per-version archiving of the outgoing configuration) are designed to make this safe. In practice every run to date has auto-applied and flagged zero changes, because the data volume is insufficient to meet the thresholds (0 to 15 tests per run in the daily logs from 2026-04-13 to 2026-09-07); this is a feature, not a bug. (Through v5.6 this list also named "canonical profile regression testing", which does not exist in the pipeline — see "Corrections in v5.7".)
 
 ### 6.3 Roadmap
 

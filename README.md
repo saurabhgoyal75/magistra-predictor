@@ -3,7 +3,7 @@
 **A dual-track framework for GLP-1 side effect estimation, separating clinical evidence from real-world patient reports.**
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Methodology](https://img.shields.io/badge/methodology-v5.6-green.svg)](https://magistra.health/en/methodology)
+[![Methodology](https://img.shields.io/badge/methodology-v5.7-green.svg)](https://magistra.health/en/methodology)
 [![Live](https://img.shields.io/badge/live-magistra.health-purple.svg)](https://magistra.health/en/predictor)
 
 This repository contains the statistical methodology and model configuration behind [Magistra Health](https://magistra.health) — a platform that estimates GLP-1 medication side effect risk using two parallel data tracks. The predictor and the public API are free and need no authentication; bulk export of the dataset is not (see the licence link below). The clinical corpus is updated daily by an automated pipeline. The community corpus is not continuously updated: Reddit blocked our collector on 2026-05-28, freezing the 684 Reddit reports that make up most of it, and the remaining platform (Drugs.com, 71 reports) was last collected 2026-08-12. Any reporting-frequency figure is therefore a fixed historical number and should be cited with its date.
@@ -130,8 +130,8 @@ Earlier versions computed a "gap" by subtracting `realWorld.percentage` (now `re
 4. **Weighted estimation.** Weighted mean rate with sample-size and extraction-confidence weights, Winsorized at 5th/95th percentiles when n > 10.
 5. **Log-odds modifiers.** Sex, age ≥ 65, GI history, diabetes, first month of treatment applied on log-odds scale, with cumulative shift capped at ±2.5 (~12× max cumulative OR) to prevent implausible stacking.
 6. **Random-effects confidence intervals.** Simplified, unweighted τ² estimation (inspired by DerSimonian-Laird, not inverse-variance weighted), delta-method SE on log-odds scale.
-7. **Self-evolving config.** Daily pipeline computes empirical odds ratios for every parameter × effect combination, applies Benjamini-Hochberg FDR correction across ~180-240 tests, auto-applies only conservative changes (n ≥ 30, p_adj ≤ 0.01, |Δ OR| ≤ 0.3).
-8. **Safety.** Versioned rollback (the outgoing config is archived by version number whenever a change is applied or flagged for review; the in-config changelog keeps its last 30 entries — an earlier wording here said "30 prior configs retained", which was that changelog cap misread as a retention count), canonical profile regression testing, human review queue for larger changes, max 5 auto-applied changes per day.
+7. **Self-evolving config.** Daily pipeline computes empirical odds ratios for every parameter × effect combination, applies Benjamini-Hochberg FDR correction across every test the run produces (0–15 per run in the daily logs from 2026-04-13 to 2026-09-07; an earlier wording here said "~180-240 tests"), auto-applies only conservative changes (n ≥ 30, p_adj ≤ 0.01, |Δ OR| ≤ 0.3).
+8. **Safety.** Versioned rollback (the outgoing config is archived by version number whenever a change is applied or flagged for review — none has been yet, so no archived version exists; the in-config changelog keeps its last 30 entries — an earlier wording here said "30 prior configs retained", which was that changelog cap misread as a retention count), a human review queue for larger changes, an odds-ratio bound of [0.1, 5.0] on every modifier, and max 5 auto-applied changes per day. An earlier wording here also listed "canonical profile regression testing"; no such test exists in the pipeline and it is withdrawn (preprint v5.7, "Corrections in v5.7").
 
 Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodology.md) or at https://magistra.health/en/methodology.
 
@@ -171,7 +171,7 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
-**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.6). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.7). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
 
 No DOI is registered for this work — the methodology is self-published at the URL above, not deposited with a repository that mints permanent identifiers. (A DOI, 10.5281/zenodo.19559749, was asserted on this page and elsewhere until 2026-08-18; it was never actually registered and has been withdrawn.)
 
@@ -181,7 +181,7 @@ No DOI is registered for this work — the methodology is self-published at the 
   title        = {A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports},
   year         = {2026},
   publisher    = {Magistra, Phlo Systems BV},
-  version      = {5.6},
+  version      = {5.7},
   url          = {https://magistra.health/en/methodology}
 }
 ```

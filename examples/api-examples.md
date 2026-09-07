@@ -77,7 +77,8 @@ curl https://magistra.health/api/data?q=effects
 Returns an array of all effects, each with: the static literature `clinicalRates`
 (low/medium/high dose); `corpusClinical`, the pooled corpus-derived clinical
 estimate with the stated-rate and distinct-source counts behind it (absent for
-the 5 effects with no eligible clinical rate); `reportingFrequency`, the share of
+the 3 effects with no eligible clinical rate — pancreatitis, fatigue and
+emotional blunting as of 2026-09-07); `reportingFrequency`, the share of
 distinct community reports mentioning the effect, with its denominator and
 platforms; plus onset, duration, and management tips. There is no
 "user-reported rate" field — averaging self-reported percentages from forum
@@ -103,8 +104,9 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 ```
 
 Returns an array of effects, each with TWO parallel figures. Abridged live
-response to exactly the request above, captured from production on 2026-08-31
-(`matchedRecords`, `sources` and the Dutch `*Nl` strings elided for length;
+response to exactly the request above, captured from production on 2026-09-07
+(results abridged to the `nausea` entry; `matchedRecords`, `sources`, the
+per-effect prose fields and the Dutch `*Nl` strings elided for length;
 field names updated 2026-09-01 to add the canonical `sourceDiversity` and
 `reportingFrequency` — see the note below the block — no value changed;
 `attribution` renamed to `matchedRecords` 2026-09-04 — same shape, still
@@ -119,15 +121,21 @@ alongside it until 2026-09-07 and is no longer returned):
       "effectName": "Nausea",
       "severity": "mild",
       "clinical": {
-        "percentage": 33,
-        "confidenceInterval": { "low": 7, "high": 77 },
+        "percentage": 30,
+        "confidenceInterval": { "low": 7, "high": 71 },
         "confidenceLevel": "high",
         "sourceDiversity": "high",
-        "dataPointCount": 70,
-        "ratePointCount": 25,
-        "rateSourceCount": 17,
-        "basis": "25 stated rates from 17 distinct sources (of 70 clinical/regulatory records). Base rate 32% → 33% after profile adjustment (sex:female ×1.25, hasDiabetes ×0.85) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
-        "isFallback": false
+        "dataPointCount": 84,
+        "ratePointCount": 33,
+        "rateSourceCount": 23,
+        "basis": "33 stated rates from 23 distinct sources (of 84 clinical/regulatory records). Base rate 29% → 30% after profile adjustment (sex:female ×1.25, hasDiabetes ×0.85) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
+        "isFallback": false,
+        "unadjustedPercentage": 29,
+        "pooledPercentage": 29,
+        "modifiersApplied": [
+          { "id": "sex:female", "oddsRatio": 1.25, "provenance": "seed-2026-04-12" },
+          { "id": "hasDiabetes", "oddsRatio": 0.85, "provenance": "seed-2026-04-12" }
+        ]
       },
       "realWorld": {
         "percentage": 38,
@@ -254,34 +262,35 @@ for (const r of data.results.slice(0, 5)) {
 }
 ```
 
-Actual output, run against production on 2026-08-31 (top 5 effects only):
+Actual output, run against production on 2026-09-07 (top 5 effects only):
 
 ```
 Two tracks for: semaglutide 1mg
-───────────────────────────────────────────────────────────────────────────
+──────────────────────────────────────────────────────────────────────────────
 Nausea
-  clinical incidence      60%  (25 rates / 17 sources)
+  clinical incidence      56%  (33 rates / 23 sources)
   community reporting     38%  (10 of 26 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate)
-Constipation
-  clinical incidence      47%  (8 rates / 5 sources)
-  community reporting     27%  (7 of 26 distinct community reports (reddit.com, drugs.com) mention constipation — reporting frequency, not a measured incidence rate)
-Acid reflux (GERD)
-  clinical incidence      45%  (1 rates / 1 sources)
-  community reporting     23%  (6 of 26 distinct community reports (reddit.com, drugs.com) mention acid reflux (gerd) — reporting frequency, not a measured incidence rate)
 Vomiting
-  clinical incidence      22%  (6 rates / 6 sources)
+  clinical incidence      21%  (11 rates / 11 sources)
   community reporting     42%  (11 of 26 distinct community reports (reddit.com, drugs.com) mention vomiting — reporting frequency, not a measured incidence rate)
 Diarrhoea
-  clinical incidence      34%  (5 rates / 4 sources)
+  clinical incidence      28%  (14 rates / 11 sources)
   community reporting     35%  (9 of 26 distinct community reports (reddit.com, drugs.com) mention diarrhoea — reporting frequency, not a measured incidence rate)
+Reduced appetite
+  clinical incidence      30%  (14 rates / 11 sources)
+  community reporting     31%  (8 of 26 distinct community reports (reddit.com, drugs.com) mention reduced appetite — reporting frequency, not a measured incidence rate)
+Constipation
+  clinical incidence      18%  (11 rates / 7 sources)
+  community reporting     27%  (7 of 26 distinct community reports (reddit.com, drugs.com) mention constipation — reporting frequency, not a measured incidence rate)
 ```
 
 > **These are model outputs for one profile, not measurements — do not quote
 > them as population rates.** The clinical figure is a corpus-pooled base rate
 > adjusted by profile modifiers whose odds ratios are hand-coded, not derived
 > from this corpus; several effects rest on a handful of distinct sources
-> (acid reflux: a single source — its 45% is one study's figure, not a pooled
-> estimate). The community figure is a reporting frequency over just 26
+> (on 2026-09-07 gallstones, hair loss and dizziness each rest on one distinct
+> source and abdominal pain, acid reflux and injection-site reaction on two — a
+> single-source figure is one study's number, not a pooled estimate). The community figure is a reporting frequency over just 26
 > distinct reports — on 2026-08-29 that denominator fell from 185 after we found
 > a failed subreddit restriction had let 159 off-topic posts into the pool
 > (see "Corrections in v5.1" in the preprint) — so a single report moves any
