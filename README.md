@@ -94,21 +94,21 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 
 Each effect in the predictor response has two fields: `clinical` and `reportingFrequency`. The clinical field reports an incidence estimate; the reporting-frequency field reports a reporting frequency (share of distinct community reports mentioning the effect) — a different quantity, not a second incidence estimate. (`reportingFrequency` is the canonical name since 2026-09-01; the old name `realWorld` is kept as a deprecated alias with the same value for one release — read the `basis` string, not the field name.) Within each track, `sourceDiversity` is the canonical name for the distinct-source-count bucket; `confidenceLevel` is kept as a deprecated same-value alias.
 
-Live `clinical` block for nausea from the request above, captured from production on 2026-09-04 (re-captured after the v5.4 interval correction — see "Corrections in v5.4" in the preprint; the interval is now anchored at the pooled rate, so it differs from the 2026-08-31 capture; `pooledPercentage` was added 2026-08-28 and the base counts have grown with the corpus):
+Live `clinical` block for nausea from the request above, captured from production on 2026-09-07 (`basisNl`, the Dutch twin of `basis`, omitted for brevity; re-captured after the v5.4 interval correction — see "Corrections in v5.4" in the preprint; the interval is now anchored at the pooled rate, so it differs from the 2026-08-31 capture; `pooledPercentage` was added 2026-08-28 and the base counts have grown with the corpus):
 
 ```json
 {
-  "percentage": 59,
-  "confidenceInterval": { "low": 18, "high": 91 },
+  "percentage": 56,
+  "confidenceInterval": { "low": 18, "high": 88 },
   "confidenceLevel": "high",
   "sourceDiversity": "high",
-  "dataPointCount": 76,
-  "ratePointCount": 27,
-  "rateSourceCount": 19,
-  "basis": "27 stated rates from 19 distinct sources (of 76 clinical/regulatory records). Base rate 32% → 59% after profile adjustment (sex:female ×1.25, isFirstMonth ×2.5) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
+  "dataPointCount": 84,
+  "ratePointCount": 33,
+  "rateSourceCount": 23,
+  "basis": "33 stated rates from 23 distinct sources (of 84 clinical/regulatory records). Base rate 29% → 56% after profile adjustment (sex:female ×1.25, isFirstMonth ×2.5) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
   "isFallback": false,
-  "unadjustedPercentage": 32,
-  "pooledPercentage": 32,
+  "unadjustedPercentage": 29,
+  "pooledPercentage": 29,
   "modifiersApplied": [
     { "id": "sex:female", "oddsRatio": 1.25, "provenance": "seed-2026-04-12" },
     { "id": "isFirstMonth", "oddsRatio": 2.5, "provenance": "seed-2026-04-12" }
@@ -116,7 +116,7 @@ Live `clinical` block for nausea from the request above, captured from productio
 }
 ```
 
-Note what the response discloses about itself: the pre-adjustment rate (32%), every modifier applied to reach 59%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (18–91) is not a formatting artefact — it is the honest spread of 27 rates from 19 sources, and since v5.4 its width is fixed by that evidence: the same profile-free interval (7–76 around the 32% pooled rate) is carried, on the log-odds scale, to wherever the modifiers move the centre.
+Note what the response discloses about itself: the pre-adjustment rate (29%), every modifier applied to reach 56%, and the fact that those odds ratios are hand-coded rather than fitted from this corpus. A wide interval (18–88) is not a formatting artefact — it is the honest spread of 33 rates from 23 sources, and since v5.4 its width is fixed by that evidence: the same profile-free interval (7–70 around the 29% pooled rate) is carried, on the log-odds scale, to wherever the modifiers move the centre.
 
 Earlier versions computed a "gap" by subtracting `realWorld.percentage` (now `reportingFrequency.percentage`) from `clinical.percentage` and flagged large gaps as evidence of clinical under-measurement. That computation is withdrawn as of v5.0 — see "Why this repo exists" above.
 
@@ -131,7 +131,7 @@ Earlier versions computed a "gap" by subtracting `realWorld.percentage` (now `re
 5. **Log-odds modifiers.** Sex, age ≥ 65, GI history, diabetes, first month of treatment applied on log-odds scale, with cumulative shift capped at ±2.5 (~12× max cumulative OR) to prevent implausible stacking.
 6. **Random-effects confidence intervals.** Simplified, unweighted τ² estimation (inspired by DerSimonian-Laird, not inverse-variance weighted), delta-method SE on log-odds scale.
 7. **Self-evolving config.** Daily pipeline computes empirical odds ratios for every parameter × effect combination, applies Benjamini-Hochberg FDR correction across ~180-240 tests, auto-applies only conservative changes (n ≥ 30, p_adj ≤ 0.01, |Δ OR| ≤ 0.3).
-8. **Safety.** Versioned rollback (30 prior configs retained), canonical profile regression testing, human review queue for larger changes, max 5 auto-applied changes per day.
+8. **Safety.** Versioned rollback (the outgoing config is archived by version number whenever a change is applied; the in-config changelog keeps its last 30 entries — an earlier wording here said "30 prior configs retained", which was that changelog cap misread as a retention count), canonical profile regression testing, human review queue for larger changes, max 5 auto-applied changes per day.
 
 Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodology.md) or at https://magistra.health/en/methodology.
 
