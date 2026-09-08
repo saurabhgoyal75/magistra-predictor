@@ -52,7 +52,18 @@ export type Study = {
   source: string;
   url: string;
   rate: number;
+  /**
+   * POOLING WEIGHT, not a published figure: `studyWeight` floors an unstated
+   * sample size at 1 so a source with no n still carries minimal weight.
+   * Never publish this — a reader of a `sampleSize` field beside a rate reads
+   * it as the study's own n, and `1` asserts a one-participant study that
+   * nobody reported (2026-09-08: three rows from one review paper were live
+   * on /api/data's nausea, diarrhea and vomiting source lists as n=1).
+   * Publish `statedSampleSize` instead.
+   */
   sampleSize: number;
+  /** The sample size the source itself states; null when it states none. */
+  statedSampleSize: number | null;
   confidence: string;
   pointCount: number;
 };
@@ -242,6 +253,7 @@ export function buildRateBase(points: RatePoint[]): RateBase {
         url: p.sourceUrl,
         rate: p.extractedRate as number,
         sampleSize: studyWeight(p),
+        statedSampleSize: p.extractedSampleSize ?? null,
         confidence: p.extractionConfidence,
         pointCount: 1,
       });
@@ -251,6 +263,9 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     existing.rate = (existing.rate * existing.pointCount + (p.extractedRate as number)) / (existing.pointCount + 1);
     existing.pointCount++;
     existing.sampleSize = Math.max(existing.sampleSize, studyWeight(p));
+    if (p.extractedSampleSize) {
+      existing.statedSampleSize = Math.max(existing.statedSampleSize ?? 0, p.extractedSampleSize);
+    }
     if ((CONFIDENCE_RANK[p.extractionConfidence] ?? 0) > (CONFIDENCE_RANK[existing.confidence] ?? 0)) {
       existing.confidence = p.extractionConfidence;
     }

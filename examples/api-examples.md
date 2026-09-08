@@ -105,8 +105,8 @@ curl -X POST https://magistra.health/api/predictor/calculate \
 ```
 
 Returns an array of effects, each with TWO parallel figures. Abridged live
-response to exactly the request above, captured from production on 2026-09-07
-(results abridged to the `nausea` entry; `matchedRecords`, `sources`, the
+response to exactly the request above, captured from production on 2026-09-08
+after the withdrawal in "Corrections in v5.9" (results abridged to the `nausea` entry; `matchedRecords`, `sources`, the
 per-effect prose fields and the Dutch `*Nl` strings elided for length;
 field names updated 2026-09-01 to add the canonical `sourceDiversity` and
 `reportingFrequency` — see the note below the block — no value changed;
@@ -122,17 +122,17 @@ alongside it until 2026-09-07 and is no longer returned):
       "effectName": "Nausea",
       "severity": "mild",
       "clinical": {
-        "percentage": 30,
-        "confidenceInterval": { "low": 7, "high": 71 },
+        "percentage": 22,
+        "confidenceInterval": { "low": 3, "high": 71 },
         "confidenceLevel": "high",
         "sourceDiversity": "high",
-        "dataPointCount": 84,
-        "ratePointCount": 33,
+        "dataPointCount": 88,
+        "ratePointCount": 32,
         "rateSourceCount": 23,
-        "basis": "33 stated rates from 23 distinct sources (of 84 clinical/regulatory records). Base rate 29% → 30% after profile adjustment (sex:female ×1.25, hasDiabetes ×0.85) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
+        "basis": "32 stated rates from 23 distinct sources (of 88 clinical/regulatory records). Base rate 21% → 22% after profile adjustment (sex:female ×1.25, hasDiabetes ×0.85) — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus",
         "isFallback": false,
-        "unadjustedPercentage": 29,
-        "pooledPercentage": 29,
+        "unadjustedPercentage": 21,
+        "pooledPercentage": 21,
         "modifiersApplied": [
           { "id": "sex:female", "oddsRatio": 1.25, "provenance": "seed-2026-04-12" },
           { "id": "hasDiabetes", "oddsRatio": 0.85, "provenance": "seed-2026-04-12" }
@@ -263,25 +263,26 @@ for (const r of data.results.slice(0, 5)) {
 }
 ```
 
-Actual output, run against production on 2026-09-07 (top 5 effects only):
+Actual output, run against production on 2026-09-08, after the withdrawal in
+"Corrections in v5.9" (top 5 effects only):
 
 ```
 Two tracks for: semaglutide 1mg
 ──────────────────────────────────────────────────────────────────────────────
 Nausea
-  clinical incidence      56%  (33 rates / 23 sources)
+  clinical incidence      45%  (32 rates / 23 sources)
   community reporting     38%  (10 of 26 distinct community reports (reddit.com, drugs.com) mention nausea — reporting frequency, not a measured incidence rate)
 Vomiting
-  clinical incidence      21%  (11 rates / 11 sources)
+  clinical incidence      23%  (14 rates / 12 sources)
   community reporting     42%  (11 of 26 distinct community reports (reddit.com, drugs.com) mention vomiting — reporting frequency, not a measured incidence rate)
 Diarrhoea
-  clinical incidence      28%  (14 rates / 11 sources)
+  clinical incidence      28%  (16 rates / 12 sources)
   community reporting     35%  (9 of 26 distinct community reports (reddit.com, drugs.com) mention diarrhoea — reporting frequency, not a measured incidence rate)
 Reduced appetite
-  clinical incidence      30%  (14 rates / 11 sources)
+  clinical incidence      20%  (14 rates / 11 sources)
   community reporting     31%  (8 of 26 distinct community reports (reddit.com, drugs.com) mention reduced appetite — reporting frequency, not a measured incidence rate)
 Constipation
-  clinical incidence      18%  (11 rates / 7 sources)
+  clinical incidence      19%  (13 rates / 9 sources)
   community reporting     27%  (7 of 26 distinct community reports (reddit.com, drugs.com) mention constipation — reporting frequency, not a measured incidence rate)
 ```
 
@@ -289,8 +290,8 @@ Constipation
 > them as population rates.** The clinical figure is a corpus-pooled base rate
 > adjusted by profile modifiers whose odds ratios are hand-coded, not derived
 > from this corpus; several effects rest on a handful of distinct sources
-> (on 2026-09-07 gallstones, hair loss and dizziness each rest on one distinct
-> source and abdominal pain, acid reflux and injection-site reaction on two — a
+> (on 2026-09-08 gallstones and hair loss each rest on one distinct
+> source and fatigue, abdominal pain and injection-site reaction on two — a
 > single-source figure is one study's number, not a pooled estimate). The community figure is a reporting frequency over just 26
 > distinct reports — on 2026-08-29 that denominator fell from 185 after we found
 > a failed subreddit restriction had let 159 off-topic posts into the pool
