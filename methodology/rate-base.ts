@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-08-31.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-08.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -257,6 +257,32 @@ export function buildRateBase(points: RatePoint[]): RateBase {
   }
 
   return { studies: [...bySource.values()], eligiblePoints, ratePoints, excluded, reportShares };
+}
+
+/**
+ * Study identity for the SITE-WIDE distinct-source count (added 2026-09-08).
+ * `buildRateBase` keys studies on sourceName, which is right per effect (one
+ * entry per source per effect) but overcounts when summed across effects:
+ * registry rows are named "ClinicalTrials.gov results — <trial> — <MedDRA
+ * term>", so one trial posting seven tracked terms counted as seven
+ * "sources" (92 by name vs 32 by study URL on 2026-09-08, while every
+ * per-effect count was identical under both keys). The source URL with its
+ * fragment stripped — the NCT page, the PMID page — is the entity a reader
+ * means by "a distinct study".
+ */
+export function studyKey(url: string): string {
+  try {
+    const u = new URL(url);
+    u.hash = "";
+    return u.toString().replace(/\/$/, "").toLowerCase();
+  } catch {
+    return (url || "").trim().toLowerCase();
+  }
+}
+
+/** Distinct studies (by `studyKey`) among a rate base's collapsed entries. */
+export function distinctStudies(studies: { url: string }[]): number {
+  return new Set(studies.map((s) => studyKey(s.url))).size;
 }
 
 /** Confidence follows the number of DISTINCT sources, never the corpus size. */

@@ -5,8 +5,8 @@ Phlo Systems BV
 saurabh@magistra.health
 https://magistra.health
 
-**Version:** 5.7
-**Date:** 7 September 2026 (v5.6: 5 September 2026 — see "Corrections in v5.7"; v5.5: 4 September 2026 — see "Corrections in v5.6"; v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
+**Version:** 5.8
+**Date:** 8 September 2026 (v5.7: 7 September 2026 — see "Corrections in v5.8"; v5.6: 5 September 2026 — see "Corrections in v5.7"; v5.5: 4 September 2026 — see "Corrections in v5.6"; v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
 **Classification:** q-bio.QM (Quantitative Methods) / stat.AP (Applications)
 
 ---
@@ -27,6 +27,14 @@ v4.0 (April 2026) described a method and a data-source inventory that internal a
 2. **The real-world track is a reporting frequency, not an incidence (2026-08-14).** v4.0's "real-world" track averaged self-reported percentages scraped from individual community posts; a personal anecdote has no rate. The track now reports the share of distinct community reports (deduplicated by source URL) that mention each effect, with Wilson intervals. Consequently v4.0's clinical-vs-real-world "convergence" framing — including the illustrative gap table and the abstract's hair-loss example — is withdrawn as a category error: a mention frequency and an incidence rate are not comparable quantities (see §3.3).
 3. **The published data-source inventory was wrong (2026-08-17).** v4.0's Table 1 listed sources (Google Scholar, 1mg.com, PvPI, Trustpilot) that had never contributed a single corpus point, and described every source as collected daily while Reddit had been blocked since 2026-05-28. Table 1 is now derived from the corpus and served live at the public API; a source that has contributed nothing cannot appear in it.
 4. **Source-type labels were assigned by scraper keyword, not by publisher (2026-08-14, fully landed 2026-08-17).** 44 points typed clinical or regulatory and branded "WHO/…", "MHRA/…", "EMA/…" or "Cochrane/…" were Google News search-result blurbs whose actual publisher was never the named agency; a further 78 points branded "Quora —" or "Twitter/X —" were likewise Google News results, not platform collections. All were relabelled by their real mechanism in both the repository and production stores. None carried an eligible rate, so no published estimate changed.
+
+---
+
+## Corrections in v5.8 (8 September 2026)
+
+v5.8 corrects the definition behind one aggregate figure. No computation of any published estimate changes, no per-effect figure in any table of this document changes, and the corpus snapshot (2026-08-31) is not re-taken.
+
+11. **The site-wide "distinct sources" count was keyed by source name, which embeds the effect for registry rows (2026-09-08).** `buildRateBase` collapses eligible rates to one entry per `sourceName`. Per effect that is the intended unit — one trial's three dose arms for alopecia are one source — and every per-effect count in Table 2 and in the live API is identical under a name key and a study-URL key (checked for all 15 effects on 2026-09-08). But registry rows are named "ClinicalTrials.gov results — *trial* — *MedDRA term*", so summed across effects a trial posting seven tracked terms counted as seven sources: on 2026-09-08 the live aggregate read 156 eligible rates from 92 "distinct sources" while the same rates came from 32 distinct studies by URL (the NCT or PMID page, fragment stripped). The site-wide figure is now keyed by study URL in the API (`evidentiaryBase.distinctSources`; the name-keyed count is exposed alongside as `sourceEntries`), on the methodology page and in every regenerated artifact; per-effect counts are unchanged. The figures this document quotes for its 2026-08-31 snapshot are restated under both keys in §4: 74 eligible rates were 51 source entries and **23 distinct studies**. The overcount was noticed when three newly fetched trials moved the count from 73 to 92 in one morning, an increase no plausible number of studies could produce.
 
 ---
 
@@ -261,7 +269,7 @@ v4.0 hypothesized that the clinical and real-world tracks would converge for mai
 
 We enumerate limitations explicitly because hidden weaknesses are more dangerous than visible ones.
 
-**Data volume.** Although the corpus held 1,482 collected points as of 2026-08-31, the eligible base behind published estimates is far smaller (74 rates from 51 distinct sources across all effects, same date), and below the threshold for robust inference on most effects — 5 of the 15 published effects have no eligible clinical rate at all, and four more (abdominal pain, acid reflux, gallstones, injection-site reaction) rest on a single distinct source each. Model health is classified as "degraded" until the eligible base per effect grows substantially. Reported confidence intervals should be interpreted accordingly.
+**Data volume.** Although the corpus held 1,482 collected points as of 2026-08-31, the eligible base behind published estimates is far smaller (74 rates across all effects, same date — 51 source entries counted one per source per effect, which is 23 distinct studies by URL; see "Corrections in v5.8"), and below the threshold for robust inference on most effects — 5 of the 15 published effects have no eligible clinical rate at all, and four more (abdominal pain, acid reflux, gallstones, injection-site reaction) rest on a single distinct source each. Model health is classified as "degraded" until the eligible base per effect grows substantially. Reported confidence intervals should be interpreted accordingly.
 
 **Frozen community denominator, and it is small.** Reddit — the largest community source — has served the collector an HTTP 403 block page since 2026-05-28. After the 2026-08-29 topical screen ("Corrections in v5.1") the community corpus is **26 distinct reports**, and it is frozen at that size until a different access route exists. Every published reporting frequency is therefore a fixed number cited with its as-of date, not a continuously updated statistic, and at n=26 a single report moves any share by 3.8 percentage points — the Wilson intervals are correspondingly wide and should be read, not just the point estimate. This is the framework's weakest published quantity.
 

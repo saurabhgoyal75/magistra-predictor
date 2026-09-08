@@ -77,8 +77,9 @@ curl https://magistra.health/api/data?q=effects
 Returns an array of all effects, each with: the static literature `clinicalRates`
 (low/medium/high dose); `corpusClinical`, the pooled corpus-derived clinical
 estimate with the stated-rate and distinct-source counts behind it (absent for
-the 3 effects with no eligible clinical rate — pancreatitis, fatigue and
-emotional blunting as of 2026-09-07); `reportingFrequency`, the share of
+the 2 effects with no eligible clinical rate — pancreatitis and emotional
+blunting as of 2026-09-08; fatigue gained its first eligible rates that day
+from the STEP 1 and STEP 2 registry results); `reportingFrequency`, the share of
 distinct community reports mentioning the effect, with its denominator and
 platforms; plus onset, duration, and management tips. There is no
 "user-reported rate" field — averaging self-reported percentages from forum

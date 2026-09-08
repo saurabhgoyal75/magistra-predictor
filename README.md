@@ -3,7 +3,7 @@
 **A dual-track framework for GLP-1 side effect estimation, separating clinical evidence from real-world patient reports.**
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Methodology](https://img.shields.io/badge/methodology-v5.7-green.svg)](https://magistra.health/en/methodology)
+[![Methodology](https://img.shields.io/badge/methodology-v5.8-green.svg)](https://magistra.health/en/methodology)
 [![Live](https://img.shields.io/badge/live-magistra.health-purple.svg)](https://magistra.health/en/predictor)
 
 This repository contains the statistical methodology and model configuration behind [Magistra Health](https://magistra.health) — a platform that estimates GLP-1 medication side effect risk using two parallel data tracks. The predictor and the public API are free and need no authentication; bulk export of the dataset is not (see the licence link below). The clinical corpus is updated daily by an automated pipeline. The community corpus is not continuously updated: Reddit blocked our collector on 2026-05-28, freezing the 684 Reddit reports that make up most of it, and the remaining platform (Drugs.com, 71 reports) was last collected 2026-08-12. Any reporting-frequency figure is therefore a fixed historical number and should be cited with its date.
@@ -139,7 +139,7 @@ Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodolo
 
 ## Limitations (honest list)
 
-- **Data volume:** the eligible base behind published rates is far smaller than the raw corpus — **128 rates from 73 distinct sources** as of 2026-09-07 (2026-09-06: 93/59; 2026-08-31: 74/51; v5.1–v5.2 stated 145/67; 72 April-2026 seed rows wearing real trial URLs were found inside the base on 2026-08-31 and excluded — see "Corrections in v5.3" in the methodology paper). The 2026-09-06→07 jump is a pinned fetch of SURMOUNT-1's posted results, which gave hair loss and dizziness their first eligible clinical rates. The per-effect breakdown is the CC BY 4.0 table in [`data/`](data/), a dated snapshot of the same API response, regenerated 2026-09-07. Of the 15 published effects, 2 (pancreatitis, fatigue) fall back to a labelled literature figure for lack of an eligible clinical rate, and 1 (emotional blunting) publishes no clinical figure at all; three more (dizziness, gallstones, hair loss) rest on a single distinct source each. The API always serves the current numbers.
+- **Data volume:** the eligible base behind published rates is far smaller than the raw corpus — **156 rates from 32 distinct studies** as of 2026-09-08, counted by study URL (a registry record or paper counts once however many effects it reports). Until 2026-09-08 the site-wide figure counted one entry per source *per effect* — 92 for the same 156 rates, and the earlier readings 2026-09-07: 128/73, 2026-09-06: 93/59, 2026-08-31: 74/51 (23 distinct studies by URL) were all on that key; v5.1–v5.2 stated 145/67 before 72 April-2026 seed rows wearing real trial URLs were found inside the base on 2026-08-31 and excluded — see "Corrections in v5.3" and "Corrections in v5.8" in the methodology paper. Per-effect counts are unaffected by the re-key (identical under both keys for all 15 effects). The per-effect breakdown is the CC BY 4.0 table in [`data/`](data/), a dated snapshot of the same API response, regenerated 2026-09-08. Of the 15 published effects, 1 (pancreatitis) falls back to a labelled literature figure for lack of an eligible clinical rate, and 1 (emotional blunting) publishes no clinical figure at all; two more (gallstones, hair loss) rest on a single distinct source each. The API always serves the current numbers.
 - **Community denominator:** the reporting-frequency track rests on **26 distinct community reports** (screened 2026-08-29, see the correction above). It is frozen at that size — Reddit has served the collector an HTTP 403 block page since 2026-05-28 — so every reporting frequency is a fixed historical number, not a live one, and must be cited with its date.
 - **Demographic bias:** Both tracks over-represent female, white, and Western populations; ethnicity and BMI are tracked but lack sufficient data for inclusion.
 - **Hand-coded modifiers:** Initial values from published literature; empirical replacement in progress as data accumulates.
@@ -171,7 +171,7 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
-**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.7). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.8). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
 
 No DOI is registered for this work — the methodology is self-published at the URL above, not deposited with a repository that mints permanent identifiers. (A DOI, 10.5281/zenodo.19559749, was asserted on this page and elsewhere until 2026-08-18; it was never actually registered and has been withdrawn.)
 
@@ -181,7 +181,7 @@ No DOI is registered for this work — the methodology is self-published at the 
   title        = {A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports},
   year         = {2026},
   publisher    = {Magistra, Phlo Systems BV},
-  version      = {5.7},
+  version      = {5.8},
   url          = {https://magistra.health/en/methodology}
 }
 ```
