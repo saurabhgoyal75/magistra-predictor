@@ -1,6 +1,6 @@
 {
-  "version": 2,
-  "generatedAt": "2026-04-12T16:52:40.840Z",
+  "version": 3,
+  "generatedAt": "2026-09-08T12:22:00.000Z",
   "inputParameters": [
     {
       "id": "molecule",
@@ -579,12 +579,12 @@
         "nl": "De meeste gebruikers omschrijven het als 'hanteerbaar' — zoals milde wagenziekte. Meestal het ergst in week 1-2, daarna neemt het af."
       },
       "onsetDays": {
-        "en": "1-3 days after starting or dose increase",
-        "nl": "1-3 dagen na starten of dosisverhoging"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Typically resolves within 2-4 weeks",
-        "nl": "Verdwijnt meestal binnen 2-4 weken"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
         "en": "Eat smaller meals, avoid fatty food, stay hydrated. Take the injection in the evening so you sleep through the worst.",
@@ -610,7 +610,7 @@
         }
       ],
       "dataPointCount": 36,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "diarrhea",
@@ -676,12 +676,12 @@
         "nl": "Gebruikers melden dat het sterk varieert — sommigen ervaren het dagelijks gedurende 1-2 weken, anderen merken het nauwelijks. Ernst lijkt dosisafhankelijk."
       },
       "onsetDays": {
-        "en": "2-5 days after starting",
-        "nl": "2-5 dagen na starten"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Usually resolves within 1-3 weeks",
-        "nl": "Verdwijnt meestal binnen 1-3 weken"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
         "en": "Stay very hydrated. Avoid dairy and high-fibre foods initially. If it persists beyond 3 weeks, contact your doctor.",
@@ -707,7 +707,7 @@
         }
       ],
       "dataPointCount": 28,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "constipation",
@@ -769,16 +769,16 @@
       },
       "userReportedRate": 0.22,
       "userReportedSeverity": {
-        "en": "Often underreported in studies. Forum users mention it more than clinical data suggests. Fibre supplements help most people.",
-        "nl": "Wordt vaak ondergerapporteerd in studies. Forumgebruikers melden het vaker dan klinische data suggereren. Vezelsupplementen helpen de meeste mensen."
+        "en": "Community reports describe it starting within the first 1-2 weeks and easing with diet changes. Fibre supplements, extra water, and gentle movement are the most frequently mentioned fixes; a few describe it persisting through the full titration period.",
+        "nl": "Gebruikersmeldingen beschrijven dat het begint binnen de eerste 1-2 weken en afneemt met voedingsaanpassingen. Vezelsupplementen, extra water en lichte beweging worden het vaakst genoemd als oplossing; enkelen melden dat het aanhoudt tijdens de hele titratieperiode."
       },
       "onsetDays": {
-        "en": "3-7 days after starting",
-        "nl": "3-7 dagen na starten"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "May persist during treatment — manageable with diet",
-        "nl": "Kan aanhouden tijdens behandeling — beheersbaar met voeding"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
         "en": "Increase water intake, add fibre-rich foods gradually, consider a mild fibre supplement. Regular movement helps.",
@@ -804,7 +804,7 @@
         }
       ],
       "dataPointCount": 20,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "reduced_appetite",
@@ -866,16 +866,16 @@
       },
       "userReportedRate": 0.55,
       "userReportedSeverity": {
-        "en": "Users frequently describe this as 'food noise disappearing' — the constant thinking about food stops. Most view this as positive, not a side effect.",
-        "nl": "Gebruikers beschrijven dit vaak als 'voedselruis die verdwijnt' — het constante denken aan eten stopt. De meesten zien dit als positief, niet als bijwerking."
+        "en": "Users frequently describe this as 'food noise disappearing' — the constant thinking about food stops.",
+        "nl": "Gebruikers beschrijven dit vaak als 'voedselruis die verdwijnt' — het constante denken aan eten stopt."
       },
       "onsetDays": {
-        "en": "3-7 days after starting",
-        "nl": "3-7 dagen na starten"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Continues throughout treatment (this is the goal)",
-        "nl": "Houdt aan gedurende de behandeling (dit is het doel)"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
         "en": "Make sure you still eat enough protein (at least 60g/day) to prevent muscle loss. Set reminders to eat if needed.",
@@ -901,7 +901,7 @@
         }
       ],
       "dataPointCount": 22,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "headache",
@@ -967,12 +967,12 @@
         "nl": "Over het algemeen mild en van korte duur. Gebruikers melden dat het het vaakst voorkomt in de eerste week en bij dosisverhoging."
       },
       "onsetDays": {
-        "en": "1-3 days after starting",
-        "nl": "1-3 dagen na starten"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Typically resolves within 1 week",
-        "nl": "Verdwijnt meestal binnen 1 week"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
         "en": "Stay hydrated — dehydration from reduced food intake is often the real cause. Regular paracetamol is safe to take.",
@@ -997,7 +997,7 @@
         }
       ],
       "dataPointCount": 15,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "pancreatitis",
@@ -1006,8 +1006,8 @@
         "nl": "Alvleesklierontsteking (zeldzaam)"
       },
       "description": {
-        "en": "Inflammation of the pancreas. RARE but SERIOUS. Stop treatment immediately and seek medical help.",
-        "nl": "Ontsteking van de alvleesklier. ZELDZAAM maar SERIEUS. Stop direct met behandeling en zoek medische hulp."
+        "en": "Inflammation of the pancreas. RARE but SERIOUS. Symptoms: severe stomach pain radiating to the back, nausea, vomiting. Stop treatment immediately and seek medical help.",
+        "nl": "Ontsteking van de alvleesklier. ZELDZAAM maar SERIEUS. Symptomen: ernstige buikpijn die naar de rug uitstraalt, misselijkheid, braken. Stop direct met behandeling en zoek medische hulp."
       },
       "severity": "severe",
       "baseRates": {
@@ -1059,8 +1059,8 @@
       },
       "userReportedRate": 0.01,
       "userReportedSeverity": {
-        "en": "Very rarely reported by users, but when it occurs it is described as extremely painful.",
-        "nl": "Zeer zelden gerapporteerd door gebruikers, maar als het voorkomt wordt het omschreven als extreem pijnlijk."
+        "en": "Very rarely reported by users, but when it occurs it is described as extremely painful and unmistakable.",
+        "nl": "Zeer zelden gerapporteerd door gebruikers, maar als het voorkomt wordt het omschreven als extreem pijnlijk en onmiskenbaar."
       },
       "onsetDays": {
         "en": "Can occur at any point during treatment",
@@ -1071,8 +1071,8 @@
         "nl": "Vereist onmiddellijke medische hulp"
       },
       "managementTip": {
-        "en": "If you experience severe stomach pain radiating to your back: STOP the medication immediately and go to the emergency room.",
-        "nl": "Bij ernstige buikpijn die naar je rug uitstraalt: STOP direct met de medicatie en ga naar de spoedeisende hulp."
+        "en": "If you experience severe stomach pain radiating to your back: STOP the medication immediately and go to the emergency room. Do not wait.",
+        "nl": "Bij ernstige buikpijn die naar je rug uitstraalt: STOP direct met de medicatie en ga naar de spoedeisende hulp. Wacht niet af."
       },
       "sources": [
         {
@@ -1093,7 +1093,7 @@
         }
       ],
       "dataPointCount": 5,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "fatigue",
@@ -1155,16 +1155,16 @@
       },
       "userReportedRate": 0.25,
       "userReportedSeverity": {
-        "en": "Commonly reported but often linked to eating significantly less. Users say it improves after 2-3 weeks.",
-        "nl": "Vaak gemeld maar meestal gekoppeld aan significant minder eten. Gebruikers zeggen dat het verbetert na 2-3 weken."
+        "en": "Commonly reported but often linked to eating significantly less. Your body is adjusting to lower caloric intake. Users say it improves after 2-3 weeks.",
+        "nl": "Vaak gemeld maar meestal gekoppeld aan significant minder eten. Je lichaam past zich aan aan een lagere calorie-inname. Gebruikers zeggen dat het verbetert na 2-3 weken."
       },
       "onsetDays": {
-        "en": "5-10 days after starting",
-        "nl": "5-10 dagen na starten"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Usually improves within 2-3 weeks",
-        "nl": "Verbetert meestal binnen 2-3 weken"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
         "en": "Ensure you're eating enough protein and calories — fatigue often means you're eating too little. Light exercise actually helps more than resting.",
@@ -1190,7 +1190,7 @@
         }
       ],
       "dataPointCount": 18,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "vomiting",
@@ -1199,8 +1199,8 @@
         "nl": "Braken"
       },
       "description": {
-        "en": "Actively throwing up, beyond just feeling nauseous. Usually dose-dependent.",
-        "nl": "Daadwerkelijk overgeven, voorbij alleen misselijkheid. Meestal dosisafhankelijk."
+        "en": "Actively throwing up, beyond just feeling nauseous. More severe than nausea and often co-occurs with it. Usually dose-dependent.",
+        "nl": "Daadwerkelijk overgeven, voorbij alleen misselijkheid. Ernstiger dan misselijkheid en komt vaak samen voor. Meestal dosisafhankelijk."
       },
       "severity": "moderate",
       "baseRates": {
@@ -1252,20 +1252,20 @@
       },
       "userReportedRate": 0.2,
       "userReportedSeverity": {
-        "en": "Users who experience vomiting say it typically happens after eating too much or too quickly.",
-        "nl": "Gebruikers die braken ervaren zeggen dat het meestal gebeurt na te veel of te snel eten."
+        "en": "Users who experience vomiting say it typically happens after eating too much or too quickly. Most learn to adapt portion sizes within 1-2 weeks.",
+        "nl": "Gebruikers die braken ervaren zeggen dat het meestal gebeurt na te veel of te snel eten. De meesten leren binnen 1-2 weken hun porties aan te passen."
       },
       "onsetDays": {
-        "en": "1-3 days after starting or dose increase",
-        "nl": "1-3 dagen na starten of dosisverhoging"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Usually resolves within 2-4 weeks as the body adjusts",
-        "nl": "Verdwijnt meestal binnen 2-4 weken naarmate het lichaam went"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Eat very small portions slowly. Avoid lying down after eating. If persistent, contact your doctor — dose reduction may help.",
-        "nl": "Eet heel kleine porties en eet langzaam. Ga niet liggen na het eten. Bij aanhoudend braken, neem contact op met je arts."
+        "en": "Eat very small portions slowly. Avoid lying down after eating. If vomiting is persistent or severe, contact your doctor — dose reduction may help.",
+        "nl": "Eet heel kleine porties en eet langzaam. Ga niet liggen na het eten. Bij aanhoudend of hevig braken, neem contact op met je arts — dosisverlaging kan helpen."
       },
       "sources": [
         {
@@ -1287,7 +1287,7 @@
         }
       ],
       "dataPointCount": 12,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "abdominal_pain",
@@ -1296,8 +1296,8 @@
         "nl": "Buikpijn"
       },
       "description": {
-        "en": "Upper abdominal pain or discomfort. Usually mild but persistent pain should be investigated.",
-        "nl": "Pijn of ongemak in de bovenbuik. Meestal mild, maar aanhoudende pijn moet worden onderzocht."
+        "en": "Upper abdominal pain or discomfort. Usually mild but persistent pain should be investigated to rule out more serious conditions like pancreatitis.",
+        "nl": "Pijn of ongemak in de bovenbuik. Meestal mild, maar aanhoudende pijn moet worden onderzocht om ernstigere aandoeningen zoals alvleesklierontsteking uit te sluiten."
       },
       "severity": "moderate",
       "baseRates": {
@@ -1349,20 +1349,20 @@
       },
       "userReportedRate": 0.18,
       "userReportedSeverity": {
-        "en": "Users describe it as a dull ache in the upper stomach, especially after eating.",
-        "nl": "Gebruikers omschrijven het als een doffe pijn in de bovenbuik, vooral na het eten."
+        "en": "Users describe it as a dull ache in the upper stomach, especially after eating. Most say it's tolerable but uncomfortable. Important: sharp or severe pain is different — seek help immediately.",
+        "nl": "Gebruikers omschrijven het als een doffe pijn in de bovenbuik, vooral na het eten. De meesten zeggen dat het verdraagbaar maar oncomfortabel is. Belangrijk: scherpe of ernstige pijn is anders — zoek direct hulp."
       },
       "onsetDays": {
-        "en": "2-7 days after starting or dose increase",
-        "nl": "2-7 dagen na starten of dosisverhoging"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Typically improves within 2-3 weeks",
-        "nl": "Verbetert meestal binnen 2-3 weken"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Eat smaller meals, avoid spicy and fatty foods. If pain is severe or radiates to the back, see a doctor immediately.",
-        "nl": "Eet kleinere maaltijden, vermijd pittig en vet eten. Bij ernstige pijn die naar de rug uitstraalt, ga direct naar de arts."
+        "en": "Eat smaller meals, avoid spicy and fatty foods. If pain is severe, persistent, or radiates to the back, see a doctor immediately to rule out pancreatitis.",
+        "nl": "Eet kleinere maaltijden, vermijd pittig en vet eten. Bij ernstige, aanhoudende pijn of pijn die naar de rug uitstraalt, ga direct naar de arts om alvleesklierontsteking uit te sluiten."
       },
       "sources": [
         {
@@ -1384,7 +1384,7 @@
         }
       ],
       "dataPointCount": 10,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "acid_reflux",
@@ -1393,8 +1393,8 @@
         "nl": "Zuurbranden (reflux)"
       },
       "description": {
-        "en": "Stomach acid flowing back into the oesophagus, causing heartburn. GLP-1 drugs slow gastric emptying, which can worsen pre-existing reflux.",
-        "nl": "Maagzuur dat terugstroomt naar de slokdarm. GLP-1-medicijnen vertragen de maagontlediging, wat bestaande reflux kan verergeren."
+        "en": "Stomach acid flowing back into the oesophagus, causing heartburn or a burning sensation. GLP-1 drugs slow gastric emptying, which can worsen pre-existing reflux.",
+        "nl": "Maagzuur dat terugstroomt naar de slokdarm, met brandend maagzuur als gevolg. GLP-1-medicijnen vertragen de maagontlediging, wat bestaande reflux kan verergeren."
       },
       "severity": "mild",
       "baseRates": {
@@ -1446,20 +1446,20 @@
       },
       "userReportedRate": 0.2,
       "userReportedSeverity": {
-        "en": "Users with pre-existing GERD report significant worsening. Sleeping elevated and avoiding late meals helps.",
-        "nl": "Gebruikers met bestaand reflux melden duidelijke verergering. Slapen met het hoofd omhoog en late maaltijden vermijden helpt."
+        "en": "Users with pre-existing GERD report significant worsening. Those without prior reflux may develop it temporarily. Sleeping with the head elevated and avoiding late meals helps.",
+        "nl": "Gebruikers met bestaand reflux melden duidelijke verergering. Mensen zonder eerdere reflux kunnen het tijdelijk ontwikkelen. Slapen met het hoofd omhoog en late maaltijden vermijden helpt."
       },
       "onsetDays": {
-        "en": "3-7 days after starting",
-        "nl": "3-7 dagen na starten"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "May persist during treatment — manageable with lifestyle changes",
-        "nl": "Kan aanhouden tijdens behandeling — beheersbaar met leefstijlaanpassingen"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Avoid eating 3+ hours before bed. Sleep with your head slightly elevated. An OTC antacid can help.",
-        "nl": "Eet niet binnen 3 uur voor het slapen. Slaap met je hoofd licht verhoogd. Een vrij verkrijgbaar antacidum kan helpen."
+        "en": "Avoid eating 3+ hours before bed. Sleep with your head slightly elevated. Avoid trigger foods (coffee, alcohol, citrus, tomatoes). An OTC antacid can help.",
+        "nl": "Eet niet binnen 3 uur voor het slapen. Slaap met je hoofd licht verhoogd. Vermijd triggerende voedingsmiddelen (koffie, alcohol, citrus, tomaten). Een vrij verkrijgbaar antacidum kan helpen."
       },
       "sources": [
         {
@@ -1480,7 +1480,7 @@
         }
       ],
       "dataPointCount": 8,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "gallstones",
@@ -1489,8 +1489,8 @@
         "nl": "Galstenen (cholelithiasis)"
       },
       "description": {
-        "en": "Formation of gallstones. Associated with rapid weight loss. Requires medical attention.",
-        "nl": "Vorming van galstenen. Geassocieerd met snel gewichtsverlies. Vereist medische aandacht."
+        "en": "Formation of gallstones in the gallbladder. Associated with rapid weight loss rather than the drug directly. Symptoms include sharp pain in the upper right abdomen after eating fatty foods. Requires medical attention.",
+        "nl": "Vorming van galstenen in de galblaas. Geassocieerd met snel gewichtsverlies, niet direct met het medicijn. Symptomen zijn scherpe pijn rechtsboven in de buik na het eten van vet voedsel. Vereist medische aandacht."
       },
       "severity": "severe",
       "baseRates": {
@@ -1542,20 +1542,20 @@
       },
       "userReportedRate": 0.04,
       "userReportedSeverity": {
-        "en": "Users who develop gallstones describe sudden, intense upper right abdominal pain. Some required surgery.",
-        "nl": "Gebruikers die galstenen ontwikkelen beschrijven plotselinge, intense pijn rechtsboven in de buik. Sommigen hadden een operatie nodig."
+        "en": "Users who develop gallstones typically describe it as sudden, intense pain in the upper right abdomen — often after a fatty meal. Some required surgery (cholecystectomy). More common in those losing weight rapidly.",
+        "nl": "Gebruikers die galstenen ontwikkelen beschrijven het als plotselinge, intense pijn rechtsboven in de buik — vaak na een vetrijke maaltijd. Sommigen hadden een operatie nodig. Komt vaker voor bij snel gewichtsverlies."
       },
       "onsetDays": {
-        "en": "Typically months into treatment, correlates with significant weight loss",
-        "nl": "Meestal maanden na start behandeling, correleert met significant gewichtsverlies"
+        "en": "Not stated by any clinical source on file. The FDA Wegovy prescribing information (section 5.3, DailyMed, revised 06/2026) states that substantial or rapid weight loss can increase the risk of cholelithiasis, but that gallbladder disease may also occur in the absence of substantial or rapid weight loss.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand. De FDA-bijsluiter van Wegovy (sectie 5.3, DailyMed, herzien 06/2026) stelt dat aanzienlijk of snel gewichtsverlies het risico op galstenen kan verhogen, maar dat galblaasaandoeningen ook kunnen optreden zonder aanzienlijk of snel gewichtsverlies."
       },
       "durationWeeks": {
-        "en": "Requires medical intervention — does not resolve on its own",
-        "nl": "Vereist medisch ingrijpen — gaat niet vanzelf over"
+        "en": "Not stated by any clinical source on file. The FDA Wegovy prescribing information (section 5.3) states that if cholelithiasis is suspected, gallbladder studies and appropriate clinical follow-up are indicated.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand. De FDA-bijsluiter van Wegovy (sectie 5.3) stelt dat bij een vermoeden van galstenen galblaasonderzoek en passende klinische opvolging aangewezen zijn."
       },
       "managementTip": {
-        "en": "If you experience sudden sharp pain in the upper right abdomen, seek medical attention. Losing weight gradually reduces risk.",
-        "nl": "Bij plotselinge scherpe pijn rechtsboven in de buik, zoek medische hulp. Geleidelijk afvallen vermindert het risico."
+        "en": "If you experience sudden sharp pain in the upper right abdomen, especially after eating, seek medical attention. Losing weight gradually (not too fast) reduces risk. Stay hydrated.",
+        "nl": "Bij plotselinge scherpe pijn rechtsboven in de buik, vooral na het eten, zoek medische hulp. Geleidelijk afvallen (niet te snel) vermindert het risico. Blijf goed gehydrateerd."
       },
       "sources": [
         {
@@ -1576,7 +1576,7 @@
         }
       ],
       "dataPointCount": 6,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "hair_loss",
@@ -1585,8 +1585,8 @@
         "nl": "Haarverlies (dunner wordend haar)"
       },
       "description": {
-        "en": "Noticeable hair thinning or shedding. Likely caused by nutritional deficiency from rapid weight loss, not a direct drug effect.",
-        "nl": "Merkbaar dunner wordend haar of haaruitval. Waarschijnlijk veroorzaakt door voedingstekorten door snel gewichtsverlies."
+        "en": "Noticeable hair thinning or shedding. The FDA Wegovy prescribing information (revised 06/2026) describes hair-loss adverse reactions as associated with weight reduction and reported more often in women (4% vs 0.9% of men on 2.4 mg); it attributes no further mechanism.",
+        "nl": "Merkbaar dunner wordend haar of haaruitval. De Amerikaanse Wegovy-bijsluiter (herzien 06/2026) beschrijft haarverlies als samenhangend met gewichtsafname en vaker gemeld bij vrouwen (4% tegenover 0,9% van de mannen op 2,4 mg); een verder mechanisme wordt niet genoemd."
       },
       "severity": "mild",
       "baseRates": {
@@ -1638,20 +1638,20 @@
       },
       "userReportedRate": 0.15,
       "userReportedSeverity": {
-        "en": "Much more commonly reported by users than clinical trials suggest. Usually stabilises once weight loss plateaus.",
-        "nl": "Veel vaker gerapporteerd door gebruikers dan klinische studies suggereren. Stabiliseert meestal als het gewichtsverlies een plateau bereikt."
+        "en": "Community reports describe increased shedding starting around month 3-4, often alongside rapid weight loss. Most who report it say it stabilises once weight loss plateaus.",
+        "nl": "Gebruikersmeldingen beschrijven meer haaruitval vanaf maand 3-4, vaak samen met snel gewichtsverlies. De meeste melders zeggen dat het stabiliseert zodra het gewichtsverlies een plateau bereikt."
       },
       "onsetDays": {
-        "en": "Typically 2-4 months after starting (delayed onset)",
-        "nl": "Meestal 2-4 maanden na starten (vertraagd begin)"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Usually temporary — 3-6 months, then regrowth",
-        "nl": "Meestal tijdelijk — 3-6 maanden, daarna hergroei"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Ensure adequate protein intake (60-80g/day), consider a multivitamin with biotin, iron, and zinc.",
-        "nl": "Zorg voor voldoende eiwitinname (60-80g/dag), overweeg een multivitamine met biotine, ijzer en zink."
+        "en": "Ensure adequate protein intake (60-80g/day), consider a multivitamin with biotin, iron, and zinc. Hair loss from weight loss is almost always temporary.",
+        "nl": "Zorg voor voldoende eiwitinname (60-80g/dag), overweeg een multivitamine met biotine, ijzer en zink. Haarverlies door gewichtsverlies is bijna altijd tijdelijk."
       },
       "sources": [
         {
@@ -1673,7 +1673,7 @@
         }
       ],
       "dataPointCount": 14,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "injection_site_reaction",
@@ -1682,8 +1682,8 @@
         "nl": "Reactie op de injectieplaats"
       },
       "description": {
-        "en": "Redness, itching, swelling, or mild pain at the injection site. Usually mild and self-resolving.",
-        "nl": "Roodheid, jeuk, zwelling of milde pijn op de injectieplaats. Meestal mild en verdwijnt vanzelf."
+        "en": "Redness, itching, swelling, or mild pain at the injection site. Usually mild and self-resolving within a few days.",
+        "nl": "Roodheid, jeuk, zwelling of milde pijn op de injectieplaats. Meestal mild en verdwijnt vanzelf binnen een paar dagen."
       },
       "severity": "mild",
       "baseRates": {
@@ -1735,20 +1735,20 @@
       },
       "userReportedRate": 0.12,
       "userReportedSeverity": {
-        "en": "Generally mild. Small red bumps or slight itching that resolve within 1-2 days. Rotating sites helps.",
-        "nl": "Over het algemeen mild. Kleine rode bultjes of lichte jeuk die binnen 1-2 dagen verdwijnt. Wisselen van injectieplaats helpt."
+        "en": "Generally mild. Users describe small red bumps or slight itching that resolve within 1-2 days. Rotating injection sites helps. Rarely a reason to stop treatment.",
+        "nl": "Over het algemeen mild. Gebruikers beschrijven kleine rode bultjes of lichte jeuk die binnen 1-2 dagen verdwijnt. Wisselen van injectieplaats helpt. Zelden een reden om te stoppen."
       },
       "onsetDays": {
-        "en": "Within hours of injection",
-        "nl": "Binnen enkele uren na injectie"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Resolves within 1-3 days per injection",
-        "nl": "Verdwijnt binnen 1-3 dagen per injectie"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Rotate injection sites (thigh, abdomen, upper arm). Let the pen reach room temperature before injecting.",
-        "nl": "Wissel van injectieplaats (bovenbeen, buik, bovenarm). Laat de pen op kamertemperatuur komen voor het injecteren."
+        "en": "Rotate injection sites (thigh, abdomen, upper arm). Let the pen reach room temperature before injecting. Apply a cold compress if the area is irritated.",
+        "nl": "Wissel van injectieplaats (bovenbeen, buik, bovenarm). Laat de pen op kamertemperatuur komen voor het injecteren. Gebruik een koud kompres als de plek geïrriteerd is."
       },
       "sources": [
         {
@@ -1770,7 +1770,7 @@
         }
       ],
       "dataPointCount": 11,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "dizziness",
@@ -1779,8 +1779,8 @@
         "nl": "Duizeligheid"
       },
       "description": {
-        "en": "Feeling lightheaded or unsteady. Often related to dehydration or blood pressure changes.",
-        "nl": "Je licht in het hoofd of onvast voelen. Vaak gerelateerd aan uitdroging of bloeddrukveranderingen."
+        "en": "Feeling lightheaded or unsteady. Often related to dehydration from reduced fluid/food intake or blood pressure changes during weight loss.",
+        "nl": "Je licht in het hoofd of onvast voelen. Vaak gerelateerd aan uitdroging door verminderde vocht-/voedselinname of bloeddrukveranderingen tijdens gewichtsverlies."
       },
       "severity": "mild",
       "baseRates": {
@@ -1832,20 +1832,20 @@
       },
       "userReportedRate": 0.14,
       "userReportedSeverity": {
-        "en": "Users link it mostly to not drinking enough water or standing up too quickly.",
-        "nl": "Gebruikers koppelen het vooral aan te weinig water drinken of te snel opstaan."
+        "en": "Users link it mostly to not drinking enough water or standing up too quickly. People on blood pressure medication should monitor closely as weight loss can lower BP further.",
+        "nl": "Gebruikers koppelen het vooral aan te weinig water drinken of te snel opstaan. Mensen die bloeddrukmedicatie gebruiken moeten goed monitoren, omdat gewichtsverlies de bloeddruk verder kan verlagen."
       },
       "onsetDays": {
-        "en": "2-7 days after starting or dose increase",
-        "nl": "2-7 dagen na starten of dosisverhoging"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "Usually resolves within 1-2 weeks with adequate hydration",
-        "nl": "Verdwijnt meestal binnen 1-2 weken bij voldoende hydratatie"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Drink at least 2 litres of water daily. Stand up slowly. If on BP medication, ask your doctor about adjusting dose.",
-        "nl": "Drink minstens 2 liter water per dag. Sta langzaam op. Als je bloeddrukmedicatie gebruikt, vraag je arts over dosisaanpassing."
+        "en": "Drink at least 2 litres of water daily. Stand up slowly. If you take blood pressure medication, ask your doctor to check if your dose needs adjusting.",
+        "nl": "Drink minstens 2 liter water per dag. Sta langzaam op. Als je bloeddrukmedicatie gebruikt, vraag je arts of de dosis moet worden aangepast."
       },
       "sources": [
         {
@@ -1866,7 +1866,7 @@
         }
       ],
       "dataPointCount": 8,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     },
     {
       "id": "emotional_blunting",
@@ -1875,8 +1875,8 @@
         "nl": "Emotionele afvlakking / Verminderd plezier"
       },
       "description": {
-        "en": "Reduced emotional response to pleasurable experiences. GLP-1 receptors in the brain's reward pathway may dampen dopamine-mediated pleasure. Not well-studied in clinical trials.",
-        "nl": "Verminderde emotionele reactie op plezierige ervaringen. GLP-1-receptoren in het beloningscentrum van de hersenen kunnen dopamine-gemedieerd plezier dempen. Nog weinig onderzocht."
+        "en": "Reduced emotional response to pleasurable experiences — not just food, but also hobbies, social activities, or intimacy. GLP-1 receptors in the brain's reward pathway may dampen dopamine-mediated pleasure. Not well-studied in clinical trials.",
+        "nl": "Verminderde emotionele reactie op plezierige ervaringen — niet alleen eten, maar ook hobby's, sociale activiteiten of intimiteit. GLP-1-receptoren in het beloningscentrum van de hersenen kunnen dopamine-gemedieerd plezier dempen. Nog weinig onderzocht in klinische studies."
       },
       "severity": "moderate",
       "baseRates": {
@@ -1928,20 +1928,20 @@
       },
       "userReportedRate": 0.12,
       "userReportedSeverity": {
-        "en": "Widely discussed on Reddit but absent from clinical trial data. Users describe feeling 'flat'.",
-        "nl": "Veel besproken op Reddit maar afwezig in klinische studiedata. Gebruikers beschrijven zich 'vlak' voelen."
+        "en": "Users describe feeling 'flat' — reduced joy not just from food, but from music, socialising, and other activities that used to feel rewarding. Onset is usually gradual over several weeks. Some find it distressing enough to raise with their prescriber; others describe it as a neutral, even welcome, side effect alongside reduced food noise.",
+        "nl": "Gebruikers beschrijven zich 'vlak' voelen — minder plezier, niet alleen van eten, maar ook van muziek, sociaal contact en andere activiteiten die voorheen bevredigend voelden. Het begin is meestal geleidelijk over enkele weken. Sommigen vinden het verontrustend genoeg om het met hun voorschrijver te bespreken; anderen omschrijven het als een neutrale, zelfs welkome, bijwerking naast minder voedselruis."
       },
       "onsetDays": {
-        "en": "Gradual onset over 2-6 weeks",
-        "nl": "Geleidelijk begin over 2-6 weken"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "durationWeeks": {
-        "en": "May persist during treatment — unclear if it resolves",
-        "nl": "Kan aanhouden tijdens behandeling — onduidelijk of het verdwijnt"
+        "en": "Not stated by any clinical source on file.",
+        "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "If you notice reduced enjoyment of activities you used to love, talk to your doctor. Maintaining social connections and exercise can help.",
-        "nl": "Als je minder plezier ervaart in activiteiten waar je van hield, bespreek dit met je arts. Sociale contacten en beweging kunnen helpen."
+        "en": "If you notice reduced enjoyment of activities you used to love, talk to your doctor. Maintaining social connections and physical exercise can help. This effect is still being studied.",
+        "nl": "Als je minder plezier ervaart in activiteiten waar je van hield, bespreek dit met je arts. Sociale contacten onderhouden en lichaamsbeweging kunnen helpen. Dit effect wordt nog onderzocht."
       },
       "sources": [
         {
@@ -1961,7 +1961,7 @@
         }
       ],
       "dataPointCount": 10,
-      "lastUpdated": "2026-04-12"
+      "lastUpdated": "2026-09-08"
     }
   ],
   "candidateParameters": [
@@ -2017,6 +2017,17 @@
         {
           "type": "base_rates_resourced",
           "reason": "fatigue (2026-09-03, decision literature-fallback-clinical-rate-2026-08-28) and pancreatitis, hair_loss, dizziness (2026-09-04, decision pancreatitis-hairloss-dizziness-triple-derivation-2026-09-03): the April-2026 triples had no recorded derivation and their cited sources state no such figures; each is now one FDA Wegovy label (revised 06/2026) figure at every tier with table/arm/N in the source name. pancreatitis's 0.002 is the label's 0.2 acute-pancreatitis cases per 100 patient-years (section 5), an exposure-time rate, not a proportion. emotional_blunting's baseRates in this file are WITHDRAWN (2026-09-03, no rate-stating source) and are not served anywhere; left in place only to keep the shape. Note: nothing in the live engine reads baseRates from this file — src/lib/side-effects-data.ts is canonical and this file is a published snapshot (mirrored to the public methodology repo), aligned here so the two copies agree."
+        }
+      ],
+      "autoApplied": false
+    },
+    {
+      "version": 3,
+      "date": "2026-09-08",
+      "changes": [
+        {
+          "type": "narrative_fields_aligned",
+          "reason": "decision unsourced-narrative-fields-side-effects-data-2026-09-06, founder-approved 2026-09-08: onsetDays/durationWeeks for 14 effects now read 'Not stated by any clinical source on file' (pancreatitis's two fields state no timeframe and stand; gallstones' two quote FDA Wegovy label §5.3), and two userReportedSeverity value-judgement/remedy clauses (reduced_appetite, hair_loss) were removed. Same edit found this snapshot's description/userReportedSeverity/managementTip fields had drifted from src/lib/side-effects-data.ts on 30 fields since 2026-04-12 (hair_loss still carried the withdrawn 'much more commonly reported by users than clinical trials suggest'); every narrative field is now byte-identical to the source. No baseRate, modifier or threshold changed."
         }
       ],
       "autoApplied": false

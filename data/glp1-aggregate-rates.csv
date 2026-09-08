@@ -1,16 +1,16 @@
 effect,effectName,severity,clinicalPooledRatePct,clinicalCiLowPct,clinicalCiHighPct,clinicalStatedRates,clinicalDistinctSources,clinicalSourceDiversity,communityReportingFrequencyPct,communityMentions,communityTotalReports
-nausea,Nausea,mild,29.4,7,68,39,26,very_high,38.5,10,26
-diarrhea,Diarrhoea,mild,15.8,2,63,19,12,high,34.6,9,26
-constipation,Constipation,mild,10,1,64,14,9,moderate,26.9,7,26
-reduced_appetite,Reduced appetite,mild,17.9,2,74,14,11,high,30.8,8,26
-headache,Headache,mild,10.4,4,27,7,4,moderate,3.8,1,26
+nausea,Nausea,mild,29.8,8,68,41,28,very_high,38.5,10,26
+diarrhea,Diarrhoea,mild,16.9,3,59,22,14,high,34.6,9,26
+constipation,Constipation,mild,10.9,1,61,18,11,high,26.9,7,26
+reduced_appetite,Reduced appetite,mild,17.6,2,72,17,13,high,30.8,8,26
+headache,Headache,mild,12.4,6,26,10,6,moderate,3.8,1,26
 pancreatitis,Pancreatitis (rare),severe,,,,0,0,,0,0,26
-fatigue,Fatigue / Low energy,mild,,,,0,0,,11.5,3,26
-vomiting,Vomiting,moderate,7.8,0,93,14,12,high,42.3,11,26
+fatigue,Fatigue / Low energy,mild,7.5,5,11,3,2,low,11.5,3,26
+vomiting,Vomiting,moderate,8.7,0,85,19,15,high,42.3,11,26
 abdominal_pain,Abdominal pain,moderate,6,1,25,4,2,low,15.4,4,26
-acid_reflux,Acid reflux (GERD),mild,7.8,0,95,4,2,low,23.1,6,26
+acid_reflux,Acid reflux (GERD),mild,5.3,0,93,7,4,moderate,23.1,6,26
 gallstones,Gallstones (cholelithiasis),severe,3.5,3,4,1,1,very_low,11.5,3,26
 hair_loss,Hair loss (thinning),mild,5.4,4,7,3,1,very_low,3.8,1,26
 injection_site_reaction,Injection site reaction,mild,4.5,0,53,4,2,low,23.1,6,26
-dizziness,Dizziness,mild,5,4,7,3,1,very_low,7.7,2,26
+dizziness,Dizziness,mild,6.9,5,10,5,3,low,7.7,2,26
 emotional_blunting,Emotional blunting / Reduced pleasure,moderate,,,,0,0,,0,0,26
