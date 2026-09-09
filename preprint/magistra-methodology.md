@@ -32,66 +32,13 @@ v4.0 (April 2026) described a method and a data-source inventory that internal a
 
 ## Corrections in v5.13 (9 September 2026)
 
-v5.13 withdraws one rate that its own source never states, and corrects two
-places in §2 where this document describes the safeguard against that class as
-weaker than the system actually implements. The site-wide eligible base falls
-by one rate and one distinct study. **No per-effect published estimate
-changes** — the withdrawn row is a community (`user_report`) point, and the
-clinical track excludes it by source type — and the 2026-08-31 snapshot this
-document reports throughout is unaffected.
+v5.13 withdraws one rate that its own source never states, and corrects two places in §2 where this document describes the safeguard against that class as weaker than the system actually implements. The site-wide eligible base falls by one rate and one distinct study. **No per-effect published estimate changes** — the withdrawn row is a community (`user_report`) point, and the clinical track excludes it by source type — and the 2026-08-31 snapshot this document reports throughout is unaffected.
 
-19. **The rate-eligibility screen was built entirely from clinical failure
-    modes and never asserted that a COMMUNITY row's rate is stated in its own
-    text (2026-09-09).** Every rule in §2.3's eligibility list targets a way a
-    *clinical* rate can be unsupported: a non-citable origin, an April-2026
-    seed row, a search-aggregator result page, a FAERS spontaneous-report
-    share. None asks the question this framework's own community-track rule
-    makes central — a personal anecdote has no rate. One row slipped through
-    on exactly that gap: a single Reddit post
-    (`reddit.com/r/Retatrutide/comments/1tpun08/`), scraped 2026-05-28, whose
-    text reads "I never actually vomit, but it's like a constant sickness
-    feeling" and contains no percentage, no fraction and no cohort anywhere,
-    was stored as `extractedRate: 0`, `extractedSampleSize: 1`,
-    `extractionConfidence: high`, and counted toward the published site-wide
-    eligible base for 104 days. Found not by a data audit but by an arithmetic
-    check: the audit script's site-wide headline (215) did not equal the sum
-    of the per-effect clinical column it prints beneath that headline (214),
-    and the one-rate gap was this row. The rate is withdrawn in both stores
-    (`extractedRate → null`, `rateWithheld: "rate_not_stated_by_source"`, the
-    same reason string as "Corrections in v5.9", so the row stays in the
-    corpus and remains auditable). The class was measured before and after,
-    corpus-wide and in both stores, by re-running the eligibility screen and
-    asking of every eligible non-clinical row whether its own excerpt states
-    its rate verbatim: exactly **one** row matched, and zero remain.
-    Published figures: the site-wide eligible base falls from **215 rates /
-    32 distinct studies to 214 rates / 31 distinct studies** (441 → 440
-    rate-bearing points; 102 → 101 source entries), verified against
-    production before and after. Vomiting's clinical figures — the effect the
-    row was filed under — are unchanged at 9.7%, 25 rates from 15 sources,
-    because a `user_report` row never entered that pool.
+19. **The rate-eligibility screen was built entirely from clinical failure modes and never asserted that a COMMUNITY row's rate is stated in its own text (2026-09-09).** Every rule in §2.3's eligibility list targets a way a *clinical* rate can be unsupported: a non-citable origin, an April-2026 seed row, a search-aggregator result page, a FAERS spontaneous-report share. None asks the question this framework's own community-track rule makes central — a personal anecdote has no rate. One row slipped through on exactly that gap: a single Reddit post (`reddit.com/r/Retatrutide/comments/1tpun08/`), scraped 2026-05-28, whose text reads "I never actually vomit, but it's like a constant sickness feeling" and contains no percentage, no fraction and no cohort anywhere, was stored as `extractedRate: 0`, `extractedSampleSize: 1`, `extractionConfidence: high`, and counted toward the published site-wide eligible base for 104 days. Found not by a data audit but by an arithmetic check: the audit script's site-wide headline (215) did not equal the sum of the per-effect clinical column it prints beneath that headline (214), and the one-rate gap was this row. The rate is withdrawn in both stores (`extractedRate → null`, `rateWithheld: "rate_not_stated_by_source"`, the same reason string as "Corrections in v5.9", so the row stays in the corpus and remains auditable). The class was measured before and after, corpus-wide and in both stores, by re-running the eligibility screen and asking of every eligible non-clinical row whether its own excerpt states its rate verbatim: exactly **one** row matched, and zero remain. Published figures: the site-wide eligible base falls from **215 rates / 32 distinct studies to 214 rates / 31 distinct studies** (441 → 440 rate-bearing points; 102 → 101 source entries), verified against production before and after. Vomiting's clinical figures — the effect the row was filed under — are unchanged at 9.7%, 25 rates from 15 sources, because a `user_report` row never entered that pool.
 
-20. **§2.2 and §2.3 described a prompt instruction where the system has
-    enforced a write-time gate since 2026-09-05 (2026-09-09).** §2.2 stated
-    only that "the prompt specifies that rates must be explicitly stated in
-    the source text, not inferred", and §2.3's eligibility list did not
-    mention verbatim statement at all. A prompt instruction is a request; the
-    system has since 2026-09-05/06 additionally applied a write-time gate
-    (`agents/data/src/lib/rate-gate.mjs`, called unconditionally from both
-    extraction loops with no source-type branch) that rejects a rate absent
-    from its own source text or equal to the midpoint of a stated range, nulls
-    it, and records `rateWithheld` — the mechanism that makes item 19 a
-    historical backfill rather than an open hole, since every row written
-    after the gate shipped is screened regardless of track. Both sections now
-    describe the gate and its scope. Corrected in the same cycle as item 19
-    because the same reading that finds a withheld row is the reading that
-    asks what prevents the next one; this document's own "Corrections in
-    v5.12", item 18, records the cost of leaving that question for a later
-    pass.
+20. **§2.2 and §2.3 described a prompt instruction where the system has enforced a write-time gate since 2026-09-05 (2026-09-09).** §2.2 stated only that "the prompt specifies that rates must be explicitly stated in the source text, not inferred", and §2.3's eligibility list did not mention verbatim statement at all. A prompt instruction is a request; the system has since 2026-09-05/06 additionally applied a write-time gate (`agents/data/src/lib/rate-gate.mjs`, called unconditionally from both extraction loops with no source-type branch) that rejects a rate absent from its own source text or equal to the midpoint of a stated range, nulls it, and records `rateWithheld` — the mechanism that makes item 19 a historical backfill rather than an open hole, since every row written after the gate shipped is screened regardless of track. Both sections now describe the gate and its scope. Corrected in the same cycle as item 19 because the same reading that finds a withheld row is the reading that asks what prevents the next one; this document's own "Corrections in v5.12", item 18, records the cost of leaving that question for a later pass.
 
-**On the v5.12 corpus-composition note:** that note recorded the eligible base
-rising to 215 rates / 32 distinct studies on the 2026-09-09 05:17 run. It
-described the state at the time it was written and is left as recorded; item
-19 restates the current figure to 214 / 31.
+**On the v5.12 corpus-composition note:** that note recorded the eligible base rising to 215 rates / 32 distinct studies on the 2026-09-09 05:17 run. It described the state at the time it was written and is left as recorded; item 19 restates the current figure to 214 / 31.
 
 ---
 
