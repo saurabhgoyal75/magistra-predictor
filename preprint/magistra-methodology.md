@@ -5,8 +5,8 @@ Phlo Systems BV
 saurabh@magistra.health
 https://magistra.health
 
-**Version:** 5.12
-**Date:** 9 September 2026 (v5.11: 9 September 2026 — see "Corrections in v5.12"; v5.10: 9 September 2026 — see "Corrections in v5.11"; v5.9: 8 September 2026 — see "Corrections in v5.10"; v5.8: 8 September 2026 — see "Corrections in v5.9"; v5.7: 7 September 2026 — see "Corrections in v5.8"; v5.6: 5 September 2026 — see "Corrections in v5.7"; v5.5: 4 September 2026 — see "Corrections in v5.6"; v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
+**Version:** 5.13
+**Date:** 9 September 2026 (v5.12: 9 September 2026 — see "Corrections in v5.13"; v5.11: 9 September 2026 — see "Corrections in v5.12"; v5.10: 9 September 2026 — see "Corrections in v5.11"; v5.9: 8 September 2026 — see "Corrections in v5.10"; v5.8: 8 September 2026 — see "Corrections in v5.9"; v5.7: 7 September 2026 — see "Corrections in v5.8"; v5.6: 5 September 2026 — see "Corrections in v5.7"; v5.5: 4 September 2026 — see "Corrections in v5.6"; v5.4: 4 September 2026 — see "Corrections in v5.5"; v5.3: 31 August 2026 — see "Corrections in v5.4"; v5.2: 30 August 2026 — see "Corrections in v5.3"; v5.1: 29 August 2026 — see "Corrections in v5.2"; v5.0: August 2026 — see "Corrections in v5.1"; v4.0: April 2026 — superseded; see "Changes from v4.0")
 **Classification:** q-bio.QM (Quantitative Methods) / stat.AP (Applications)
 
 ---
@@ -27,6 +27,71 @@ v4.0 (April 2026) described a method and a data-source inventory that internal a
 2. **The real-world track is a reporting frequency, not an incidence (2026-08-14).** v4.0's "real-world" track averaged self-reported percentages scraped from individual community posts; a personal anecdote has no rate. The track now reports the share of distinct community reports (deduplicated by source URL) that mention each effect, with Wilson intervals. Consequently v4.0's clinical-vs-real-world "convergence" framing — including the illustrative gap table and the abstract's hair-loss example — is withdrawn as a category error: a mention frequency and an incidence rate are not comparable quantities (see §3.3).
 3. **The published data-source inventory was wrong (2026-08-17).** v4.0's Table 1 listed sources (Google Scholar, 1mg.com, PvPI, Trustpilot) that had never contributed a single corpus point, and described every source as collected daily while Reddit had been blocked since 2026-05-28. Table 1 is now derived from the corpus and served live at the public API; a source that has contributed nothing cannot appear in it.
 4. **Source-type labels were assigned by scraper keyword, not by publisher (2026-08-14, fully landed 2026-08-17).** 44 points typed clinical or regulatory and branded "WHO/…", "MHRA/…", "EMA/…" or "Cochrane/…" were Google News search-result blurbs whose actual publisher was never the named agency; a further 78 points branded "Quora —" or "Twitter/X —" were likewise Google News results, not platform collections. All were relabelled by their real mechanism in both the repository and production stores. None carried an eligible rate, so no published estimate changed.
+
+---
+
+## Corrections in v5.13 (9 September 2026)
+
+v5.13 withdraws one rate that its own source never states, and corrects two
+places in §2 where this document describes the safeguard against that class as
+weaker than the system actually implements. The site-wide eligible base falls
+by one rate and one distinct study. **No per-effect published estimate
+changes** — the withdrawn row is a community (`user_report`) point, and the
+clinical track excludes it by source type — and the 2026-08-31 snapshot this
+document reports throughout is unaffected.
+
+19. **The rate-eligibility screen was built entirely from clinical failure
+    modes and never asserted that a COMMUNITY row's rate is stated in its own
+    text (2026-09-09).** Every rule in §2.3's eligibility list targets a way a
+    *clinical* rate can be unsupported: a non-citable origin, an April-2026
+    seed row, a search-aggregator result page, a FAERS spontaneous-report
+    share. None asks the question this framework's own community-track rule
+    makes central — a personal anecdote has no rate. One row slipped through
+    on exactly that gap: a single Reddit post
+    (`reddit.com/r/Retatrutide/comments/1tpun08/`), scraped 2026-05-28, whose
+    text reads "I never actually vomit, but it's like a constant sickness
+    feeling" and contains no percentage, no fraction and no cohort anywhere,
+    was stored as `extractedRate: 0`, `extractedSampleSize: 1`,
+    `extractionConfidence: high`, and counted toward the published site-wide
+    eligible base for 104 days. Found not by a data audit but by an arithmetic
+    check: the audit script's site-wide headline (215) did not equal the sum
+    of the per-effect clinical column it prints beneath that headline (214),
+    and the one-rate gap was this row. The rate is withdrawn in both stores
+    (`extractedRate → null`, `rateWithheld: "rate_not_stated_by_source"`, the
+    same reason string as "Corrections in v5.9", so the row stays in the
+    corpus and remains auditable). The class was measured before and after,
+    corpus-wide and in both stores, by re-running the eligibility screen and
+    asking of every eligible non-clinical row whether its own excerpt states
+    its rate verbatim: exactly **one** row matched, and zero remain.
+    Published figures: the site-wide eligible base falls from **215 rates /
+    32 distinct studies to 214 rates / 31 distinct studies** (441 → 440
+    rate-bearing points; 102 → 101 source entries), verified against
+    production before and after. Vomiting's clinical figures — the effect the
+    row was filed under — are unchanged at 9.7%, 25 rates from 15 sources,
+    because a `user_report` row never entered that pool.
+
+20. **§2.2 and §2.3 described a prompt instruction where the system has
+    enforced a write-time gate since 2026-09-05 (2026-09-09).** §2.2 stated
+    only that "the prompt specifies that rates must be explicitly stated in
+    the source text, not inferred", and §2.3's eligibility list did not
+    mention verbatim statement at all. A prompt instruction is a request; the
+    system has since 2026-09-05/06 additionally applied a write-time gate
+    (`agents/data/src/lib/rate-gate.mjs`, called unconditionally from both
+    extraction loops with no source-type branch) that rejects a rate absent
+    from its own source text or equal to the midpoint of a stated range, nulls
+    it, and records `rateWithheld` — the mechanism that makes item 19 a
+    historical backfill rather than an open hole, since every row written
+    after the gate shipped is screened regardless of track. Both sections now
+    describe the gate and its scope. Corrected in the same cycle as item 19
+    because the same reading that finds a withheld row is the reading that
+    asks what prevents the next one; this document's own "Corrections in
+    v5.12", item 18, records the cost of leaving that question for a later
+    pass.
+
+**On the v5.12 corpus-composition note:** that note recorded the eligible base
+rising to 215 rates / 32 distinct studies on the 2026-09-09 05:17 run. It
+described the state at the time it was written and is left as recorded; item
+19 restates the current figure to 214 / 31.
 
 ---
 
@@ -197,7 +262,7 @@ Raw text is retained as a 500-character excerpt for each data point to allow pos
 
 Raw scraped text is processed by a Claude model (Anthropic; the specific model tier is pinned in the pipeline configuration and validated against production text before any change) via a pre-specified extraction prompt that captures: the side effect mentioned, the drug name (normalized to generic), the extracted incidence rate (if explicitly stated), dose tier (for ClinicalTrials.gov arm rows this field is overwritten at write time by a deterministic derivation from the arm's own label — see "Corrections in v5.11", items 15–16, and "Corrections in v5.12", item 17 — asserting `unspecified` for molecules with no approved maintenance-dose ladder and deferring to the model's value only where a ladder exists but the label states no dose), demographic fields (sex, age range, ethnicity, BMI range), lifestyle fields (exercise level, diet, blood type), sample size (if reported), and an extraction confidence label (high / medium / low).
 
-The extraction is deliberately conservative: the prompt specifies that rates must be explicitly stated in the source text, not inferred. Items with no extractable rate are stored with `extractedRate = null` and contribute only to qualitative analysis. Confidence labels are used downstream as multiplicative weights (high = 1.0, medium = 0.7, low = 0.3) on sample-size-based weighting.
+The extraction is deliberately conservative, and since 2026-09-05 this is enforced rather than only requested: the prompt specifies that rates must be explicitly stated in the source text and never inferred, and a write-time gate (`agents/data/src/lib/rate-gate.mjs`, called unconditionally from both extraction loops, with no source-type branch) independently checks the model's output against the fetched text — a rate whose percentage form does not appear in that text at a number boundary, or which equals the midpoint of a stated "A to B%" range, is nulled and recorded as `rateWithheld` rather than stored. An accepted rate carries the sentence it was read from (`rateEvidence`), so it can be re-audited later without a refetch. See "Corrections in v5.13", items 19–20; rows written before the gate shipped were screened against the same rule retrospectively. Items with no extractable rate are stored with `extractedRate = null` and contribute only to qualitative analysis. Confidence labels are used downstream as multiplicative weights (high = 1.0, medium = 0.7, low = 0.3) on sample-size-based weighting.
 
 Deduplication is performed on the composite key (sourceUrl, sideEffect), extended for ClinicalTrials.gov registry rows to also include the arm label extracted from the row's own excerpt, so that a trial's separate dosing arms are not collapsed into one (see "Corrections in v5.10", item 13, and "Corrections in v5.12", item 18); every other source produces the pre-extension key unchanged. The extraction prompt is versioned and any change triggers re-extraction of a sample for validation (planned; not yet implemented).
 
@@ -205,7 +270,7 @@ Deduplication is performed on the composite key (sourceUrl, sideEffect), extende
 
 For a target patient profile P and side effect e, the system produces two parallel signals.
 
-**Rate eligibility (applied before either track).** A rate-bearing data point may support a published estimate only if: (i) its source URL is a citable external origin — points whose provenance is our own site, the April-2026 seeding pass (any URL — see "Corrections in v5.3"), a synthetic aggregate ("Aggregated user reports"), or a search-aggregator result page are retained and labelled but excluded from every public total and estimate; (ii) it is not a spontaneous-report *share* (e.g. the share of FAERS adverse-event reports mentioning an effect), which is a different quantity from incidence and is kept as a separate labelled signal, never averaged into a rate; (iii) it is that source's single entry for the effect — a paper contributing several rates collapses to one entry per distinct source, so one publication cannot masquerade as multiple independent observations; and (iv) sample sizes extracted from social posts are ignored for weighting. As of 2026-08-31 these rules admit 74 rates from 51 distinct sources out of 311 rate-bearing points — 71 from 50 as restated in "Corrections in v5.9" — (v5.1–v5.2 printed 145/67; the difference is the April-2026 seed rows excluded in "Corrections in v5.3"); effects whose eligible base is empty publish a clearly-labelled static figure from named published trials instead of a computed estimate.
+**Rate eligibility (applied before either track).** A rate-bearing data point may support a published estimate only if: (i) its source URL is a citable external origin — points whose provenance is our own site, the April-2026 seeding pass (any URL — see "Corrections in v5.3"), a synthetic aggregate ("Aggregated user reports"), or a search-aggregator result page are retained and labelled but excluded from every public total and estimate; (ii) it is not a spontaneous-report *share* (e.g. the share of FAERS adverse-event reports mentioning an effect), which is a different quantity from incidence and is kept as a separate labelled signal, never averaged into a rate; (iii) it is that source's single entry for the effect — a paper contributing several rates collapses to one entry per distinct source, so one publication cannot masquerade as multiple independent observations; (iv) sample sizes extracted from social posts are ignored for weighting; and (v) the rate is stated verbatim in the source's own text — enforced at write time since 2026-09-05 by the gate described in §2.2, and applied retrospectively to the pre-gate corpus (see "Corrections in v5.13", item 19). Rule (v) binds both tracks: a community post that states no percentage states no rate, whatever the extraction returns. As of 2026-08-31 these rules admit 74 rates from 51 distinct sources out of 311 rate-bearing points — 71 from 50 as restated in "Corrections in v5.9" — (v5.1–v5.2 printed 145/67; the difference is the April-2026 seed rows excluded in "Corrections in v5.3"); effects whose eligible base is empty publish a clearly-labelled static figure from named published trials instead of a computed estimate.
 
 **Track C (Clinical).** Let D_C(P, e) be the set of eligible data points with sideEffect = e, sourceType ∈ {clinical, regulatory}, and profile filters (sex, dose, ethnicity, exercise) matching P or marked "unspecified". The clinical estimate is computed as:
 

@@ -5,7 +5,7 @@
   "description": "Per-effect summary table only: pooled clinical rate estimate (with 95% CI, stated rates, distinct sources) and community reporting frequency (mentions, distinct reports) for each of the 15 tracked GLP-1 side effects. Computed from Magistra's underlying point-level corpus, which is NOT included here and remains under a separate attribution/no-redistribution licence (see licenseUrl). This summary table may be redistributed with attribution. Figures are pulled live from https://magistra.health/api/data?q=overview at build time — never hand-typed.",
   "version": "1.1",
   "asOf": "2026-09-09",
-  "generatedAt": "2026-09-09T05:46:54.133Z",
+  "generatedAt": "2026-09-09T11:46:37.064Z",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "licenseNote": "This aggregate table (effect, pooled rate, CI, n, distinct sources) is CC BY 4.0 — free to redistribute with attribution (Magistra, magistra.health). The underlying point-level corpus is NOT covered by this licence; see https://magistra.health/en/data#licence.",
   "licenseUrl": "https://magistra.health/en/data#licence",
@@ -27,10 +27,10 @@
   "disclaimer": "Data, not medical advice. Reporting frequency is not incidence — do not compare it to the clinical rate as if the two measured the same thing.",
   "evidentiaryBase": {
     "corpusPoints": 1725,
-    "ratePoints": 441,
-    "eligibleRates": 215,
-    "distinctSources": 32,
-    "sourceEntries": 102,
+    "ratePoints": 440,
+    "eligibleRates": 214,
+    "distinctSources": 31,
+    "sourceEntries": 101,
     "effectsTracked": 15,
     "communityDistinctReports": 26,
     "note": "corpusPoints includes the April-2026 seed points retained for audit trail (totalDataPoints excludes them). Of the corpus, only ratePoints state a rate; after eligibility rules, eligibleRates are allowed to support a published estimate. distinctSources counts distinct STUDIES by source URL with its fragment stripped (a registry record or paper counts once however many effects it reports; re-keyed 2026-09-08 — until then this field counted one entry per source per effect, now exposed as sourceEntries). Per-effect breakdown: ?q=effect&id=<effect>, field rateBase, whose distinctSources is one entry per source for that effect."
