@@ -1,6 +1,6 @@
 {
-  "version": 3,
-  "generatedAt": "2026-09-08T12:22:00.000Z",
+  "version": 4,
+  "generatedAt": "2026-09-09T14:43:00.000Z",
   "inputParameters": [
     {
       "id": "molecule",
@@ -716,8 +716,8 @@
         "nl": "Verstopping"
       },
       "description": {
-        "en": "Difficulty passing stools or less frequent bowel movements. Caused by slowed stomach emptying.",
-        "nl": "Moeite met stoelgang of minder frequente ontlasting. Veroorzaakt door vertraagde maagontlediging."
+        "en": "Difficulty passing stools or less frequent bowel movements. The FDA Wegovy prescribing information (revised 06/2026) lists it among the most common adverse reactions \u2014 24% on semaglutide 2.4 mg (N=2,116) versus 11% on placebo (N=1,261), Table 3 \u2014 and separately states that semaglutide delays gastric emptying (section 12.2). It attributes constipation to no mechanism, and neither do we.",
+        "nl": "Moeite met stoelgang of minder frequente ontlasting. De FDA-productinformatie voor Wegovy (herzien 06/2026) noemt het bij de meest voorkomende bijwerkingen \u2014 24% bij semaglutide 2,4 mg (N=2.116) tegenover 11% bij placebo (N=1.261), tabel 3 \u2014 en vermeldt afzonderlijk dat semaglutide de maaglediging vertraagt (rubriek 12.2). De bijsluiter schrijft verstopping aan geen enkel mechanisme toe, en wij evenmin."
       },
       "severity": "mild",
       "baseRates": {
