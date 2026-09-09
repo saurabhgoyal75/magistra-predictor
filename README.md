@@ -3,7 +3,7 @@
 **A dual-track framework for GLP-1 side effect estimation, separating clinical evidence from real-world patient reports.**
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Methodology](https://img.shields.io/badge/methodology-v5.9-green.svg)](https://magistra.health/en/methodology)
+[![Methodology](https://img.shields.io/badge/methodology-v5.10-green.svg)](https://magistra.health/en/methodology)
 [![Live](https://img.shields.io/badge/live-magistra.health-purple.svg)](https://magistra.health/en/predictor)
 
 This repository contains the statistical methodology and model configuration behind [Magistra Health](https://magistra.health) — a platform that estimates GLP-1 medication side effect risk using two parallel data tracks. The predictor and the public API are free and need no authentication; bulk export of the dataset is not (see the licence link below). The clinical corpus is updated daily by an automated pipeline. The community corpus is not continuously updated: Reddit blocked our collector on 2026-05-28, freezing the 684 Reddit reports that make up most of it, and the remaining platform (Drugs.com, 71 reports) was last collected 2026-08-12. Any reporting-frequency figure is therefore a fixed historical number and should be cited with its date.
@@ -139,7 +139,7 @@ Full details in [`preprint/magistra-methodology.md`](preprint/magistra-methodolo
 
 ## Limitations (honest list)
 
-- **Data volume:** the eligible base behind published rates is far smaller than the raw corpus — **153 rates from 31 distinct studies** as of 2026-09-08, counted by study URL (a registry record or paper counts once however many effects it reports). It read 156/32 earlier the same day, before three hand-authored April-2026 rows citing a Nature GWAS that states no incidence rate were withheld — see "Corrections in v5.9" in the methodology paper; that withdrawal also moved three published estimates (nausea 29.8% → 22.8%, reduced appetite 17.6% → 11.1%, vomiting 8.7% → 9.7%). Until 2026-09-08 the site-wide figure counted one entry per source *name* — 91 for the same 153 rates, and the earlier readings 2026-09-07: 128/73, 2026-09-06: 93/59, 2026-08-31: 74/51 (23 distinct studies by URL) were all on that key; v5.1–v5.2 stated 145/67 before 72 April-2026 seed rows wearing real trial URLs were found inside the base on 2026-08-31 and excluded — see "Corrections in v5.3" and "Corrections in v5.8" in the methodology paper. Per-effect counts are unaffected by the re-key (identical under both keys for all 15 effects). The per-effect breakdown is the CC BY 4.0 table in [`data/`](data/), a dated snapshot of the same API response, regenerated 2026-09-08. Of the 15 published effects, 1 (pancreatitis) falls back to a labelled literature figure for lack of an eligible clinical rate, and 1 (emotional blunting) publishes no clinical figure at all; two more (gallstones, hair loss) rest on a single distinct source each. The API always serves the current numbers.
+- **Data volume:** the eligible base behind published rates is far smaller than the raw corpus — **154 rates from 31 distinct studies** as of 2026-09-09, counted by study URL (a registry record or paper counts once however many effects it reports). It read 153/31 on 2026-09-08, before a trial arm that a storage dedupe key had dropped was restored (vomiting: 18 rates → 19, 95% CI 0–82 → 0–76, same 14 sources — see "Corrections in v5.10"), and 156/32 earlier that same day, before three hand-authored April-2026 rows citing a Nature GWAS that states no incidence rate were withheld — see "Corrections in v5.9" in the methodology paper; that withdrawal also moved three published estimates (nausea 29.8% → 22.8%, reduced appetite 17.6% → 11.1%, vomiting 8.7% → 9.7%). Until 2026-09-08 the site-wide figure counted one entry per source *name* — 91 for the 153 rates of that day, and the earlier readings 2026-09-07: 128/73, 2026-09-06: 93/59, 2026-08-31: 74/51 (23 distinct studies by URL) were all on that key; v5.1–v5.2 stated 145/67 before 72 April-2026 seed rows wearing real trial URLs were found inside the base on 2026-08-31 and excluded — see "Corrections in v5.3" and "Corrections in v5.8" in the methodology paper. Per-effect counts are unaffected by the re-key (identical under both keys for all 15 effects). The per-effect breakdown is the CC BY 4.0 table in [`data/`](data/), a dated snapshot of the same API response, regenerated 2026-09-09. Of the 15 published effects, 1 (pancreatitis) falls back to a labelled literature figure for lack of an eligible clinical rate, and 1 (emotional blunting) publishes no clinical figure at all; two more (gallstones, hair loss) rest on a single distinct source each. The API always serves the current numbers.
 - **Community denominator:** the reporting-frequency track rests on **26 distinct community reports** (screened 2026-08-29, see the correction above). It is frozen at that size — Reddit has served the collector an HTTP 403 block page since 2026-05-28 — so every reporting frequency is a fixed historical number, not a live one, and must be cited with its date.
 - **Demographic bias:** Both tracks over-represent female, white, and Western populations; ethnicity and BMI are tracked but lack sufficient data for inclusion.
 - **Hand-coded modifiers:** Initial values from published literature; empirical replacement in progress as data accumulates.
@@ -171,7 +171,7 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
-**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.9). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.10). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
 
 No DOI is registered for this work — the methodology is self-published at the URL above, not deposited with a repository that mints permanent identifiers. (A DOI, 10.5281/zenodo.19559749, was asserted on this page and elsewhere until 2026-08-18; it was never actually registered and has been withdrawn.)
 
@@ -181,7 +181,7 @@ No DOI is registered for this work — the methodology is self-published at the 
   title        = {A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports},
   year         = {2026},
   publisher    = {Magistra, Phlo Systems BV},
-  version      = {5.9},
+  version      = {5.10},
   url          = {https://magistra.health/en/methodology}
 }
 ```
