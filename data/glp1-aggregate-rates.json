@@ -4,8 +4,8 @@
   "name": "Magistra GLP-1 Aggregate Pooled Side Effect Rates",
   "description": "Per-effect summary table only: pooled clinical rate estimate (with 95% CI, stated rates, distinct sources) and community reporting frequency (mentions, distinct reports) for each of the 15 tracked GLP-1 side effects. Computed from Magistra's underlying point-level corpus, which is NOT included here and remains under a separate attribution/no-redistribution licence (see licenseUrl). This summary table may be redistributed with attribution. Figures are pulled live from https://magistra.health/api/data?q=overview at build time — never hand-typed.",
   "version": "1.1",
-  "asOf": "2026-09-09",
-  "generatedAt": "2026-09-09T17:49:35.811Z",
+  "asOf": "2026-09-10",
+  "generatedAt": "2026-09-10T05:51:45.505Z",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "licenseNote": "This aggregate table (effect, pooled rate, CI, n, distinct sources) is CC BY 4.0 — free to redistribute with attribution (Magistra, magistra.health). The underlying point-level corpus is NOT covered by this licence; see https://magistra.health/en/data#licence.",
   "licenseUrl": "https://magistra.health/en/data#licence",
@@ -22,18 +22,18 @@
       "contentUrl": "https://magistra.health/data/glp1-aggregate-rates.csv"
     }
   ],
-  "citation": "Magistra Health. \"GLP-1 Aggregate Pooled Side Effect Rates.\" magistra.health/data/glp1-aggregate-rates.json. Accessed 2026-09-09.",
-  "methodologyNote": "clinicalPooledRatePct/CI: weighted random-effects pooled rate across eligible clinical + regulatory rate points, one entry per distinct source (src/lib/side-effects-engine.ts::pooledClinicalEstimate, exposed live at /api/data?q=overview -> effectsTracked[].corpusClinical). Null when the corpus has zero eligible clinical rate points for that effect. communityReportingFrequencyPct: of N distinct community reports (corpus-wide, deduped by URL), the share mentioning this effect — NOT an incidence rate, see /en/methodology (src/lib/rate-base.ts::buildReportingFrequency).",
+  "citation": "Magistra Health. \"GLP-1 Aggregate Pooled Side Effect Rates.\" magistra.health/data/glp1-aggregate-rates.json. Accessed 2026-09-10.",
+  "methodologyNote": "clinicalPooledRatePct/CI: weighted random-effects pooled rate across eligible clinical + regulatory rate points, one entry per distinct source (src/lib/side-effects-engine.ts::pooledClinicalEstimate, exposed live at /api/data?q=overview -> effectsTracked[].corpusClinical). Null when the corpus has zero eligible clinical rate points for that effect. communityReportingFrequencyPct: of N distinct community reports (corpus-wide, deduped by URL), the share mentioning this effect — NOT an incidence rate, see /en/methodology (src/lib/rate-base.ts::buildReportingFrequency). clinicalRateKind: \"incidence\" for an ordinary all-cause pooled rate; \"serious_ae_floor\" when every source behind the pooled rate is a rate from a trial registry’s SERIOUS adverse-events table (the registry lists non-serious events only above the trial’s reporting threshold, so such a figure is a FLOOR on all-cause incidence, not incidence); \"mixed_incidence_and_serious_ae\" when the pool contains both. Do not compare a serious_ae_floor row to a label’s all-cause figure without saying so.",
   "disclaimer": "Data, not medical advice. Reporting frequency is not incidence — do not compare it to the clinical rate as if the two measured the same thing.",
   "evidentiaryBase": {
-    "corpusPoints": 1729,
-    "ratePoints": 444,
-    "eligibleRates": 218,
+    "corpusPoints": 1747,
+    "ratePoints": 466,
+    "eligibleRates": 239,
     "distinctSources": 31,
-    "sourceEntries": 103,
+    "sourceEntries": 114,
     "effectsTracked": 15,
     "communityDistinctReports": 26,
-    "note": "corpusPoints includes the April-2026 seed points retained for audit trail (totalDataPoints excludes them). Of the corpus, only ratePoints state a rate; after eligibility rules, eligibleRates are allowed to support a published estimate. distinctSources counts distinct STUDIES by source URL with its fragment stripped (a registry record or paper counts once however many effects it reports; re-keyed 2026-09-08 — until then this field counted one entry per source per effect, now exposed as sourceEntries). Per-effect breakdown: ?q=effect&id=<effect>, field rateBase, whose distinctSources is one entry per source for that effect."
+    "note": "corpusPoints includes the April-2026 seed points retained for audit trail (totalDataPoints excludes them). Of the corpus, only ratePoints state a rate; after eligibility rules, eligibleRates are allowed to support a published estimate. distinctSources counts distinct STUDIES by source URL with its fragment stripped (a registry record or paper counts once however many effects it reports; re-keyed 2026-09-08 — until then this field counted one entry per source per effect, now exposed as sourceEntries). Per-effect breakdown: ?q=effect&id=<effect>, field rateBase, whose distinctSources is keyed the same way (re-keyed 2026-09-10 — it too counted one entry per source per effect until then, and still does under sourceEntries; the two differ only where one study posts more than one MedDRA preferred term for the same effect, e.g. SURMOUNT-1's Pancreatitis and Pancreatitis acute)."
   },
   "effects": [
     {
@@ -46,6 +46,7 @@
       "clinicalStatedRates": 46,
       "clinicalDistinctSources": 28,
       "clinicalSourceDiversity": "very_high",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 38.5,
       "communityMentions": 10,
       "communityTotalReports": 26
@@ -57,9 +58,10 @@
       "clinicalPooledRatePct": 16.8,
       "clinicalCiLowPct": 3,
       "clinicalCiHighPct": 58,
-      "clinicalStatedRates": 28,
+      "clinicalStatedRates": 29,
       "clinicalDistinctSources": 15,
       "clinicalSourceDiversity": "high",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 34.6,
       "communityMentions": 9,
       "communityTotalReports": 26
@@ -71,9 +73,10 @@
       "clinicalPooledRatePct": 11.8,
       "clinicalCiLowPct": 1,
       "clinicalCiHighPct": 56,
-      "clinicalStatedRates": 25,
+      "clinicalStatedRates": 26,
       "clinicalDistinctSources": 13,
       "clinicalSourceDiversity": "high",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 26.9,
       "communityMentions": 7,
       "communityTotalReports": 26
@@ -88,6 +91,7 @@
       "clinicalStatedRates": 23,
       "clinicalDistinctSources": 13,
       "clinicalSourceDiversity": "high",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 30.8,
       "communityMentions": 8,
       "communityTotalReports": 26
@@ -102,6 +106,7 @@
       "clinicalStatedRates": 17,
       "clinicalDistinctSources": 8,
       "clinicalSourceDiversity": "moderate",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 3.8,
       "communityMentions": 1,
       "communityTotalReports": 26
@@ -110,12 +115,13 @@
       "effect": "pancreatitis",
       "effectName": "Pancreatitis (rare)",
       "severity": "severe",
-      "clinicalPooledRatePct": null,
-      "clinicalCiLowPct": null,
-      "clinicalCiHighPct": null,
-      "clinicalStatedRates": 0,
-      "clinicalDistinctSources": 0,
-      "clinicalSourceDiversity": null,
+      "clinicalPooledRatePct": 0.1,
+      "clinicalCiLowPct": 0,
+      "clinicalCiHighPct": 1,
+      "clinicalStatedRates": 8,
+      "clinicalDistinctSources": 2,
+      "clinicalSourceDiversity": "low",
+      "clinicalRateKind": "serious_ae_floor",
       "communityReportingFrequencyPct": 0,
       "communityMentions": 0,
       "communityTotalReports": 26
@@ -130,6 +136,7 @@
       "clinicalStatedRates": 9,
       "clinicalDistinctSources": 3,
       "clinicalSourceDiversity": "low",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 11.5,
       "communityMentions": 3,
       "communityTotalReports": 26
@@ -138,12 +145,13 @@
       "effect": "vomiting",
       "effectName": "Vomiting",
       "severity": "moderate",
-      "clinicalPooledRatePct": 9.7,
+      "clinicalPooledRatePct": 9.9,
       "clinicalCiLowPct": 0,
-      "clinicalCiHighPct": 74,
-      "clinicalStatedRates": 25,
-      "clinicalDistinctSources": 15,
+      "clinicalCiHighPct": 71,
+      "clinicalStatedRates": 26,
+      "clinicalDistinctSources": 16,
       "clinicalSourceDiversity": "high",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 42.3,
       "communityMentions": 11,
       "communityTotalReports": 26
@@ -158,6 +166,7 @@
       "clinicalStatedRates": 11,
       "clinicalDistinctSources": 4,
       "clinicalSourceDiversity": "moderate",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 15.4,
       "communityMentions": 4,
       "communityTotalReports": 26
@@ -172,6 +181,7 @@
       "clinicalStatedRates": 13,
       "clinicalDistinctSources": 5,
       "clinicalSourceDiversity": "moderate",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 23.1,
       "communityMentions": 6,
       "communityTotalReports": 26
@@ -180,12 +190,13 @@
       "effect": "gallstones",
       "effectName": "Gallstones (cholelithiasis)",
       "severity": "severe",
-      "clinicalPooledRatePct": 3.5,
-      "clinicalCiLowPct": 3,
-      "clinicalCiHighPct": 4,
-      "clinicalStatedRates": 1,
-      "clinicalDistinctSources": 1,
-      "clinicalSourceDiversity": "very_low",
+      "clinicalPooledRatePct": 1.7,
+      "clinicalCiLowPct": 0,
+      "clinicalCiHighPct": 6,
+      "clinicalStatedRates": 11,
+      "clinicalDistinctSources": 4,
+      "clinicalSourceDiversity": "moderate",
+      "clinicalRateKind": "mixed_incidence_and_serious_ae",
       "communityReportingFrequencyPct": 11.5,
       "communityMentions": 3,
       "communityTotalReports": 26
@@ -200,6 +211,7 @@
       "clinicalStatedRates": 3,
       "clinicalDistinctSources": 1,
       "clinicalSourceDiversity": "very_low",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 3.8,
       "communityMentions": 1,
       "communityTotalReports": 26
@@ -214,6 +226,7 @@
       "clinicalStatedRates": 4,
       "clinicalDistinctSources": 2,
       "clinicalSourceDiversity": "low",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 23.1,
       "communityMentions": 6,
       "communityTotalReports": 26
@@ -228,6 +241,7 @@
       "clinicalStatedRates": 12,
       "clinicalDistinctSources": 4,
       "clinicalSourceDiversity": "moderate",
+      "clinicalRateKind": "incidence",
       "communityReportingFrequencyPct": 7.7,
       "communityMentions": 2,
       "communityTotalReports": 26
@@ -242,6 +256,7 @@
       "clinicalStatedRates": 0,
       "clinicalDistinctSources": 0,
       "clinicalSourceDiversity": null,
+      "clinicalRateKind": null,
       "communityReportingFrequencyPct": 0,
       "communityMentions": 0,
       "communityTotalReports": 26
