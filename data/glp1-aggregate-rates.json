@@ -5,7 +5,7 @@
   "description": "Per-effect summary table only: pooled clinical rate estimate (with 95% CI, stated rates, distinct sources) and community reporting frequency (mentions, distinct reports) for each of the 15 tracked GLP-1 side effects. Computed from Magistra's underlying point-level corpus, which is NOT included here and remains under a separate attribution/no-redistribution licence (see licenseUrl). This summary table may be redistributed with attribution. Figures are pulled live from https://magistra.health/api/data?q=overview at build time — never hand-typed.",
   "version": "1.1",
   "asOf": "2026-09-10",
-  "generatedAt": "2026-09-10T11:51:51.794Z",
+  "generatedAt": "2026-09-10T20:54:31.632Z",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "licenseNote": "This aggregate table (effect, pooled rate, CI, n, distinct sources) is CC BY 4.0 — free to redistribute with attribution (Magistra, magistra.health). The underlying point-level corpus is NOT covered by this licence; see https://magistra.health/en/data#licence.",
   "licenseUrl": "https://magistra.health/en/data#licence",
@@ -35,6 +35,7 @@
     "communityDistinctReports": 26,
     "note": "corpusPoints includes the April-2026 seed points retained for audit trail (totalDataPoints excludes them) and is scoped to the 15 publicly-tracked effects (excludes kidney_issues/muscle_loss/weight_regain, extraction-only categories never displayed on the site). Of the corpus, only ratePoints state a rate; after eligibility rules, eligibleRates are allowed to support a published estimate. distinctSources counts distinct STUDIES by source URL with its fragment stripped (a registry record or paper counts once however many effects it reports; re-keyed 2026-09-08 — until then this field counted one entry per source per effect, now exposed as sourceEntries). Per-effect breakdown: ?q=effect&id=<effect>, field rateBase, whose distinctSources is keyed the same way (re-keyed 2026-09-10 — it too counted one entry per source per effect until then, and still does under sourceEntries; the two differ only where one study posts more than one MedDRA preferred term for the same effect, e.g. SURMOUNT-1's Pancreatitis and Pancreatitis acute)."
   },
+  "knownDefect": "Known upward bias, not yet corrected: registry rows collected before 2026-09-10 through the rotation path were capped at the five highest-percentage arm rows per trial, which selects on the rate being measured. 19 of the 25 trials with stored registry rows are affected; the six pinned pivotal trials (SURMOUNT-1, SELECT, STEP 1, STEP 2, SURPASS-CVOT, retatrutide phase 2) are not, because they emit every non-placebo arm. Pooled clinical estimates that draw on an affected trial therefore read HIGH by an amount we have not yet quantified per effect. The collector was fixed 2026-09-10; the stored rows await a re-collection. Method and per-trial measurements: §4 Limitations and correction-log item 25 of the published methodology, https://github.com/saurabhgoyal75/magistra-predictor/blob/main/preprint/magistra-methodology.md.",
   "effects": [
     {
       "effect": "nausea",
