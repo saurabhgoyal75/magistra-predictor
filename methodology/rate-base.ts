@@ -264,6 +264,29 @@ export function classifyRatePoint(p: RatePoint): ExclusionReason | null {
 }
 
 /**
+ * Filter points to a set of effect ids before computing a SITE-WIDE aggregate.
+ * Added 2026-09-10 (ASSET INTEGRITY): the extraction pipeline's taxonomy
+ * (agents/data/src/prompts/extraction-prompt.mjs, 18 ids) is wider than the
+ * effects ever displayed publicly (src/lib/side-effects-data.ts's
+ * SIDE_EFFECTS, 15) — kidney_issues, muscle_loss and weight_regain are
+ * collected but never shown on any page. An unscoped buildRateBase(allPoints)
+ * silently pulled those 96 points (1 of them rate-bearing, from 1 source)
+ * into the "218 rates from 31 distinct studies" figure quoted in llms.txt,
+ * the methodology page and /api/data?q=overview — all of which describe that
+ * figure as the evidence base for "15 side effects." Per-effect callers
+ * (the predictor, ?q=effect&id=) already filter to one effect id first and
+ * don't need this; it exists only for a caller computing a corpus-wide total
+ * meant to describe the displayed taxonomy.
+ */
+export function scopeToTrackedEffects<T extends { sideEffect?: string }>(
+  points: T[],
+  trackedEffectIds: string[],
+): T[] {
+  const ids = new Set(trackedEffectIds);
+  return points.filter((p) => ids.has(p.sideEffect ?? ""));
+}
+
+/**
  * Collapse a set of data points into one entry per distinct source, plus the
  * audit trail of what was excluded and why.
  */
