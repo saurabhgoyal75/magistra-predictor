@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-07.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-10.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -143,7 +143,23 @@ export type DynamicRiskResult = DualTrackRiskResult;
 
 // --- Statistical helpers ---
 
-type RateSummary = { rate: number; effectiveN: number; rates: number[]; sourceCount: number; pointCount: number };
+type RateSummary = {
+  rate: number;
+  effectiveN: number;
+  rates: number[];
+  /**
+   * DISTINCT STUDIES (by source URL), not source entries — see
+   * `RateBase.studyCount`. One trial posting two MedDRA terms for the same
+   * effect is one source to a reader, and grading confidence off the entry
+   * count published "moderate" on 2 trials (found 2026-09-10).
+   */
+  sourceCount: number;
+  /** Source ENTRIES (one per sourceName per effect) — the pre-2026-09-10 sourceCount. */
+  sourceEntryCount: number;
+  pointCount: number;
+  /** Of `sourceCount`, how many rest only on registry serious-AE rates (a floor, not incidence). */
+  seriousAeSourceCount: number;
+};
 
 // One entry per DISTINCT source (rate-base.ts), so a paper stating 3 rates counts
 // once — not three times — and shares-of-reports never enter an incidence average.
@@ -180,9 +196,34 @@ function weightedAverageRate(points: SideEffectDataPoint[]): RateSummary | null 
     rate: weightedSum / totalWeight,
     effectiveN: totalWeight,
     rates,
-    sourceCount: withRates.length,
+    sourceCount: base.studyCount,
+    sourceEntryCount: withRates.length,
     pointCount: base.eligiblePoints,
+    seriousAeSourceCount: base.seriousAeStudies,
   };
+}
+
+/**
+ * The sentence that keeps a serious-adverse-event rate from being read as
+ * incidence. CT.gov posts SAE counts for every term but lists non-serious
+ * events only above the trial's reporting threshold, so for an effect whose
+ * events are adjudicated serious (pancreatitis, gallbladder disease) the SAE
+ * count is the only figure the registry states — genuine, citable, and
+ * strictly a lower bound on all-cause incidence. Empty when no such source is
+ * in the pool, so an ordinary estimate keeps its plain basis.
+ * (Decision `serious-ae-rows-readmit-2026-09-07`, founder-approved 2026-09-08.)
+ */
+function seriousAeNote(seriousSources: number, totalSources: number, locale: "en" | "nl"): string {
+  if (seriousSources === 0) return "";
+  const all = seriousSources === totalSources;
+  if (locale === "nl") {
+    return all
+      ? ` — alle ${totalSources} bron${totalSources === 1 ? "" : "nen"} ${totalSources === 1 ? "is een" : "zijn"} percentage${totalSources === 1 ? "" : "s"} voor ERNSTIGE bijwerkingen uit de SAE-tabel van een studieregister: een ondergrens voor de incidentie over alle ernstgraden, geen incidentie zelf`
+      : ` — ${seriousSources} van ${totalSources} bronnen ${seriousSources === 1 ? "is een percentage" : "zijn percentages"} voor ERNSTIGE bijwerkingen uit de SAE-tabel van een studieregister, wat de incidentie over alle ernstgraden onderschat`;
+  }
+  return all
+    ? ` — all ${totalSources} source${totalSources === 1 ? "" : "s"} ${totalSources === 1 ? "is a" : "are"} SERIOUS adverse-event rate${totalSources === 1 ? "" : "s"} from a trial registry's SAE table: a floor on all-cause incidence, not incidence itself`
+    : ` — ${seriousSources} of ${totalSources} sources ${seriousSources === 1 ? "is a" : "are"} SERIOUS adverse-event rate${seriousSources === 1 ? "" : "s"} from a trial registry's SAE table, which understate all-cause incidence`;
 }
 
 export type PooledClinicalEstimate = {
@@ -190,7 +231,15 @@ export type PooledClinicalEstimate = {
   ciLowPct: number;
   ciHighPct: number;
   statedRates: number;
+  /** DISTINCT STUDIES by source URL (re-keyed 2026-09-10; was one entry per sourceName). */
   distinctSources: number;
+  /** One entry per sourceName for this effect — the pre-2026-09-10 `distinctSources`. */
+  sourceEntries: number;
+  /** Of `distinctSources`, how many rest only on registry serious-AE rates. */
+  seriousAeSources: number;
+  /** Human-readable disclosure when `seriousAeSources > 0`; empty string otherwise. */
+  rateKindNote: string;
+  rateKindNoteNl: string;
   /** @deprecated use `sourceDiversity` — same value, this name stays one release for back-compat */
   confidence: "very_low" | "low" | "moderate" | "high" | "very_high";
   /** Bucketed count of DISTINCT sources behind the estimate — not a statement about precision. Canonical name; see confidence. */
@@ -217,6 +266,10 @@ export function pooledClinicalEstimate(points: SideEffectDataPoint[]): PooledCli
     ciHighPct: ci.high,
     statedRates: result.pointCount,
     distinctSources: result.sourceCount,
+    sourceEntries: result.sourceEntryCount,
+    seriousAeSources: result.seriousAeSourceCount,
+    rateKindNote: seriousAeNote(result.seriousAeSourceCount, result.sourceCount, "en").replace(/^ — /, ""),
+    rateKindNoteNl: seriousAeNote(result.seriousAeSourceCount, result.sourceCount, "nl").replace(/^ — /, ""),
     confidence: diversity,
     sourceDiversity: diversity,
   };
@@ -448,8 +501,8 @@ export async function calculateDynamicRisk(
       dataPointCount: clinicalPoints.length,
       ratePointCount: clinicalResult.pointCount,
       rateSourceCount: srcs,
-      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records)${doseNoteEn}${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
-      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records)${doseNoteNl}${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
+      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "en")}${doseNoteEn}${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
+      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "nl")}${doseNoteNl}${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
       isFallback: false,
       unadjustedPercentage: unadjustedPct,
       pooledPercentage: pooledPct,
