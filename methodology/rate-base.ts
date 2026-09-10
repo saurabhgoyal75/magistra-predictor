@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-08.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-10.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -36,6 +36,18 @@ export type RatePoint = {
   extractedSampleSize: number | null;
   extractionConfidence: string;
   provenance?: string;
+  /**
+   * What KIND of quantity `extractedRate` is. Absent/undefined means an
+   * ordinary all-cause incidence rate. `"serious_ae"` marks a rate taken from
+   * a trial registry's SERIOUS adverse-events table for a term that appears in
+   * no other table for the same arm (decision
+   * `serious-ae-rows-readmit-2026-09-07`, founder-approved 2026-09-08): a real
+   * stated rate, but a FLOOR on all-cause incidence, since the registry's
+   * "Other (Not Including Serious)" table only lists terms above the trial's
+   * reporting threshold. Carried through to every basis string and published
+   * block so the figure is never read as incidence.
+   */
+  rateKind?: string | null;
 };
 
 export type ExclusionReason =
@@ -66,6 +78,13 @@ export type Study = {
   statedSampleSize: number | null;
   confidence: string;
   pointCount: number;
+  /**
+   * True when EVERY rate this source contributed is a serious-adverse-event
+   * rate (see `RatePoint.rateKind`). A source entry mixing an all-cause rate
+   * with an SAE one is false here — the mix, not the floor, is what a reader
+   * needs told.
+   */
+  seriousAeOnly: boolean;
 };
 
 export type RateBase = {
@@ -77,6 +96,34 @@ export type RateBase = {
   excluded: Partial<Record<ExclusionReason, number>>;
   /** FAERS-style share-of-reports signals, kept separate from incidence */
   reportShares: { source: string; url: string; share: number; reports: number }[];
+  /**
+   * DISTINCT STUDIES behind `studies`, keyed on the source URL (`studyKey`),
+   * not on `sourceName`. The two agree for most effects and are different
+   * exactly where one study posts more than one MedDRA preferred term for the
+   * same effect: SURMOUNT-1 states "Pancreatitis" AND "Pancreatitis acute",
+   * SELECT and STEP 1 state "Cholelithiasis" AND "Cholecystitis", so a
+   * name-keyed count published 4 "sources" for pancreatitis where the reader
+   * means 2 trials — and `confidenceFromSources` graded it moderate on that
+   * inflated number (found 2026-09-10, RED TEAM of the serious-AE
+   * re-admission, before either figure was published). This is the same
+   * re-key applied site-wide on 2026-09-08, one level down.
+   */
+  studyCount: number;
+  /**
+   * Source ENTRIES (name-keyed) resting only on serious-AE rates. Differs from
+   * `seriousAeStudies` at the SITE-WIDE level, where one study URL contributes
+   * entries for many effects: NCT04184622 states ordinary incidence for nausea
+   * and serious-AE-only rates for pancreatitis, so it is not a serious-AE-only
+   * STUDY while two of its entries are serious-AE-only ENTRIES. Publish this
+   * one wherever the surrounding figures are entry-keyed.
+   */
+  seriousAeSourceEntries: number;
+  /**
+   * How many of `studyCount` rest ONLY on registry serious-AE rates (a floor,
+   * not incidence). Counted per study, so it shares a denominator with
+   * `studyCount` and a "N of M sources" disclosure cannot mix the two keys.
+   */
+  seriousAeStudies: number;
 };
 
 const CONFIDENCE_RANK: Record<string, number> = { low: 0, medium: 1, high: 2 };
@@ -256,6 +303,7 @@ export function buildRateBase(points: RatePoint[]): RateBase {
         statedSampleSize: p.extractedSampleSize ?? null,
         confidence: p.extractionConfidence,
         pointCount: 1,
+        seriousAeOnly: p.rateKind === "serious_ae",
       });
       continue;
     }
@@ -269,9 +317,29 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     if ((CONFIDENCE_RANK[p.extractionConfidence] ?? 0) > (CONFIDENCE_RANK[existing.confidence] ?? 0)) {
       existing.confidence = p.extractionConfidence;
     }
+    // One all-cause rate in the entry is enough to stop calling the whole
+    // entry a serious-AE floor.
+    if (p.rateKind !== "serious_ae") existing.seriousAeOnly = false;
   }
 
-  return { studies: [...bySource.values()], eligiblePoints, ratePoints, excluded, reportShares };
+  const studies = [...bySource.values()];
+  // Collapse the source entries onto the study they came from before counting
+  // anything a reader will read as "how many studies is this".
+  const byStudy = new Map<string, boolean>();
+  for (const s of studies) {
+    const k = studyKey(s.url);
+    byStudy.set(k, (byStudy.get(k) ?? true) && s.seriousAeOnly);
+  }
+  return {
+    studies,
+    eligiblePoints,
+    ratePoints,
+    excluded,
+    reportShares,
+    studyCount: byStudy.size,
+    seriousAeSourceEntries: studies.filter((s) => s.seriousAeOnly).length,
+    seriousAeStudies: [...byStudy.values()].filter(Boolean).length,
+  };
 }
 
 /**
