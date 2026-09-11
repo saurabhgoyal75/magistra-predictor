@@ -3,9 +3,9 @@
   "@type": "Dataset",
   "name": "Magistra GLP-1 Aggregate Pooled Side Effect Rates",
   "description": "Per-effect summary table only: pooled clinical rate estimate (with 95% CI, stated rates, distinct sources) and community reporting frequency (mentions, distinct reports) for each of the 15 tracked GLP-1 side effects. Computed from Magistra's underlying point-level corpus, which is NOT included here and remains under a separate attribution/no-redistribution licence (see licenseUrl). This summary table may be redistributed with attribution. Figures are pulled live from https://magistra.health/api/data?q=overview at build time — never hand-typed.",
-  "version": "1.2",
+  "version": "1.3",
   "asOf": "2026-09-10",
-  "generatedAt": "2026-09-10T20:59:07.792Z",
+  "generatedAt": "2026-09-11T08:56:18.330Z",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "licenseNote": "This aggregate table (effect, pooled rate, CI, n, distinct sources) is CC BY 4.0 — free to redistribute with attribution (Magistra, magistra.health). The underlying point-level corpus is NOT covered by this licence; see https://magistra.health/en/data#licence.",
   "licenseUrl": "https://magistra.health/en/data#licence",
@@ -22,8 +22,8 @@
       "contentUrl": "https://magistra.health/data/glp1-aggregate-rates.csv"
     }
   ],
-  "citation": "Magistra Health. \"GLP-1 Aggregate Pooled Side Effect Rates.\" magistra.health/data/glp1-aggregate-rates.json. Accessed 2026-09-10.",
-  "methodologyNote": "clinicalPooledRatePct/CI: weighted random-effects pooled rate across eligible clinical + regulatory rate points, one entry per distinct source (src/lib/side-effects-engine.ts::pooledClinicalEstimate, exposed live at /api/data?q=overview -> effectsTracked[].corpusClinical). Null when the corpus has zero eligible clinical rate points for that effect. communityReportingFrequencyPct: of N distinct community reports (corpus-wide, deduped by URL), the share mentioning this effect — NOT an incidence rate, see /en/methodology (src/lib/rate-base.ts::buildReportingFrequency). clinicalRateKind: \"incidence\" for an ordinary all-cause pooled rate; \"serious_ae_floor\" when every source behind the pooled rate is a rate from a trial registry’s SERIOUS adverse-events table (the registry lists non-serious events only above the trial’s reporting threshold, so such a figure is a FLOOR on all-cause incidence, not incidence); \"mixed_incidence_and_serious_ae\" when the pool contains both. Do not compare a serious_ae_floor row to a label’s all-cause figure without saying so.",
+  "citation": "Magistra Health. \"GLP-1 Aggregate Pooled Side Effect Rates.\" magistra.health/data/glp1-aggregate-rates.json. Accessed 2026-09-11.",
+  "methodologyNote": "clinicalPooledRatePct/CI: weighted random-effects pooled rate across eligible clinical + regulatory rate points, one entry per distinct source (src/lib/side-effects-engine.ts::pooledClinicalEstimate, exposed live at /api/data?q=overview -> effectsTracked[].corpusClinical). Null when the corpus has zero eligible clinical rate points for that effect. communityReportingFrequencyPct: of N distinct community reports (corpus-wide, deduped by URL), the share mentioning this effect — NOT an incidence rate, see /en/methodology (src/lib/rate-base.ts::buildReportingFrequency). clinicalIntervalBasis: \"sampling_plus_between_study\" normally; \"sampling_only_single_source\" when a single source entry contributes, in which case the between-study heterogeneity term is 0 by construction and the two CI columns describe that one study's sampling only — never read such a row's narrow interval as stronger evidence than a wider one. clinicalRateKind: \"incidence\" for an ordinary all-cause pooled rate; \"serious_ae_floor\" when every source behind the pooled rate is a rate from a trial registry’s SERIOUS adverse-events table (the registry lists non-serious events only above the trial’s reporting threshold, so such a figure is a FLOOR on all-cause incidence, not incidence); \"mixed_incidence_and_serious_ae\" when the pool contains both. Do not compare a serious_ae_floor row to a label’s all-cause figure without saying so.",
   "disclaimer": "Data, not medical advice. Reporting frequency is not incidence — do not compare it to the clinical rate as if the two measured the same thing.",
   "evidentiaryBase": {
     "corpusPoints": 1650,
@@ -48,6 +48,7 @@
       "clinicalDistinctSources": 27,
       "clinicalSourceDiversity": "very_high",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 38.5,
       "communityMentions": 10,
       "communityTotalReports": 26
@@ -63,6 +64,7 @@
       "clinicalDistinctSources": 14,
       "clinicalSourceDiversity": "high",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 34.6,
       "communityMentions": 9,
       "communityTotalReports": 26
@@ -78,6 +80,7 @@
       "clinicalDistinctSources": 13,
       "clinicalSourceDiversity": "high",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 26.9,
       "communityMentions": 7,
       "communityTotalReports": 26
@@ -93,6 +96,7 @@
       "clinicalDistinctSources": 12,
       "clinicalSourceDiversity": "high",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 30.8,
       "communityMentions": 8,
       "communityTotalReports": 26
@@ -108,6 +112,7 @@
       "clinicalDistinctSources": 8,
       "clinicalSourceDiversity": "moderate",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 3.8,
       "communityMentions": 1,
       "communityTotalReports": 26
@@ -123,6 +128,7 @@
       "clinicalDistinctSources": 2,
       "clinicalSourceDiversity": "low",
       "clinicalRateKind": "serious_ae_floor",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 0,
       "communityMentions": 0,
       "communityTotalReports": 26
@@ -138,6 +144,7 @@
       "clinicalDistinctSources": 3,
       "clinicalSourceDiversity": "low",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 11.5,
       "communityMentions": 3,
       "communityTotalReports": 26
@@ -153,6 +160,7 @@
       "clinicalDistinctSources": 15,
       "clinicalSourceDiversity": "high",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 42.3,
       "communityMentions": 11,
       "communityTotalReports": 26
@@ -168,6 +176,7 @@
       "clinicalDistinctSources": 4,
       "clinicalSourceDiversity": "moderate",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 15.4,
       "communityMentions": 4,
       "communityTotalReports": 26
@@ -183,6 +192,7 @@
       "clinicalDistinctSources": 5,
       "clinicalSourceDiversity": "moderate",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 23.1,
       "communityMentions": 6,
       "communityTotalReports": 26
@@ -198,6 +208,7 @@
       "clinicalDistinctSources": 4,
       "clinicalSourceDiversity": "moderate",
       "clinicalRateKind": "mixed_incidence_and_serious_ae",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 11.5,
       "communityMentions": 3,
       "communityTotalReports": 26
@@ -213,6 +224,7 @@
       "clinicalDistinctSources": 1,
       "clinicalSourceDiversity": "very_low",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_only_single_source",
       "communityReportingFrequencyPct": 3.8,
       "communityMentions": 1,
       "communityTotalReports": 26
@@ -228,6 +240,7 @@
       "clinicalDistinctSources": 2,
       "clinicalSourceDiversity": "low",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 23.1,
       "communityMentions": 6,
       "communityTotalReports": 26
@@ -243,6 +256,7 @@
       "clinicalDistinctSources": 4,
       "clinicalSourceDiversity": "moderate",
       "clinicalRateKind": "incidence",
+      "clinicalIntervalBasis": "sampling_plus_between_study",
       "communityReportingFrequencyPct": 7.7,
       "communityMentions": 2,
       "communityTotalReports": 26
@@ -258,6 +272,7 @@
       "clinicalDistinctSources": 0,
       "clinicalSourceDiversity": null,
       "clinicalRateKind": null,
+      "clinicalIntervalBasis": null,
       "communityReportingFrequencyPct": 0,
       "communityMentions": 0,
       "communityTotalReports": 26
