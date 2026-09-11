@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-10.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-11.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -226,6 +226,25 @@ function seriousAeNote(seriousSources: number, totalSources: number, locale: "en
     : ` — ${seriousSources} of ${totalSources} sources ${seriousSources === 1 ? "is a" : "are"} SERIOUS adverse-event rate${seriousSources === 1 ? "" : "s"} from a trial registry's SAE table, which understate all-cause incidence`;
 }
 
+/**
+ * The sentence that keeps a NARROW interval on a single-source estimate from
+ * being read as precision. `computeConfidenceInterval` sets τ² to 0 when only one
+ * source entry contributes (k = 1, documented in the preprint's §2.5), so the
+ * published interval is that one study's sampling interval and carries NO
+ * between-study term at all — it can come out tighter than a well-evidenced
+ * effect's interval while resting on far less. The API's `confidenceNote`
+ * already tells readers to treat a WIDE interval as the binding statement;
+ * nothing said the converse, and hair_loss (3 rates, one trial, 4–7%) is
+ * currently the only estimate in this state. Empty when k > 1, so an ordinary
+ * estimate keeps its plain basis. (RED TEAM 2026-09-11.)
+ */
+function singleSourceIntervalNote(entryCount: number, locale: "en" | "nl"): string {
+  if (entryCount !== 1) return "";
+  return locale === "nl"
+    ? " — het interval komt van één bron: er zit geen heterogeniteitsterm tussen studies in (τ² = 0), dus de breedte beschrijft alleen de steekproef van die ene studie, niet hoe goed het percentage bekend is"
+    : " — the interval rests on a single source: it contains no between-study heterogeneity term at all (τ² = 0), so its width describes that one study's sampling, not how well the rate is known";
+}
+
 export type PooledClinicalEstimate = {
   ratePct: number;
   ciLowPct: number;
@@ -240,6 +259,12 @@ export type PooledClinicalEstimate = {
   /** Human-readable disclosure when `seriousAeSources > 0`; empty string otherwise. */
   rateKindNote: string;
   rateKindNoteNl: string;
+  /** How the interval was computed: "sampling_plus_between_study" normally,
+   *  "sampling_only_single_source" when k = 1 and τ² is 0 by construction. */
+  intervalBasis: "sampling_plus_between_study" | "sampling_only_single_source";
+  /** Human-readable disclosure when `intervalBasis` is single-source; empty otherwise. */
+  intervalNote: string;
+  intervalNoteNl: string;
   /** @deprecated use `sourceDiversity` — same value, this name stays one release for back-compat */
   confidence: "very_low" | "low" | "moderate" | "high" | "very_high";
   /** Bucketed count of DISTINCT sources behind the estimate — not a statement about precision. Canonical name; see confidence. */
@@ -270,6 +295,9 @@ export function pooledClinicalEstimate(points: SideEffectDataPoint[]): PooledCli
     seriousAeSources: result.seriousAeSourceCount,
     rateKindNote: seriousAeNote(result.seriousAeSourceCount, result.sourceCount, "en").replace(/^ — /, ""),
     rateKindNoteNl: seriousAeNote(result.seriousAeSourceCount, result.sourceCount, "nl").replace(/^ — /, ""),
+    intervalBasis: result.rates.length === 1 ? "sampling_only_single_source" : "sampling_plus_between_study",
+    intervalNote: singleSourceIntervalNote(result.rates.length, "en").replace(/^ — /, ""),
+    intervalNoteNl: singleSourceIntervalNote(result.rates.length, "nl").replace(/^ — /, ""),
     confidence: diversity,
     sourceDiversity: diversity,
   };
@@ -501,8 +529,8 @@ export async function calculateDynamicRisk(
       dataPointCount: clinicalPoints.length,
       ratePointCount: clinicalResult.pointCount,
       rateSourceCount: srcs,
-      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "en")}${doseNoteEn}${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
-      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "nl")}${doseNoteNl}${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
+      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "en")}${singleSourceIntervalNote(clinicalResult.rates.length, "en")}${doseNoteEn}${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
+      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "nl")}${singleSourceIntervalNote(clinicalResult.rates.length, "nl")}${doseNoteNl}${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
       isFallback: false,
       unadjustedPercentage: unadjustedPct,
       pooledPercentage: pooledPct,
