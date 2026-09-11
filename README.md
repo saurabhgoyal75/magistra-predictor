@@ -3,7 +3,7 @@
 **A dual-track framework for GLP-1 side effect estimation, separating clinical evidence from real-world patient reports.**
 
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![Methodology](https://img.shields.io/badge/methodology-v5.20-green.svg)](https://magistra.health/en/methodology)
+[![Methodology](https://img.shields.io/badge/methodology-v5.21-green.svg)](https://magistra.health/en/methodology)
 [![Live](https://img.shields.io/badge/live-magistra.health-purple.svg)](https://magistra.health/en/predictor)
 
 This repository contains the statistical methodology and model configuration behind [Magistra Health](https://magistra.health) — a platform that estimates GLP-1 medication side effect risk using two parallel data tracks. The predictor and the public API are free and need no authentication; bulk export of the dataset is not (see the licence link below). The clinical corpus is updated daily by an automated pipeline. The community corpus is not continuously updated: Reddit blocked our collector on 2026-05-28, freezing the 684 Reddit reports that make up most of it, and the remaining platform (Drugs.com, 71 reports) was last collected 2026-08-12. Any reporting-frequency figure is therefore a fixed historical number and should be cited with its date.
@@ -171,7 +171,7 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
-**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.20). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.21). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
 
 No DOI is registered for this work — the methodology is self-published at the URL above, not deposited with a repository that mints permanent identifiers. (A DOI, 10.5281/zenodo.19559749, was asserted on this page and elsewhere until 2026-08-18; it was never actually registered and has been withdrawn.)
 
@@ -181,7 +181,7 @@ No DOI is registered for this work — the methodology is self-published at the 
   title        = {A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports},
   year         = {2026},
   publisher    = {Magistra, Phlo Systems BV},
-  version      = {5.20},
+  version      = {5.21},
   url          = {https://magistra.health/en/methodology}
 }
 ```
