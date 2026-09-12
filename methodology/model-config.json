@@ -1,6 +1,6 @@
 {
-  "version": 4,
-  "generatedAt": "2026-09-09T14:43:00.000Z",
+  "version": 5,
+  "generatedAt": "2026-09-12T12:43:00.000Z",
   "inputParameters": [
     {
       "id": "molecule",
@@ -781,8 +781,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Increase water intake, add fibre-rich foods gradually, consider a mild fibre supplement. Regular movement helps.",
-        "nl": "Verhoog je waterinname, voeg geleidelijk vezelrijk eten toe, overweeg een mild vezelsupplement. Regelmatige beweging helpt."
+        "en": "Increase water intake and add fibre-rich foods gradually. If it persists, or before you start any supplement, ask your pharmacist or doctor.",
+        "nl": "Verhoog je waterinname en voeg geleidelijk vezelrijk eten toe. Als het aanhoudt, of voordat je een supplement gaat gebruiken, vraag je apotheker of arts."
       },
       "sources": [
         {
@@ -878,8 +878,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Make sure you still eat enough protein (at least 60g/day) to prevent muscle loss. Set reminders to eat if needed.",
-        "nl": "Zorg dat je genoeg eiwit eet (minimaal 60g/dag) om spierverlies te voorkomen. Stel herinneringen in om te eten indien nodig."
+        "en": "Make sure you still eat enough — ask your pharmacist or doctor what intake is right for you. Set reminders to eat if needed.",
+        "nl": "Zorg dat je genoeg blijft eten — vraag je apotheker of arts wat voor jou een passende inname is. Stel herinneringen in om te eten indien nodig."
       },
       "sources": [
         {
@@ -910,8 +910,8 @@
         "nl": "Hoofdpijn"
       },
       "description": {
-        "en": "Mild to moderate headaches, especially in the first 1-2 weeks.",
-        "nl": "Milde tot matige hoofdpijn, vooral in de eerste 1-2 weken."
+        "en": "Mild to moderate headaches. No clinical source on file states when they start or how long they last.",
+        "nl": "Milde tot matige hoofdpijn. Geen klinische bron in ons bestand vermeldt wanneer die begint of hoe lang die aanhoudt."
       },
       "severity": "mild",
       "baseRates": {
@@ -975,8 +975,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Stay hydrated — dehydration from reduced food intake is often the real cause. Regular paracetamol is safe to take.",
-        "nl": "Blijf gehydrateerd — uitdroging door minder eten is vaak de echte oorzaak. Gewone paracetamol is veilig om te nemen."
+        "en": "Stay hydrated. If headaches persist, or before you take anything for them, ask your pharmacist or doctor.",
+        "nl": "Blijf gehydrateerd. Als de hoofdpijn aanhoudt, of voordat je er iets voor inneemt, vraag je apotheker of arts."
       },
       "sources": [
         {
@@ -1102,8 +1102,8 @@
         "nl": "Vermoeidheid / Lage energie"
       },
       "description": {
-        "en": "Feeling tired or having less energy than usual, especially in the first weeks.",
-        "nl": "Je moe voelen of minder energie hebben dan normaal, vooral in de eerste weken."
+        "en": "Feeling tired or having less energy than usual. No clinical source on file states when it starts or how long it lasts.",
+        "nl": "Je moe voelen of minder energie hebben dan normaal. Geen klinische bron in ons bestand vermeldt wanneer dit begint of hoe lang het aanhoudt."
       },
       "severity": "mild",
       "baseRates": {
@@ -1167,8 +1167,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Ensure you're eating enough protein and calories — fatigue often means you're eating too little. Light exercise actually helps more than resting.",
-        "nl": "Zorg dat je genoeg eiwit en calorieën eet — vermoeidheid betekent vaak dat je te weinig eet. Lichte beweging helpt meer dan rusten."
+        "en": "If fatigue persists or gets worse, discuss it with your pharmacist or doctor — they can check whether your eating pattern or something else needs attention.",
+        "nl": "Als de vermoeidheid aanhoudt of erger wordt, bespreek dit met je apotheker of arts — zij kunnen nagaan of je eetpatroon of iets anders aandacht nodig heeft."
       },
       "sources": [
         {
@@ -1393,8 +1393,8 @@
         "nl": "Zuurbranden (reflux)"
       },
       "description": {
-        "en": "Stomach acid flowing back into the oesophagus, causing heartburn or a burning sensation. GLP-1 drugs slow gastric emptying, which can worsen pre-existing reflux.",
-        "nl": "Maagzuur dat terugstroomt naar de slokdarm, met brandend maagzuur als gevolg. GLP-1-medicijnen vertragen de maagontlediging, wat bestaande reflux kan verergeren."
+        "en": "Stomach acid flowing back into the oesophagus, causing heartburn or a burning sensation. The FDA Wegovy prescribing information (revised 06/2026) states that semaglutide delays gastric emptying (section 12.2); it does not attribute reflux to that mechanism, and neither do we.",
+        "nl": "Maagzuur dat terugstroomt naar de slokdarm, met brandend maagzuur als gevolg. De FDA-productinformatie voor Wegovy (herzien 06/2026) vermeldt dat semaglutide de maaglediging vertraagt (rubriek 12.2); reflux wordt daar niet aan toegeschreven, en wij doen dat evenmin."
       },
       "severity": "mild",
       "baseRates": {
@@ -1458,8 +1458,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Avoid eating 3+ hours before bed. Sleep with your head slightly elevated. Avoid trigger foods (coffee, alcohol, citrus, tomatoes). An OTC antacid can help.",
-        "nl": "Eet niet binnen 3 uur voor het slapen. Slaap met je hoofd licht verhoogd. Vermijd triggerende voedingsmiddelen (koffie, alcohol, citrus, tomaten). Een vrij verkrijgbaar antacidum kan helpen."
+        "en": "Avoid eating shortly before bed. Sleep with your head slightly elevated. Avoid foods you find trigger it. Ask your pharmacist or doctor before taking anything for it.",
+        "nl": "Eet niet vlak voor het slapen. Slaap met je hoofd licht verhoogd. Vermijd voedingsmiddelen waarvan je merkt dat ze het uitlokken. Vraag je apotheker of arts voordat je er iets voor inneemt."
       },
       "sources": [
         {
@@ -1489,8 +1489,8 @@
         "nl": "Galstenen (cholelithiasis)"
       },
       "description": {
-        "en": "Formation of gallstones in the gallbladder. Associated with rapid weight loss rather than the drug directly. Symptoms include sharp pain in the upper right abdomen after eating fatty foods. Requires medical attention.",
-        "nl": "Vorming van galstenen in de galblaas. Geassocieerd met snel gewichtsverlies, niet direct met het medicijn. Symptomen zijn scherpe pijn rechtsboven in de buik na het eten van vet voedsel. Vereist medische aandacht."
+        "en": "Formation of gallstones in the gallbladder. The FDA Wegovy prescribing information (section 5.3, revised 06/2026) states that substantial or rapid weight loss can increase the risk of cholelithiasis, but that gallbladder disease may also occur in the absence of substantial or rapid weight loss — so it is not attributed to weight loss alone. Symptoms include sharp pain in the upper right abdomen after eating fatty foods. Requires medical attention.",
+        "nl": "Vorming van galstenen in de galblaas. De FDA-bijsluiter van Wegovy (sectie 5.3, herzien 06/2026) stelt dat aanzienlijk of snel gewichtsverlies het risico op galstenen kan verhogen, maar dat galblaasaandoeningen ook kunnen optreden zonder aanzienlijk of snel gewichtsverlies — het wordt dus niet alleen aan gewichtsverlies toegeschreven. Symptomen zijn scherpe pijn rechtsboven in de buik na het eten van vet voedsel. Vereist medische aandacht."
       },
       "severity": "severe",
       "baseRates": {
@@ -1542,8 +1542,8 @@
       },
       "userReportedRate": 0.04,
       "userReportedSeverity": {
-        "en": "Users who develop gallstones typically describe it as sudden, intense pain in the upper right abdomen — often after a fatty meal. Some required surgery (cholecystectomy). More common in those losing weight rapidly.",
-        "nl": "Gebruikers die galstenen ontwikkelen beschrijven het als plotselinge, intense pijn rechtsboven in de buik — vaak na een vetrijke maaltijd. Sommigen hadden een operatie nodig. Komt vaker voor bij snel gewichtsverlies."
+        "en": "Users who develop gallstones typically describe it as sudden, intense pain in the upper right abdomen — often after a fatty meal. Some required surgery (cholecystectomy).",
+        "nl": "Gebruikers die galstenen ontwikkelen beschrijven het als plotselinge, intense pijn rechtsboven in de buik — vaak na een vetrijke maaltijd. Sommigen hadden een operatie nodig."
       },
       "onsetDays": {
         "en": "Not stated by any clinical source on file. The FDA Wegovy prescribing information (section 5.3, DailyMed, revised 06/2026) states that substantial or rapid weight loss can increase the risk of cholelithiasis, but that gallbladder disease may also occur in the absence of substantial or rapid weight loss.",
@@ -1554,8 +1554,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand. De FDA-bijsluiter van Wegovy (sectie 5.3) stelt dat bij een vermoeden van galstenen galblaasonderzoek en passende klinische opvolging aangewezen zijn."
       },
       "managementTip": {
-        "en": "If you experience sudden sharp pain in the upper right abdomen, especially after eating, seek medical attention. Losing weight gradually (not too fast) reduces risk. Stay hydrated.",
-        "nl": "Bij plotselinge scherpe pijn rechtsboven in de buik, vooral na het eten, zoek medische hulp. Geleidelijk afvallen (niet te snel) vermindert het risico. Blijf goed gehydrateerd."
+        "en": "If you experience sudden sharp pain in the upper right abdomen, especially after eating, seek medical attention. Discuss the pace of your weight loss with your doctor.",
+        "nl": "Bij plotselinge scherpe pijn rechtsboven in de buik, vooral na het eten, zoek medische hulp. Bespreek het tempo van je gewichtsverlies met je arts."
       },
       "sources": [
         {
@@ -1650,8 +1650,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Ensure adequate protein intake (60-80g/day), consider a multivitamin with biotin, iron, and zinc. Hair loss from weight loss is almost always temporary.",
-        "nl": "Zorg voor voldoende eiwitinname (60-80g/dag), overweeg een multivitamine met biotine, ijzer en zink. Haarverlies door gewichtsverlies is bijna altijd tijdelijk."
+        "en": "If you notice hair shedding, ask your pharmacist or doctor before starting any supplement — they can advise what, if anything, is appropriate for you.",
+        "nl": "Als je haaruitval merkt, vraag je apotheker of arts om advies voordat je een supplement gaat gebruiken — zij kunnen aangeven wat, indien iets, voor jou passend is."
       },
       "sources": [
         {
@@ -1682,8 +1682,8 @@
         "nl": "Reactie op de injectieplaats"
       },
       "description": {
-        "en": "Redness, itching, swelling, or mild pain at the injection site. Usually mild and self-resolving within a few days.",
-        "nl": "Roodheid, jeuk, zwelling of milde pijn op de injectieplaats. Meestal mild en verdwijnt vanzelf binnen een paar dagen."
+        "en": "Redness, itching, swelling, or mild pain at the injection site. Usually mild. No clinical source on file states how long it lasts.",
+        "nl": "Roodheid, jeuk, zwelling of milde pijn op de injectieplaats. Meestal mild. Geen klinische bron in ons bestand vermeldt hoe lang dit aanhoudt."
       },
       "severity": "mild",
       "baseRates": {
@@ -1779,8 +1779,8 @@
         "nl": "Duizeligheid"
       },
       "description": {
-        "en": "Feeling lightheaded or unsteady. Often related to dehydration from reduced fluid/food intake or blood pressure changes during weight loss.",
-        "nl": "Je licht in het hoofd of onvast voelen. Vaak gerelateerd aan uitdroging door verminderde vocht-/voedselinname of bloeddrukveranderingen tijdens gewichtsverlies."
+        "en": "Feeling lightheaded or unsteady. No clinical source on file states a cause for it.",
+        "nl": "Je licht in het hoofd of onvast voelen. Geen klinische bron in ons bestand noemt een oorzaak hiervoor."
       },
       "severity": "mild",
       "baseRates": {
@@ -1844,8 +1844,8 @@
         "nl": "Niet vermeld in een klinische bron in ons bestand."
       },
       "managementTip": {
-        "en": "Drink at least 2 litres of water daily. Stand up slowly. If you take blood pressure medication, ask your doctor to check if your dose needs adjusting.",
-        "nl": "Drink minstens 2 liter water per dag. Sta langzaam op. Als je bloeddrukmedicatie gebruikt, vraag je arts of de dosis moet worden aangepast."
+        "en": "Drink enough fluids and stand up slowly. If you take blood pressure medication, ask your doctor whether it needs reviewing.",
+        "nl": "Drink voldoende en sta langzaam op. Als je bloeddrukmedicatie gebruikt, vraag je arts of die herzien moet worden."
       },
       "sources": [
         {
@@ -2028,6 +2028,17 @@
         {
           "type": "narrative_fields_aligned",
           "reason": "decision unsourced-narrative-fields-side-effects-data-2026-09-06, founder-approved 2026-09-08: onsetDays/durationWeeks for 14 effects now read 'Not stated by any clinical source on file' (pancreatitis's two fields state no timeframe and stand; gallstones' two quote FDA Wegovy label §5.3), and two userReportedSeverity value-judgement/remedy clauses (reduced_appetite, hair_loss) were removed. Same edit found this snapshot's description/userReportedSeverity/managementTip fields had drifted from src/lib/side-effects-data.ts on 30 fields since 2026-04-12 (hair_loss still carried the withdrawn 'much more commonly reported by users than clinical trials suggest'); every narrative field is now byte-identical to the source. No baseRate, modifier or threshold changed."
+        }
+      ],
+      "autoApplied": false
+    },
+    {
+      "version": 5,
+      "date": "2026-09-12",
+      "changes": [
+        {
+          "type": "narrative_fields_aligned",
+          "reason": "Founder approved both open narrative decisions in one reply (2026-09-12T10:12:35Z, \"Proceed with all your recommendations..\"). (a) managementtip-medical-guidance-2026-09-08, option (ii): every managementTip that named a drug, a supplement, a dose or made a comparative claim now points to a pharmacist or doctor instead. The decision enumerated five \u2014 reduced_appetite (at least 60g/day protein), headache (regular paracetamol is safe to take), fatigue (light exercise helps more than resting), gallstones (losing weight gradually reduces risk), hair_loss (60-80g/day protein plus a biotin/iron/zinc multivitamin); applying the same criterion to every row also caught constipation (a mild fibre supplement), acid_reflux (an OTC antacid can help) and dizziness (at least 2 litres of water daily). (b) unsourced-mechanism-timeframe-clauses-in-descriptions-2026-09-09: description clauses asserting a timeframe or a causal mechanism that no source on file states are stripped, or replaced with what the FDA Wegovy label (revised 06/2026) actually states \u2014 headache, injection_site_reaction, acid_reflux, gallstones and dizziness enumerated, fatigue caught by the same criterion; gallstones' userReportedSeverity also dropped a prevalence assertion (\"more common in those losing weight rapidly\") that the label's own section 5.3 text, quoted three fields below it, contradicts. No rate, modifier or baseRate changed \u2014 prose only, EN+NL, applied identically to src/lib/side-effects-data.ts (canonical), this published snapshot and the public methodology mirror."
         }
       ],
       "autoApplied": false
