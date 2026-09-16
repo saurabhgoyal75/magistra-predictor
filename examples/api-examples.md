@@ -207,11 +207,11 @@ curl -X POST https://magistra.health/api/predictor/journey \
 ```
 
 Returns three predictions:
-- **weightTrajectory**: 68-week expected weight loss curve
+- **weightTrajectory**: expected weight loss curve to the trial readout week (68 weeks semaglutide, 72 tirzepatide, 56 liraglutide)
 - **muscleRisk**: lean mass loss risk score and protein target
 - **discontinuation**: expected regain trajectory if medication is stopped
 
-All three are grounded in STEP trial data (Wilding 2021, Davies 2021, Jastreboff 2022, etc.) with expert-coded modifiers for exercise, protein, resistance training, and demographics. These modifiers are NOT yet empirically validated — see limitations.
+The trajectory's terminal loss comes from the STEP (semaglutide), SURMOUNT-1/2 (tirzepatide) or SCALE / SCALE-Diabetes (liraglutide) arm for the chosen molecule and dose; the curve shape, the muscle model (STEP-1 DEXA substudy) and the discontinuation model (STEP-4) are STEP-derived, with expert-coded modifiers for exercise, protein, resistance training, and demographics. These modifiers are NOT yet empirically validated — see limitations.
 
 ---
 
