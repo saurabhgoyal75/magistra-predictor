@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-11.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-16.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -359,6 +359,17 @@ const MAX_TOTAL_LOG_ODDS_SHIFT = 2.5; // ~12x max cumulative OR
 
 /** Human-readable disclosure of the modifiers behind an adjusted percentage.
  *  Empty when none fired, so an unmodified estimate keeps its plain basis. */
+/** Display rounding for a clinical-track rate. Below 1% keep one decimal
+ *  instead of flooring to 1: since 2026-09-04 pancreatitis's static figure is
+ *  the FDA label's 0.2 per 100 patient-years (encoded 0.002), and a floor of 1
+ *  would print it 5× too high while the whole-number round printed it as 0.
+ *  Everything ≥1% renders as before. Was local to the literature-fallback
+ *  branch until 2026-09-16; the corpus-derived branch kept the bare floor and
+ *  printed pancreatitis's 0.1% pooled serious-AE rate as 1%. */
+function displayPct(r: number): number {
+  return r * 100 < 1 ? Math.round(r * 1000) / 10 : Math.max(1, Math.min(95, Math.round(r * 100)));
+}
+
 function modifierNote(applied: AppliedModifier[], unadjustedPct: number, adjustedPct: number, lang: "en" | "nl"): string {
   if (applied.length === 0) return "";
   // States BOTH endpoints rather than only the multipliers: applyModifiers caps
@@ -512,9 +523,14 @@ export async function calculateDynamicRisk(
       profile, hasSexSpecificData, getModifier, staticEffect.modifiers, appliedMods
     );
     const adjustedRate = 1 / (1 + Math.exp(-logOdds));
-    const pct = Math.max(1, Math.min(95, Math.round(adjustedRate * 100)));
-    const unadjustedPct = Math.max(1, Math.min(95, Math.round(clampedRate * 100)));
-    const pooledPct = Math.max(1, Math.min(95, Math.round(pooledRate * 100)));
+    // displayPct (not a bare floor of 1): since the 2026-09-10 serious-AE
+    // re-admission, pancreatitis's corpus-derived rate is 0.1% — the API and the
+    // CC BY table published 0.1 while this branch floored it to 1, a 10×
+    // overstatement of the one figure disclosed as a FLOOR on incidence
+    // (found by RED TEAM 2026-09-16, live probe at every tier).
+    const pct = displayPct(adjustedRate);
+    const unadjustedPct = displayPct(clampedRate);
+    const pooledPct = displayPct(pooledRate);
     // Anchor the variance at the pooled corpus rate (the evidence), centre on the adjusted one.
     const ci = computeConfidenceInterval(adjustedRate, clinicalResult.rates, clinicalResult.effectiveN, pooledRate);
 
@@ -529,8 +545,8 @@ export async function calculateDynamicRisk(
       dataPointCount: clinicalPoints.length,
       ratePointCount: clinicalResult.pointCount,
       rateSourceCount: srcs,
-      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "en")}${singleSourceIntervalNote(clinicalResult.rates.length, "en")}${doseNoteEn}${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
-      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "nl")}${singleSourceIntervalNote(clinicalResult.rates.length, "nl")}${doseNoteNl}${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
+      basis: `${clinicalResult.pointCount} stated rate${clinicalResult.pointCount === 1 ? "" : "s"} from ${srcs} distinct source${srcs === 1 ? "" : "s"} (of ${clinicalPoints.length} clinical/regulatory records matching this profile's sex and dose tier)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "en")}${singleSourceIntervalNote(clinicalResult.rates.length, "en")}${doseNoteEn}${modifierNote(appliedMods, unadjustedPct, pct, "en")}`,
+      basisNl: `${clinicalResult.pointCount} vermelde percentage${clinicalResult.pointCount === 1 ? "" : "s"} uit ${srcs} afzonderlijke bron${srcs === 1 ? "" : "nen"} (van ${clinicalPoints.length} klinische/regulatoire records die passen bij het geslacht en dosisniveau van dit profiel)${seriousAeNote(clinicalResult.seriousAeSourceCount, srcs, "nl")}${singleSourceIntervalNote(clinicalResult.rates.length, "nl")}${doseNoteNl}${modifierNote(appliedMods, unadjustedPct, pct, "nl")}`,
       isFallback: false,
       unadjustedPercentage: unadjustedPct,
       pooledPercentage: pooledPct,
@@ -555,13 +571,7 @@ export async function calculateDynamicRisk(
       profile, false, getModifier, staticEffect.modifiers, appliedMods
     );
     const adjustedRate = 1 / (1 + Math.exp(-logOdds));
-    // Below 1% keep one decimal instead of flooring to 1: since 2026-09-04
-    // pancreatitis's static figure is the FDA label's 0.2 per 100 patient-years
-    // (encoded 0.002), and a floor of 1 would print it 5× too high while the
-    // whole-number round printed it as 0. Everything ≥1% renders as before.
-    const fallbackPct = (r: number) =>
-      r * 100 < 1 ? Math.round(r * 1000) / 10 : Math.max(1, Math.min(95, Math.round(r * 100)));
-    const pct = fallbackPct(adjustedRate);
+    const pct = displayPct(adjustedRate);
 
     // For fallback: CI from published trial ranges (low to high dose rate),
     // passed through the SAME modifier shift as the point estimate — otherwise a
@@ -573,7 +583,7 @@ export async function calculateDynamicRisk(
         Math.log(clamped / (1 - clamped)),
         profile, false, getModifier, staticEffect.modifiers
       );
-      return fallbackPct(1 / (1 + Math.exp(-lo)));
+      return displayPct(1 / (1 + Math.exp(-lo)));
     };
     const lowRate = shiftEndpoint(staticEffect.clinicalRates.low);
     const highRate = shiftEndpoint(staticEffect.clinicalRates.high);
@@ -596,10 +606,10 @@ export async function calculateDynamicRisk(
       // effect with NO citable source at all (emotional_blunting) no longer reaches
       // this branch — see `noCitableClinicalEvidence` above, which returns
       // UnavailableEstimate instead.
-      basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "en")}${staticEffect.clinicalRatesUnitNote ? ` ${staticEffect.clinicalRatesUnitNote}` : ""}`,
-      basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, fallbackPct(clampedRate), pct, "nl")}${staticEffect.clinicalRatesUnitNoteNl ? ` ${staticEffect.clinicalRatesUnitNoteNl}` : ""}`,
+      basis: `Published baseline estimate — no citable rate for this effect in our corpus yet${modifierNote(appliedMods, displayPct(clampedRate), pct, "en")}${staticEffect.clinicalRatesUnitNote ? ` ${staticEffect.clinicalRatesUnitNote}` : ""}`,
+      basisNl: `Gepubliceerde basisschatting — nog geen citeerbaar percentage in ons corpus${modifierNote(appliedMods, displayPct(clampedRate), pct, "nl")}${staticEffect.clinicalRatesUnitNoteNl ? ` ${staticEffect.clinicalRatesUnitNoteNl}` : ""}`,
       isFallback: true,
-      unadjustedPercentage: fallbackPct(clampedRate),
+      unadjustedPercentage: displayPct(clampedRate),
       modifiersApplied: appliedMods,
     };
   }
