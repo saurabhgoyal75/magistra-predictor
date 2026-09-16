@@ -7,7 +7,7 @@ headache,Headache,mild,9.9,4,22,117,18,high,incidence,sampling_plus_between_stud
 pancreatitis,Pancreatitis (rare),severe,0.1,0,1,11,3,low,mixed_incidence_and_serious_ae,sampling_plus_between_study,0,0,26
 fatigue,Fatigue / Low energy,mild,6.1,1,24,64,11,high,incidence,sampling_plus_between_study,11.5,3,26
 vomiting,Vomiting,moderate,9.9,3,29,131,26,very_high,incidence,sampling_plus_between_study,42.3,11,26
-abdominal_pain,Abdominal pain,moderate,6.6,1,42,116,17,high,incidence,sampling_plus_between_study,15.4,4,26
+abdominal_pain,Abdominal pain,moderate,6.5,1,42,115,16,high,incidence,sampling_plus_between_study,15.4,4,26
 acid_reflux,Acid reflux (GERD),mild,5.2,0,56,52,14,high,incidence,sampling_plus_between_study,23.1,6,26
 gallstones,Gallstones (cholelithiasis),severe,1.7,1,5,20,7,moderate,mixed_incidence_and_serious_ae,sampling_plus_between_study,11.5,3,26
 hair_loss,Hair loss (thinning),mild,4.5,2,12,8,3,low,incidence,sampling_plus_between_study,3.8,1,26
