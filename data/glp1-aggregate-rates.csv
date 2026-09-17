@@ -1,12 +1,12 @@
 effect,effectName,severity,clinicalPooledRatePct,clinicalCiLowPct,clinicalCiHighPct,clinicalStatedRates,clinicalDistinctSources,clinicalSourceDiversity,clinicalRateKind,clinicalIntervalBasis,communityReportingFrequencyPct,communityMentions,communityTotalReports
 nausea,Nausea,mild,22.5,7,51,133,28,very_high,incidence,sampling_plus_between_study,38.5,10,26
-diarrhea,Diarrhoea,mild,16.5,5,42,126,23,high,incidence,sampling_plus_between_study,34.6,9,26
+diarrhea,Diarrhoea,mild,17,5,42,126,23,high,incidence,sampling_plus_between_study,34.6,9,26
 constipation,Constipation,mild,11.6,2,40,125,22,high,incidence,sampling_plus_between_study,26.9,7,26
 reduced_appetite,Reduced appetite,mild,9.4,1,61,122,22,high,incidence,sampling_plus_between_study,30.8,8,26
 headache,Headache,mild,9.9,4,22,117,18,high,incidence,sampling_plus_between_study,3.8,1,26
 pancreatitis,Pancreatitis (rare),severe,0.1,0,1,11,3,low,mixed_incidence_and_serious_ae,sampling_plus_between_study,0,0,26
 fatigue,Fatigue / Low energy,mild,6.1,1,24,64,11,high,incidence,sampling_plus_between_study,11.5,3,26
-vomiting,Vomiting,moderate,9.9,3,29,131,26,very_high,incidence,sampling_plus_between_study,42.3,11,26
+vomiting,Vomiting,moderate,10,3,29,131,26,very_high,incidence,sampling_plus_between_study,42.3,11,26
 abdominal_pain,Abdominal pain,moderate,6.5,1,42,115,16,high,incidence,sampling_plus_between_study,15.4,4,26
 acid_reflux,Acid reflux (GERD),mild,5,3,9,51,13,high,incidence,sampling_plus_between_study,23.1,6,26
 gallstones,Gallstones (cholelithiasis),severe,1.7,1,5,20,7,moderate,mixed_incidence_and_serious_ae,sampling_plus_between_study,11.5,3,26
