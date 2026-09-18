@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-10.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-18.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -223,13 +223,36 @@ export function isCommunityReport(url: string): boolean {
   );
 }
 
-// A study weight may only come from a source that reports a study population.
-// Social/forum points carried extracted "sample sizes" of 500,000 and 40,000,000
-// (follower or impression counts, not cohorts) and, being weights, they decided
-// the community average on their own. A post is one voice: n=1.
+// A systematic review / network meta-analysis pools participants across every
+// trial it includes; its stated "sample size" describes that pool, not a
+// cohort specific to the one rate it reports for one drug/effect. Weighting a
+// row by it hands a single review row more pull than the individual trials it
+// draws from combined — found 2026-09-17 (RED TEAM): PMID 42419792, a
+// systematic review and network meta-analysis, carries extractedSampleSize
+// 99,791 (6x the next-largest entry in the corpus) on a muscle_loss rate; only
+// off-taxonomy today (muscle_loss publishes no figure), so nothing currently
+// live moved, but nothing stopped it landing on a displayed effect next.
+// Detected on the same text the extraction prompt always captures (design
+// language in the source name / abstract excerpt), the same way isFaers()
+// detects its class below.
+function isReviewOfReviews(p: RatePoint): boolean {
+  const excerpt = (p as RatePoint & { rawExcerpt?: string }).rawExcerpt || "";
+  return /systematic review|network meta-analysis|meta-analysis/i.test(
+    `${p.sourceName || ""} ${excerpt}`
+  );
+}
+
+// A study weight may only come from a source that reports a study population
+// specific to the rate it states. Social/forum points carried extracted
+// "sample sizes" of 500,000 and 40,000,000 (follower or impression counts, not
+// cohorts) and, being weights, they decided the community average on their
+// own. A post is one voice: n=1. A review-of-reviews' pooled n is the same
+// category of non-cohort number, just several orders of magnitude smaller.
 export function studyWeight(p: RatePoint): number {
   const isStudy = p.sourceType === "clinical" || p.sourceType === "regulatory";
-  return isStudy ? Math.max(1, p.extractedSampleSize || 1) : 1;
+  if (!isStudy) return 1;
+  if (isReviewOfReviews(p)) return 1;
+  return Math.max(1, p.extractedSampleSize || 1);
 }
 
 function isFaers(p: RatePoint): boolean {
