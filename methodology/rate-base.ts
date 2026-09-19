@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-18.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-19.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -95,7 +95,11 @@ export type RateBase = {
   ratePoints: number;
   excluded: Partial<Record<ExclusionReason, number>>;
   /** FAERS-style share-of-reports signals, kept separate from incidence */
-  reportShares: { source: string; url: string; share: number; reports: number }[];
+  // `reports` is the NUMERATOR (reports naming this term); `totalReports` is the
+  // denominator the share is computed against. Publishing the share and the
+  // numerator alone left a caller unable to check the arithmetic or to tell a
+  // 1,154-report base from a 99,460-report one (2026-09-19).
+  reportShares: { source: string; url: string; share: number; reports: number; totalReports: number | null }[];
   /**
    * DISTINCT STUDIES behind `studies`, keyed on the source URL (`studyKey`),
    * not on `sourceName`. The two agree for most effects and are different
@@ -326,12 +330,15 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     if (reason) {
       excluded[reason] = (excluded[reason] || 0) + 1;
       if (reason === "spontaneous_report_share") {
-        const m = /reported (\d+) times/i.exec((p as RatePoint & { rawExcerpt?: string }).rawExcerpt || "");
+        const excerpt = (p as RatePoint & { rawExcerpt?: string }).rawExcerpt || "";
+        const m = /reported (\d+) times/i.exec(excerpt);
+        const total = /out of (\d+) total reports/i.exec(excerpt);
         reportShares.push({
           source: p.sourceName,
           url: p.sourceUrl,
           share: p.extractedRate as number,
           reports: m ? Number(m[1]) : 0,
+          totalReports: p.extractedSampleSize ?? (total ? Number(total[1]) : null),
         });
       }
       continue;
