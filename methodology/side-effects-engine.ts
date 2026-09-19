@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-16.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-19.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -23,7 +23,7 @@
 import { getDataPoints, getMetadata, type SideEffectDataPoint } from "./side-effects-db";
 import { SIDE_EFFECTS, calculateRisk as calculateFallbackRisk } from "./side-effects-data";
 import { loadModelConfig, getEffectConfig } from "./model-config";
-import { buildRateBase, classifyRatePoint, confidenceFromSources, buildReportingFrequency, wilsonInterval } from "./rate-base";
+import { buildRateBase, classifyRatePoint, confidenceFromSources, buildReportingFrequency, poolingWeight, wilsonInterval } from "./rate-base";
 
 export type PatientProfile = {
   sex: "male" | "female";
@@ -180,15 +180,14 @@ function weightedAverageRate(points: SideEffectDataPoint[]): RateSummary | null 
     rates = rates.map((r) => Math.max(low, Math.min(high, r)));
   }
 
-  const confidenceDiscount: Record<string, number> = { high: 1.0, medium: 0.7, low: 0.3 };
-
   let totalWeight = 0;
   let weightedSum = 0;
   for (let i = 0; i < withRates.length; i++) {
-    const s = withRates[i];
-    const sampleWeight = Math.max(1, s.sampleSize);
-    const qualityWeight = confidenceDiscount[s.confidence] || 0.5;
-    const w = sampleWeight * qualityWeight;
+    // `poolingWeight` (rate-base.ts) is this formula's only definition since
+    // 2026-09-19 — `drugMix` reports shares of the same weight, and a second
+    // copy here would let a published composition drift off the estimate it
+    // describes.
+    const w = poolingWeight(withRates[i]);
     weightedSum += rates[i] * w;
     totalWeight += w;
   }
