@@ -421,6 +421,79 @@ export function distinctStudies(studies: { url: string }[]): number {
   return new Set(studies.map((s) => studyKey(s.url))).size;
 }
 
+/**
+ * The weight one collapsed source entry carries in a pooled estimate.
+ * Lifted out of `weightedAverageRate` (side-effects-engine.ts) 2026-09-19 so
+ * the pooling weight has ONE definition: the engine pools with it and
+ * `drugMix` below reports shares of it. A second copy of this formula would
+ * publish a composition that did not describe the number it sits beside.
+ */
+export function poolingWeight(study: Pick<Study, "sampleSize" | "confidence">): number {
+  const quality: Record<string, number> = { high: 1.0, medium: 0.7, low: 0.3 };
+  return Math.max(1, study.sampleSize) * (quality[study.confidence] ?? 0.5);
+}
+
+export type DrugMixEntry = {
+  drug: string;
+  statedRates: number;
+  distinctStudies: number;
+  sourceEntries: number;
+  pooledWeightPct: number;
+};
+
+/**
+ * Which molecules a pooled estimate is actually made of — measured 2026-09-19,
+ * when 876 of the 1,142 eligible clinical rates site-wide (77%) turned out to
+ * carry one drug's label while that drug held 1-36% of the pooling weight per
+ * effect. Both figures are true and they answer different questions, so
+ * publishing either alone misleads: `statedRates` counts rows, and rows are
+ * what the n beside every estimate reports; `pooledWeightPct` is the share of
+ * the weighted mean the drug actually moves, after one-entry-per-source
+ * collapsing and sample-size weighting shrink 103 tiny Phase-1 arm rows to a
+ * handful of small entries.
+ *
+ * `distinctStudies` per drug can sum ABOVE the effect's own distinctSources:
+ * a trial with a comparator arm posts rows under two molecules and is counted
+ * once under each. The drug is the one the row's own arm/source names;
+ * `(unlabelled)` is a row whose source names no molecule.
+ */
+export function drugMix(points: (RatePoint & { extractedDrug?: string | null })[]): DrugMixEntry[] {
+  const base = buildRateBase(points);
+  if (base.studies.length === 0) return [];
+
+  const totalWeight = base.studies.reduce((sum, s) => sum + poolingWeight(s), 0);
+  const drugOfEntry = new Map<string, string>();
+  for (const s of base.studies) {
+    const counts = new Map<string, number>();
+    for (const p of points) {
+      if (p.sourceName !== s.source || classifyRatePoint(p)) continue;
+      const d = p.extractedDrug || "(unlabelled)";
+      counts.set(d, (counts.get(d) ?? 0) + 1);
+    }
+    const top = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
+    drugOfEntry.set(s.source, top ? top[0] : "(unlabelled)");
+  }
+
+  const drugs = [...new Set(points.map((p) => p.extractedDrug || "(unlabelled)"))];
+  const rows: DrugMixEntry[] = [];
+  for (const drug of drugs) {
+    const subset = points.filter((p) => (p.extractedDrug || "(unlabelled)") === drug);
+    const sub = buildRateBase(subset);
+    if (sub.eligiblePoints === 0) continue;
+    const weight = base.studies
+      .filter((s) => drugOfEntry.get(s.source) === drug)
+      .reduce((sum, s) => sum + poolingWeight(s), 0);
+    rows.push({
+      drug,
+      statedRates: sub.eligiblePoints,
+      distinctStudies: distinctStudies(sub.studies),
+      sourceEntries: sub.studies.length,
+      pooledWeightPct: Math.round((weight / totalWeight) * 1000) / 10,
+    });
+  }
+  return rows.sort((a, b) => b.statedRates - a.statedRates);
+}
+
 /** Confidence follows the number of DISTINCT sources, never the corpus size. */
 export function confidenceFromSources(sourceCount: number): "very_low" | "low" | "moderate" | "high" | "very_high" {
   if (sourceCount <= 1) return "very_low";
