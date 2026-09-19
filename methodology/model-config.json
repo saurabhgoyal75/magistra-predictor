@@ -1076,7 +1076,7 @@
       },
       "sources": [
         {
-          "name": "FDA Wegovy (semaglutide) prescribing information, revised 06/2026, section 5 Acute Pancreatitis: 4 adjudicated cases in Wegovy-treated adults (0.2 per 100 patient-years) vs 1 on placebo (<0.1 per 100 patient-years) — a rate per patient-year, not a proportion of patients",
+          "name": "FDA Wegovy (semaglutide) prescribing information, revised 06/2026, section 6.1 Adverse Reactions, under \"Other Adverse Reactions in Adults and/or Pediatric Patients — Acute Pancreatitis\" (the section 5.2 warning of the same name states no figure): 4 adjudicated cases in Wegovy-treated adults (0.2 per 100 patient-years) vs 1 on placebo (<0.1 per 100 patient-years) — a rate per patient-year, not a proportion of patients",
           "type": "clinical",
           "url": "https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=ee06186f-2aa3-4990-a760-757579d8f77b",
           "weight": 0.3
@@ -2016,7 +2016,7 @@
       "changes": [
         {
           "type": "base_rates_resourced",
-          "reason": "fatigue (2026-09-03, decision literature-fallback-clinical-rate-2026-08-28) and pancreatitis, hair_loss, dizziness (2026-09-04, decision pancreatitis-hairloss-dizziness-triple-derivation-2026-09-03): the April-2026 triples had no recorded derivation and their cited sources state no such figures; each is now one FDA Wegovy label (revised 06/2026) figure at every tier with table/arm/N in the source name. pancreatitis's 0.002 is the label's 0.2 acute-pancreatitis cases per 100 patient-years (section 5), an exposure-time rate, not a proportion. emotional_blunting's baseRates in this file are WITHDRAWN (2026-09-03, no rate-stating source) and are not served anywhere; left in place only to keep the shape. Note: nothing in the live engine reads baseRates from this file — src/lib/side-effects-data.ts is canonical and this file is a published snapshot (mirrored to the public methodology repo), aligned here so the two copies agree."
+          "reason": "fatigue (2026-09-03, decision literature-fallback-clinical-rate-2026-08-28) and pancreatitis, hair_loss, dizziness (2026-09-04, decision pancreatitis-hairloss-dizziness-triple-derivation-2026-09-03): the April-2026 triples had no recorded derivation and their cited sources state no such figures; each is now one FDA Wegovy label (revised 06/2026) figure at every tier with table/arm/N in the source name. pancreatitis's 0.002 is the label's 0.2 acute-pancreatitis cases per 100 patient-years (section 6.1 Adverse Reactions, under Other Adverse Reactions in Adults and/or Pediatric Patients), an exposure-time rate, not a proportion. emotional_blunting's baseRates in this file are WITHDRAWN (2026-09-03, no rate-stating source) and are not served anywhere; left in place only to keep the shape. Note: nothing in the live engine reads baseRates from this file — src/lib/side-effects-data.ts is canonical and this file is a published snapshot (mirrored to the public methodology repo), aligned here so the two copies agree."
         }
       ],
       "autoApplied": false
