@@ -15,11 +15,18 @@
 //      seeded from our own static page in April), and 15 more are attributed to
 //      a synthetic "Aggregated user reports" source. Neither can be cited, so
 //      neither may support a published number.
-//   2. SPONTANEOUS-REPORT SHARES ARE NOT INCIDENCE — FAERS tells us what share
-//      of adverse-event *reports* mention an effect (its own excerpt says
-//      "reported events, not incidence rates"). Averaging that into an
-//      incidence estimate is a category error, and with n=82,377 it silently
-//      dominated every clinical estimate and collapsed the confidence interval.
+//   2. SPONTANEOUS-REPORT SHARES ARE NOT INCIDENCE — a FAERS row is a term's
+//      count over the SUM OF THE 30 MOST-REPORTED REACTION-TERM COUNTS for that
+//      drug (agents/data/src/scrapers/fda.mjs: count=patient.reaction.
+//      reactionmeddrapt.exact, limit=30, top 15 stored). So it is a share of
+//      term-mentions, not of reports and not of patients: a report naming three
+//      reactions counts under each, and any term outside the top 30 is in
+//      neither numerator nor denominator. FDA's own note says "reported events,
+//      not incidence rates". Averaging that into an incidence estimate is a
+//      category error, and with a denominator of 82,377 it silently dominated
+//      every clinical estimate and collapsed the confidence interval. (Corrected
+//      2026-09-19: this comment previously called the denominator a count of
+//      *reports*, which is what the field name `totalReports` still asserts.)
 //      Kept as a separate labelled signal; never averaged into a rate.
 //   3. ONE SOURCE, ONE STUDY — a single paper contributing 3-12 rates was being
 //      counted as 3-12 independent observations, inflating effectiveN and the
