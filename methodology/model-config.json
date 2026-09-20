@@ -1,6 +1,6 @@
 {
-  "version": 5,
-  "generatedAt": "2026-09-12T12:43:00.000Z",
+  "version": 6,
+  "generatedAt": "2026-09-20T06:00:00.000Z",
   "inputParameters": [
     {
       "id": "molecule",
@@ -1059,8 +1059,8 @@
       },
       "userReportedRate": 0.01,
       "userReportedSeverity": {
-        "en": "Very rarely reported by users, but when it occurs it is described as extremely painful and unmistakable.",
-        "nl": "Zeer zelden gerapporteerd door gebruikers, maar als het voorkomt wordt het omschreven als extreem pijnlijk en onmiskenbaar."
+        "en": "Withdrawn 2026-09-20: the account of what users report that stood here was typed at the 2026-04-12 seed and has no supporting report in this corpus. The community reporting frequency published beside this field is the measured figure — a share of our distinct community reports, not an incidence rate. This withdrawal does not change the clinical description or the emergency guidance for this effect.",
+        "nl": "Ingetrokken op 20 september 2026: de weergave van wat gebruikers melden die hier stond, is op 12 april 2026 ingetypt en heeft geen onderbouwende melding in dit corpus. De community-meldingsfrequentie naast dit veld is het gemeten cijfer — een aandeel van onze afzonderlijke community-meldingen, geen incidentiepercentage. Deze intrekking verandert niets aan de klinische beschrijving of het spoedadvies voor dit effect."
       },
       "onsetDays": {
         "en": "Can occur at any point during treatment",
@@ -1928,8 +1928,8 @@
       },
       "userReportedRate": 0.12,
       "userReportedSeverity": {
-        "en": "Users describe feeling 'flat' — reduced joy not just from food, but from music, socialising, and other activities that used to feel rewarding. Onset is usually gradual over several weeks. Some find it distressing enough to raise with their prescriber; others describe it as a neutral, even welcome, side effect alongside reduced food noise.",
-        "nl": "Gebruikers beschrijven zich 'vlak' voelen — minder plezier, niet alleen van eten, maar ook van muziek, sociaal contact en andere activiteiten die voorheen bevredigend voelden. Het begin is meestal geleidelijk over enkele weken. Sommigen vinden het verontrustend genoeg om het met hun voorschrijver te bespreken; anderen omschrijven het als een neutrale, zelfs welkome, bijwerking naast minder voedselruis."
+        "en": "Withdrawn 2026-09-20: the account of what users report that stood here was typed at the 2026-04-12 seed and has no supporting report in this corpus. The community reporting frequency published beside this field is the measured figure — a share of our distinct community reports, not an incidence rate.",
+        "nl": "Ingetrokken op 20 september 2026: de weergave van wat gebruikers melden die hier stond, is op 12 april 2026 ingetypt en heeft geen onderbouwende melding in dit corpus. De community-meldingsfrequentie naast dit veld is het gemeten cijfer — een aandeel van onze afzonderlijke community-meldingen, geen incidentiepercentage."
       },
       "onsetDays": {
         "en": "Not stated by any clinical source on file.",
@@ -2039,6 +2039,17 @@
         {
           "type": "narrative_fields_aligned",
           "reason": "Founder approved both open narrative decisions in one reply (2026-09-12T10:12:35Z, \"Proceed with all your recommendations..\"). (a) managementtip-medical-guidance-2026-09-08, option (ii): every managementTip that named a drug, a supplement, a dose or made a comparative claim now points to a pharmacist or doctor instead. The decision enumerated five \u2014 reduced_appetite (at least 60g/day protein), headache (regular paracetamol is safe to take), fatigue (light exercise helps more than resting), gallstones (losing weight gradually reduces risk), hair_loss (60-80g/day protein plus a biotin/iron/zinc multivitamin); applying the same criterion to every row also caught constipation (a mild fibre supplement), acid_reflux (an OTC antacid can help) and dizziness (at least 2 litres of water daily). (b) unsourced-mechanism-timeframe-clauses-in-descriptions-2026-09-09: description clauses asserting a timeframe or a causal mechanism that no source on file states are stripped, or replaced with what the FDA Wegovy label (revised 06/2026) actually states \u2014 headache, injection_site_reaction, acid_reflux, gallstones and dizziness enumerated, fatigue caught by the same criterion; gallstones' userReportedSeverity also dropped a prevalence assertion (\"more common in those losing weight rapidly\") that the label's own section 5.3 text, quoted three fields below it, contradicts. No rate, modifier or baseRate changed \u2014 prose only, EN+NL, applied identically to src/lib/side-effects-data.ts (canonical), this published snapshot and the public methodology mirror."
+        }
+      ],
+      "autoApplied": false
+    },
+    {
+      "version": 6,
+      "date": "2026-09-20",
+      "changes": [
+        {
+          "type": "narrative_fields_aligned",
+          "reason": "Loop cycle 2026-09-20 0643 (LOCAL), applying the criterion the founder approved on 2026-09-12 (decision unsourced-mechanism-timeframe-clauses-in-descriptions-2026-09-09, which also dropped gallstones' userReportedSeverity prevalence assertion) to every row rather than to that entry's enumerated list. Two rows fail it: emotional_blunting and pancreatitis each published a userReportedSeverity account of what users report while the SAME API response publishes reportingFrequency.mentions = 0 of 26 distinct community reports for that effect, so neither sentence had a supporting report in the corpus. emotional_blunting's only named source, a Reddit megathread, carries no URL and exists in the corpus only as three 2026-04-12 seed rows pointing back at magistra.health; 15 of its other 16 user_report rows are posts from unrelated subreddits (r/lexapro, r/schizoaffective, r/AdultDepression, r/Anemic) collected under the subreddit-restriction defect corrected 2026-08-29, all of which reportingFrequency already excludes. Both fields now state the withdrawal and point at the measured reporting frequency beside them. Deliberately NOT caught by this criterion and left standing: the 13 effects whose narrative rests on 1-11 community mentions (thin, not zero), and pancreatitis's description, onsetDays, durationWeeks and managementTip, which are label-consistent emergency copy. No rate, modifier, baseRate or threshold changed - prose only, EN+NL, applied identically to src/lib/side-effects-data.ts (canonical), this published snapshot and the public methodology mirror."
         }
       ],
       "autoApplied": false
