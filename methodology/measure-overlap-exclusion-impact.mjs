@@ -26,9 +26,14 @@
 //
 // READ-ONLY: writes nothing to either store.
 //
-// Usage: node scripts/measure-overlap-exclusion-impact.mjs         (production KV)
-//        node scripts/measure-overlap-exclusion-impact.mjs --file  (repo file)
-//        node scripts/measure-overlap-exclusion-impact.mjs --json
+// Usage (the resolve hook is REQUIRED — this script imports the site's real
+// TypeScript engine, and bare Node will not resolve `./side-effects-db` to a
+// `.ts` file; without it the script dies on ERR_MODULE_NOT_FOUND):
+//
+//   node --experimental-strip-types --import ./scripts/lib/register-ts-resolve.mjs \
+//     scripts/measure-overlap-exclusion-impact.mjs          (production KV)
+//                                              ... --file   (repo file)
+//                                              ... --json
 
 import fs from "fs";
 import path from "path";
@@ -122,7 +127,19 @@ for (const [nct, rows] of byStudy) {
     const sum = [...arms.values()].reduce((a, b) => a + b, 0);
     if (sum > enrolled && (!worst || sum > worst.sum)) worst = { sum, arms: arms.size };
   }
-  if (worst) flaggedDetail.push({ nct, enrolled, armDenominatorSum: worst.sum, arms: worst.arms, ratio: worst.sum / enrolled });
+  if (worst)
+    flaggedDetail.push({
+      nct,
+      enrolled,
+      armDenominatorSum: worst.sum,
+      arms: worst.arms,
+      ratio: worst.sum / enrolled,
+      // How many of our live registry rate rows this one study supplies. A
+      // claim an article makes has to be printable by this script before it
+      // ships (LEARNINGS 2026-09-18), and "which of the six costs us most" is
+      // the first thing a reader asks after the ratio.
+      liveRates: live.filter((p) => (p.sourceUrl || "").includes(nct)).length,
+    });
 }
 flaggedDetail.sort((a, b) => b.ratio - a.ratio);
 const flagged = flaggedDetail.map((f) => f.nct);
@@ -193,7 +210,7 @@ if (AS_JSON) {
   console.log(`\n=== flagged studies (worst effect per study) ===`);
   for (const f of flaggedDetail) {
     console.log(
-      `  ${f.nct}  ${String(f.arms).padStart(3)} arms  sum n=${String(f.armDenominatorSum).padStart(5)}  enrolled ${String(f.enrolled).padStart(4)}  (${f.ratio.toFixed(1)}x)`
+      `  ${f.nct}  ${String(f.arms).padStart(3)} arms  sum n=${String(f.armDenominatorSum).padStart(5)}  enrolled ${String(f.enrolled).padStart(4)}  (${f.ratio.toFixed(1)}x)  ${String(f.liveRates).padStart(4)} live rate rows`
     );
   }
   console.log(`\n=== published clinical estimate, with and without them ===`);
