@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-19.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-21.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -159,6 +159,8 @@ type RateSummary = {
   pointCount: number;
   /** Of `sourceCount`, how many rest only on registry serious-AE rates (a floor, not incidence). */
   seriousAeSourceCount: number;
+  /** Passthrough of `RateBase.phaseMix` — see rate-base.ts. */
+  phaseMix: Record<string, number>;
 };
 
 // One entry per DISTINCT source (rate-base.ts), so a paper stating 3 rates counts
@@ -199,6 +201,7 @@ function weightedAverageRate(points: SideEffectDataPoint[]): RateSummary | null 
     sourceEntryCount: withRates.length,
     pointCount: base.eligiblePoints,
     seriousAeSourceCount: base.seriousAeStudies,
+    phaseMix: base.phaseMix,
   };
 }
 
@@ -268,6 +271,17 @@ export type PooledClinicalEstimate = {
   confidence: "very_low" | "low" | "moderate" | "high" | "very_high";
   /** Bucketed count of DISTINCT sources behind the estimate — not a statement about precision. Canonical name; see confidence. */
   sourceDiversity: "very_low" | "low" | "moderate" | "high" | "very_high";
+  /**
+   * Distinct ClinicalTrials.gov sources behind this estimate, by trial phase
+   * ("PHASE1".."PHASE4"). A source with no registry phase (a paper, FAERS)
+   * contributes to none of these buckets, so the values need not sum to
+   * `distinctSources`. Added 2026-09-21 (decision
+   * `phase1-registry-rows-pool-as-incidence-2026-09-16`, part 1) — see
+   * rate-base.ts's `Study.phase` for why: a phase 1 healthy-volunteer study
+   * and a pivotal phase 3 trial were the same kind of "source" in every
+   * published count until this was exposed.
+   */
+  phaseMix: Record<string, number>;
 };
 
 /**
@@ -299,6 +313,7 @@ export function pooledClinicalEstimate(points: SideEffectDataPoint[]): PooledCli
     intervalNoteNl: singleSourceIntervalNote(result.rates.length, "nl").replace(/^ — /, ""),
     confidence: diversity,
     sourceDiversity: diversity,
+    phaseMix: result.phaseMix,
   };
 }
 
