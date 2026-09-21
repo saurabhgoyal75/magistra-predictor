@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-19.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-21.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -92,7 +92,32 @@ export type Study = {
    * needs told.
    */
   seriousAeOnly: boolean;
+  /**
+   * The trial phase ("PHASE1".."PHASE4") a ClinicalTrials.gov registry source
+   * ran at, parsed from the excerpt `processStudy` (trials.mjs) always writes
+   * — "... (NCTXXXXXXXX, PHASEn). In the ..." — the same verbatim text a
+   * reader is shown. Null for every non-registry source (a paper, FAERS, a
+   * community report) and, harmlessly, if a future registry excerpt shape
+   * ever fails to match. Added 2026-09-21 (decision
+   * `phase1-registry-rows-pool-as-incidence-2026-09-16`, part 1): a healthy-
+   * volunteer phase 1 study and a pivotal phase 3 trial read as the same kind
+   * of "source" in every published count unless this is exposed — measured
+   * 2026-09-17: 733 of the corpus's 1,134 rated registry rows are PHASE1.
+   */
+  phase: string | null;
 };
+
+/**
+ * Deterministic, no network: every registry excerpt the collector writes
+ * states its phase in the form "(NCTXXXXXXXX, PHASEn)" — verified against
+ * all 1,134 currently-rated registry rows in the repo corpus, 0 misses.
+ * Returns null for a non-registry excerpt (nothing to parse) rather than
+ * guessing.
+ */
+function parsePhase(excerpt: string): string | null {
+  const m = /\(NCT\d+,\s*(PHASE\d)\)/.exec(excerpt);
+  return m ? m[1] : null;
+}
 
 export type RateBase = {
   studies: Study[];
@@ -135,6 +160,13 @@ export type RateBase = {
    * `studyCount` and a "N of M sources" disclosure cannot mix the two keys.
    */
   seriousAeStudies: number;
+  /**
+   * Distinct STUDIES (keyed the same way as `studyCount`) grouped by trial
+   * phase — keys are "PHASE1".."PHASE4"; a study with no registry phase (a
+   * paper, FAERS, a community report) contributes to none of these buckets,
+   * so the values do not have to sum to `studyCount`.
+   */
+  phaseMix: Record<string, number>;
 };
 
 const CONFIDENCE_RANK: Record<string, number> = { low: 0, medium: 1, high: 2 };
@@ -355,6 +387,7 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     const key = (p.sourceName || p.sourceUrl).trim().toLowerCase();
     const existing = bySource.get(key);
     if (!existing) {
+      const excerpt = (p as RatePoint & { rawExcerpt?: string }).rawExcerpt || "";
       bySource.set(key, {
         source: p.sourceName,
         url: p.sourceUrl,
@@ -364,6 +397,7 @@ export function buildRateBase(points: RatePoint[]): RateBase {
         confidence: p.extractionConfidence,
         pointCount: 1,
         seriousAeOnly: p.rateKind === "serious_ae",
+        phase: parsePhase(excerpt),
       });
       continue;
     }
@@ -390,6 +424,16 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     const k = studyKey(s.url);
     byStudy.set(k, (byStudy.get(k) ?? true) && s.seriousAeOnly);
   }
+  // Same collapse for phase: one study contributes one phase reading however
+  // many source entries it has (pancreatitis/gallstones-style two-MedDRA-term
+  // studies would otherwise double-count). Non-registry studies (phase null)
+  // are excluded from this map entirely, not counted under a fake bucket.
+  const phaseByStudy = new Map<string, string>();
+  for (const s of studies) {
+    if (s.phase && !phaseByStudy.has(studyKey(s.url))) phaseByStudy.set(studyKey(s.url), s.phase);
+  }
+  const phaseMix: Record<string, number> = {};
+  for (const phase of phaseByStudy.values()) phaseMix[phase] = (phaseMix[phase] || 0) + 1;
   return {
     studies,
     eligiblePoints,
@@ -399,6 +443,7 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     studyCount: byStudy.size,
     seriousAeSourceEntries: studies.filter((s) => s.seriousAeOnly).length,
     seriousAeStudies: [...byStudy.values()].filter(Boolean).length,
+    phaseMix,
   };
 }
 
