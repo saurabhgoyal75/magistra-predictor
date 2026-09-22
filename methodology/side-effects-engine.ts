@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-21.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-22.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -399,23 +399,48 @@ function modifierNote(applied: AppliedModifier[], unadjustedPct: number, adjuste
     (seeded ? " — odds ratios hand-coded at the 2026-04-12 seed with no per-modifier citation recorded, not derived from this corpus" : " — odds ratios derived from this corpus");
 }
 
-/** Human-readable disclosure of the dose-tier rescale. The multiplier is a ratio
- *  of two STATIC reference-table figures (per-tier derivation unrecorded for every
- *  effect where the ratio is not 1 — see side-effects-data.ts), not a corpus-derived quantity, so an
- *  estimate that has been through it is no longer purely "N stated rates from M
- *  sources" — the basis string has to say so. Empty when no rescale fired
- *  (majority dose-tagged pool, or the medium tier where the ratio is 1), so an
- *  unrescaled estimate keeps its plain basis.
+/** Human-readable disclosure of the dose-tier rescale. Two kinds, since Option A
+ *  step 2 (founder-approved 2026-09-12): "corpus_derived" (high tier, when the
+ *  corpus has at least one high-tagged source) means the displayed rate IS a
+ *  corpus-derived high-tier estimate, not a ratio applied to the diluted pool —
+ *  its own n and distinct-source count are the real evidentiary basis, disclosed
+ *  even at a single source (same pattern as the site's other single-source
+ *  pooled-clinical-estimate figures). "static_unsourced" (low tier always —
+ *  verified 2026-09-10/22 that the registry reports no isolated low-dose arm for
+ *  any drug, so no corpus-derived low estimate can exist — and high tier when an
+ *  effect has zero high-tagged sources) means the multiplier is a ratio of two
+ *  STATIC reference-table figures with no recorded per-tier derivation (see
+ *  side-effects-data.ts). Empty when no rescale fired (majority dose-tagged pool,
+ *  or the medium tier, whose ratio is always 1), so an unrescaled estimate keeps
+ *  its plain basis.
  *  Added 2026-08-28: the same cycle's `.some()` → majority-threshold fix turned
  *  this rescale from dormant into live for effectively every effect, which made
  *  an undisclosed adjustment load-bearing on a public number for the first time. */
-function doseNote(pooledPct: number, rescaledPct: number, tier: string, taggedPoints: number, poolSize: number, lang: "en" | "nl"): string {
+function doseNote(
+  pooledPct: number,
+  rescaledPct: number,
+  tier: string,
+  taggedPoints: number,
+  poolSize: number,
+  lang: "en" | "nl",
+  kind: "corpus_derived" | "static_unsourced",
+  tierEstimate: { statedRates: number; distinctSources: number } | null
+): string {
+  if (kind === "corpus_derived" && tierEstimate) {
+    const single = tierEstimate.distinctSources === 1;
+    if (lang === "nl") {
+      return `. Gepoold corpuspercentage ${pooledPct}% → ${rescaledPct}% herschaald naar dosisniveau "${tier}"` +
+        ` — het corpus telt slechts ${taggedPoints} van ${poolSize} gepoolde records met een dosislabel, dus is in plaats van de statische tabel een uit dit corpus afgeleide schatting voor dosisniveau "${tier}" gebruikt: ${tierEstimate.statedRates} vermelde percentage${tierEstimate.statedRates === 1 ? "" : "s"} uit ${tierEstimate.distinctSources} afzonderlijke bron${tierEstimate.distinctSources === 1 ? "" : "nen"}${single ? " (één bron — lees met voorzichtigheid)" : ""}. De betrouwbaarheidsgradatie (sourceDiversity) volgt die ${tierEstimate.distinctSources} bron${tierEstimate.distinctSources === 1 ? "" : "nen"}, niet het grotere aantal hierboven`;
+    }
+    return `. Pooled corpus rate ${pooledPct}% → ${rescaledPct}% rescaled to the ${tier} dose tier` +
+      ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag, so a corpus-derived ${tier}-tier estimate was used in place of the static table: ${tierEstimate.statedRates} stated rate${tierEstimate.statedRates === 1 ? "" : "s"} from ${tierEstimate.distinctSources} distinct source${tierEstimate.distinctSources === 1 ? "" : "s"}${single ? " (single source — read with caution)" : ""}. The confidence grade (sourceDiversity) follows those ${tierEstimate.distinctSources} source${tierEstimate.distinctSources === 1 ? "" : "s"}, not the larger count above`;
+  }
   if (lang === "nl") {
     return `. Gepoold corpuspercentage ${pooledPct}% → ${rescaledPct}% herschaald naar dosisniveau "${tier}"` +
-      ` — slechts ${taggedPoints} van ${poolSize} gepoolde records dragen een dosislabel, dus de verhouding komt uit de statische literatuurreferentietabel (herkomst per dosisniveau niet vastgelegd voor deze bijwerking), niet uit dit corpus`;
+      ` — slechts ${taggedPoints} van ${poolSize} gepoolde records dragen een dosislabel; er bestaat geen uit dit corpus afgeleid percentage voor dit dosisniveau, dus de verhouding komt uit de statische literatuurreferentietabel (herkomst per dosisniveau niet vastgelegd voor deze bijwerking), niet uit dit corpus`;
   }
   return `. Pooled corpus rate ${pooledPct}% → ${rescaledPct}% rescaled to the ${tier} dose tier` +
-    ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag, so the ratio is taken from the static literature reference table (per-tier derivation not recorded for this effect), not derived from this corpus`;
+    ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag; no corpus-derived rate exists for this dose tier, so the ratio is taken from the static literature reference table (per-tier derivation not recorded for this effect), not derived from this corpus`;
 }
 
 function applyModifiers(
@@ -519,14 +544,59 @@ export async function calculateDynamicRisk(
     const doseTaggedPoints = clinicalPoints.filter((p) => p.extractedDoseTier !== "unspecified").length;
     const hasDoseData = clinicalPoints.length > 0 && doseTaggedPoints / clinicalPoints.length >= 0.5;
     let doseRescaled = false;
+    let doseRescaleKind: "corpus_derived" | "static_unsourced" = "static_unsourced";
+    let doseTierEstimate: PooledClinicalEstimate | null = null;
+    // `profile.doseTier === "medium"` never reaches here with an effect: the ratio
+    // clinicalRates.medium/clinicalRates.medium is always 1 by construction, so the
+    // `targetRate !== medianRate` guard below already skips it (medium is this
+    // model's baseline tier, not a tier that gets rescaled away from itself).
     if (!hasDoseData) {
-      const medianRate = staticEffect.clinicalRates.medium;
-      const targetRate = staticEffect.clinicalRates[profile.doseTier];
-      // `targetRate !== medianRate` skips the medium tier, where the ratio is 1 —
-      // a no-op multiply must not produce a disclosure sentence claiming a rescale.
-      if (medianRate > 0 && targetRate !== medianRate) {
-        rate = rate * (targetRate / medianRate);
-        doseRescaled = true;
+      if (profile.doseTier === "high") {
+        // Option A step 2 (founder-approved 2026-09-12, decision
+        // dose-tier-rescale-low-tier-no-registry-data-2026-09-10): prefer a
+        // corpus-derived high-tier estimate — pooledClinicalEstimate() on ONLY the
+        // points explicitly tagged high, the same tested function the API and the
+        // predictor's own aggregate already use, so this is not a second parallel
+        // implementation — over the unsourced 2026-04-06 static ratio. Verified
+        // 2026-09-22 (cloud) against the repo corpus: 14 of 15 effects now clear at
+        // least one distinct high-tier source (up from the "mostly single-source"
+        // 09-10/09-16 scoping, on a corpus that has since roughly doubled); falls
+        // back to the static ratio only when an effect has none (emotional_blunting
+        // today).
+        const tierTaggedPoints = clinicalPoints.filter((p) => p.extractedDoseTier === "high");
+        const tierEstimate = pooledClinicalEstimate(tierTaggedPoints);
+        // Take the RATE from weightedAverageRate, not from tierEstimate.ratePct:
+        // the latter is already rounded to one decimal place, and dividing a
+        // rounded percentage back by 100 re-enters the engine at lower precision.
+        // Found by RED TEAM 2026-09-22 (LOCAL): pancreatitis's high-tier pool
+        // rounds to 0.0%, so `ratePct / 100` handed this branch a literal 0 that
+        // the downstream 0.001 clamp then republished as 0.1% — the same
+        // floor-printed-as-an-estimate class the 2026-09-16 RED TEAM fixed in
+        // displayPct, on the one figure the site discloses as a FLOOR on
+        // incidence. tierEstimate still supplies every disclosure count.
+        const tierResult = weightedAverageRate(tierTaggedPoints);
+        if (tierEstimate && tierResult) {
+          rate = tierResult.rate;
+          doseRescaled = true;
+          doseRescaleKind = "corpus_derived";
+          doseTierEstimate = tierEstimate;
+        }
+      }
+      if (!doseRescaled) {
+        // Low tier (verified 2026-09-10 and re-verified 2026-09-22: the registry
+        // corpus reports zero isolated low/starting-dose maintenance arms for any
+        // drug — trials report MTD or maintenance arms, low doses appear only
+        // inside a titration path — so no corpus-derived low estimate can exist)
+        // and the high-tier no-data fallback both use the static reference ratio,
+        // disclosed as unsourced.
+        const medianRate = staticEffect.clinicalRates.medium;
+        const targetRate = staticEffect.clinicalRates[profile.doseTier];
+        // `targetRate !== medianRate` skips the medium tier, where the ratio is 1 —
+        // a no-op multiply must not produce a disclosure sentence claiming a rescale.
+        if (medianRate > 0 && targetRate !== medianRate) {
+          rate = rate * (targetRate / medianRate);
+          doseRescaled = true;
+        }
       }
     }
 
@@ -549,13 +619,26 @@ export async function calculateDynamicRisk(
     const ci = computeConfidenceInterval(adjustedRate, clinicalResult.rates, clinicalResult.effectiveN, pooledRate);
 
     const srcs = clinicalResult.sourceCount;
-    const doseNoteEn = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "en") : "";
-    const doseNoteNl = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "nl") : "";
+    // Grade the DISPLAYED number, not the pool it was selected from. When the
+    // corpus-derived high-tier path fires, the percentage is pooled from the
+    // tier-tagged subset, so grading on the whole profile-matched pool awards a
+    // confidence label to evidence that did not produce the figure. Found by RED
+    // TEAM 2026-09-22 (LOCAL) on the cloud cycle's own change before it shipped:
+    // nausea would have published `very_high` (29 pool sources) beside a 42%
+    // computed from 5 — and /en/blog/glp1-confidence-grade-does-not-measure-how-
+    // common-an-effect-is tells readers, in print, that the grade counts "how
+    // many distinct studies state a rate for that effect". `rateSourceCount`
+    // deliberately keeps describing the pool: it pairs with `ratePointCount` and
+    // `dataPointCount`, which are pool-level by definition, and the basis string
+    // states both counts.
+    const gradingSrcs = doseRescaleKind === "corpus_derived" && doseTierEstimate ? doseTierEstimate.distinctSources : srcs;
+    const doseNoteEn = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "en", doseRescaleKind, doseTierEstimate) : "";
+    const doseNoteNl = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "nl", doseRescaleKind, doseTierEstimate) : "";
     clinical = {
       percentage: pct,
       confidenceInterval: ci,
-      confidenceLevel: confidenceFromSources(srcs),
-      sourceDiversity: confidenceFromSources(srcs),
+      confidenceLevel: confidenceFromSources(gradingSrcs),
+      sourceDiversity: confidenceFromSources(gradingSrcs),
       dataPointCount: clinicalPoints.length,
       ratePointCount: clinicalResult.pointCount,
       rateSourceCount: srcs,
