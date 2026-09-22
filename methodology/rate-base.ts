@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-21.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-22.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -55,6 +55,8 @@ export type RatePoint = {
    * block so the figure is never read as incidence.
    */
   rateKind?: string | null;
+  /** When the collector stored this point. Used to date-stamp published FAERS rows. */
+  scrapedAt?: string | null;
 };
 
 export type ExclusionReason =
@@ -131,7 +133,22 @@ export type RateBase = {
   // denominator the share is computed against. Publishing the share and the
   // numerator alone left a caller unable to check the arithmetic or to tell a
   // 1,154-report base from a 99,460-report one (2026-09-19).
-  reportShares: { source: string; url: string; share: number; reports: number; totalReports: number | null }[];
+  reportShares: {
+    source: string;
+    url: string;
+    share: number;
+    reports: number;
+    totalReports: number | null;
+    scrapedAt: string | null;
+  }[];
+  /**
+   * Rows excluded from `reportShares` because their stored denominator
+   * (`totalReports`) is under `REPORT_SHARE_MIN_DENOMINATOR` term-mentions —
+   * below that, the share carries no ranking information (decision
+   * `faers-share-denominator-stale-and-mislabelled-2026-09-19`, approved
+   * 2026-09-22: the two orforglipron rows published a 50% share on n=2).
+   */
+  reportSharesWithheld: number;
   /**
    * DISTINCT STUDIES behind `studies`, keyed on the source URL (`studyKey`),
    * not on `sourceName`. The two agree for most effects and are different
@@ -170,6 +187,14 @@ export type RateBase = {
 };
 
 const CONFIDENCE_RANK: Record<string, number> = { low: 0, medium: 1, high: 2 };
+
+/**
+ * Below this many term-mentions, a FAERS `shareOfReports` figure carries no
+ * ranking information (decision `faers-share-denominator-stale-and-mislabelled-
+ * 2026-09-19`, approved 2026-09-22: the two orforglipron rows published a 50%
+ * share computed on a denominator of 2).
+ */
+export const REPORT_SHARE_MIN_DENOMINATOR = 100;
 
 // Hosts that index other people's content. A point hosted here is a search
 // result *about* a source, never the source itself — several collectors query
@@ -359,6 +384,7 @@ export function scopeToTrackedEffects<T extends { sideEffect?: string }>(
 export function buildRateBase(points: RatePoint[]): RateBase {
   const excluded: Partial<Record<ExclusionReason, number>> = {};
   const reportShares: RateBase["reportShares"] = [];
+  let reportSharesWithheld = 0;
   const bySource = new Map<string, Study>();
   let ratePoints = 0;
   let eligiblePoints = 0;
@@ -372,13 +398,19 @@ export function buildRateBase(points: RatePoint[]): RateBase {
         const excerpt = (p as RatePoint & { rawExcerpt?: string }).rawExcerpt || "";
         const m = /reported (\d+) times/i.exec(excerpt);
         const total = /out of (\d+) total reports/i.exec(excerpt);
-        reportShares.push({
-          source: p.sourceName,
-          url: p.sourceUrl,
-          share: p.extractedRate as number,
-          reports: m ? Number(m[1]) : 0,
-          totalReports: p.extractedSampleSize ?? (total ? Number(total[1]) : null),
-        });
+        const totalReports = p.extractedSampleSize ?? (total ? Number(total[1]) : null);
+        if (totalReports !== null && totalReports < REPORT_SHARE_MIN_DENOMINATOR) {
+          reportSharesWithheld++;
+        } else {
+          reportShares.push({
+            source: p.sourceName,
+            url: p.sourceUrl,
+            share: p.extractedRate as number,
+            reports: m ? Number(m[1]) : 0,
+            totalReports,
+            scrapedAt: p.scrapedAt ?? null,
+          });
+        }
       }
       continue;
     }
@@ -440,6 +472,7 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     ratePoints,
     excluded,
     reportShares,
+    reportSharesWithheld,
     studyCount: byStudy.size,
     seriousAeSourceEntries: studies.filter((s) => s.seriousAeOnly).length,
     seriousAeStudies: [...byStudy.values()].filter(Boolean).length,
