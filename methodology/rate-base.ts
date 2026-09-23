@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-22.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-23.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -541,22 +541,35 @@ export type DrugMixEntry = {
  * a trial with a comparator arm posts rows under two molecules and is counted
  * once under each. The drug is the one the row's own arm/source names;
  * `(unlabelled)` is a row whose source names no molecule.
+ *
+ * An entry holding rows for two molecules (a head-to-head trial's two arms
+ * for one term) splits its weight by row share, because its rate is the
+ * UNWEIGHTED mean of those rows (`buildRateBase`), so each row moves exactly
+ * 1/pointCount of it. Until 2026-09-23 the whole entry went to whichever drug
+ * had the most rows, ties broken by row order: SURPASS-CVOT (tirzepatide vs
+ * dulaglutide, 6,647 per arm, one row each) published as 100% tirzepatide,
+ * so dizziness read tirzepatide 70.5% / dulaglutide 0% when the rows split
+ * it 38.3% / 32.2%, and dulaglutide read 0% on every effect it has a
+ * comparator arm in.
  */
 export function drugMix(points: (RatePoint & { extractedDrug?: string | null })[]): DrugMixEntry[] {
   const base = buildRateBase(points);
   if (base.studies.length === 0) return [];
 
   const totalWeight = base.studies.reduce((sum, s) => sum + poolingWeight(s), 0);
-  const drugOfEntry = new Map<string, string>();
+  const weightByDrug = new Map<string, number>();
   for (const s of base.studies) {
     const counts = new Map<string, number>();
+    let rows = 0;
     for (const p of points) {
       if (p.sourceName !== s.source || classifyRatePoint(p)) continue;
       const d = p.extractedDrug || "(unlabelled)";
       counts.set(d, (counts.get(d) ?? 0) + 1);
+      rows++;
     }
-    const top = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
-    drugOfEntry.set(s.source, top ? top[0] : "(unlabelled)");
+    for (const [d, n] of counts) {
+      weightByDrug.set(d, (weightByDrug.get(d) ?? 0) + (poolingWeight(s) * n) / rows);
+    }
   }
 
   const drugs = [...new Set(points.map((p) => p.extractedDrug || "(unlabelled)"))];
@@ -565,9 +578,7 @@ export function drugMix(points: (RatePoint & { extractedDrug?: string | null })[
     const subset = points.filter((p) => (p.extractedDrug || "(unlabelled)") === drug);
     const sub = buildRateBase(subset);
     if (sub.eligiblePoints === 0) continue;
-    const weight = base.studies
-      .filter((s) => drugOfEntry.get(s.source) === drug)
-      .reduce((sum, s) => sum + poolingWeight(s), 0);
+    const weight = weightByDrug.get(drug) ?? 0;
     rows.push({
       drug,
       statedRates: sub.eligiblePoints,
