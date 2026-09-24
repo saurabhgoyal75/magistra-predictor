@@ -252,6 +252,13 @@ const GLP1_SUBREDDITS = new Set(
     "PeptideSource", "compoundedtirzepatide",
     "PCOS", "diabetes", "diabetes_t2",
     "GLP1_Drugs", "ObesityScience", "BodyRecomposition", "intermittentfasting",
+    // Added 2026-09-25 (decision community-screen-excludes-glp1-subreddits-2026-09-21,
+    // founder-approved 2026-09-22): ten GLP-1 drug communities whose 16 reports
+    // arrived as search spillover and were screened out alongside r/gallbladders.
+    // Widening the configured frame, not dropping the screen.
+    "mounjarouk", "TirzepatideRX", "Retatrutide", "RetatrutideTalk", "GLP1India",
+    "CompoundedSemaglutide", "Mounjaro_ForType2", "liraglutide", "antidietglp1",
+    "TirzepatidePH",
   ].map((s) => s.toLowerCase())
 );
 
@@ -725,7 +732,7 @@ const SOURCE_FAMILIES: { id: string; label: string; hosts: string[] }[] = [
   { id: "pubmed", label: "PubMed / PMC (NCBI E-utilities)", hosts: ["pubmed.ncbi.nlm.nih.gov", "pmc.ncbi.nlm.nih.gov"] },
   { id: "faers", label: "FDA FAERS (openFDA API)", hosts: ["api.fda.gov"] },
   { id: "trials", label: "ClinicalTrials.gov (API v2)", hosts: ["clinicaltrials.gov"] },
-  { id: "reddit", label: "Reddit (16 subreddits)", hosts: ["reddit.com", "old.reddit.com"] },
+  { id: "reddit", label: "Reddit (26 subreddits)", hosts: ["reddit.com", "old.reddit.com"] },
   { id: "news", label: "Health news (Google News RSS)", hosts: ["news.google.com"] },
   { id: "reviews", label: "Drugs.com patient reviews", hosts: ["drugs.com"] },
   { id: "preprints", label: "medRxiv / bioRxiv preprints", hosts: ["doi.org", "medrxiv.org", "biorxiv.org"] },
