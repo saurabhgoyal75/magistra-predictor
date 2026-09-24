@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-22.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-24.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -23,7 +23,7 @@
 import { getDataPoints, getMetadata, type SideEffectDataPoint } from "./side-effects-db";
 import { SIDE_EFFECTS, calculateRisk as calculateFallbackRisk } from "./side-effects-data";
 import { loadModelConfig, getEffectConfig } from "./model-config";
-import { buildRateBase, classifyRatePoint, confidenceFromSources, buildReportingFrequency, poolingWeight, wilsonInterval } from "./rate-base";
+import { buildRateBase, classifyRatePoint, confidenceFromSources, buildReportingFrequency, poolingWeight, wilsonInterval, drugMix } from "./rate-base";
 
 export type PatientProfile = {
   sex: "male" | "female";
@@ -379,9 +379,24 @@ const MAX_TOTAL_LOG_ODDS_SHIFT = 2.5; // ~12x max cumulative OR
  *  would print it 5× too high while the whole-number round printed it as 0.
  *  Everything ≥1% renders as before. Was local to the literature-fallback
  *  branch until 2026-09-16; the corpus-derived branch kept the bare floor and
- *  printed pancreatitis's 0.1% pooled serious-AE rate as 1%. */
+ *  printed pancreatitis's 0.1% pooled serious-AE rate as 1%.
+ *  Two-decimal step added 2026-09-24 (decision
+ *  `high-tier-subclamp-rate-published-as-clamp-floor-2026-09-22`, option (a)):
+ *  publishing the true sub-clamp rate (this decision's own change, above)
+ *  produces genuinely positive rates below 0.05% for the first time —
+ *  pancreatitis's high-tier estimate is ~0.04%, which one-decimal rounding
+ *  prints as a bare "0", the same floor-printed-as-an-estimate class this
+ *  function exists to avoid, only inverted (reads as zero risk rather than an
+ *  inflated one). A positive rate that rounds to 0.0 at one decimal gets a
+ *  second decimal instead; every rate that already rounded to a nonzero
+ *  one-decimal value is unaffected. */
 function displayPct(r: number): number {
-  return r * 100 < 1 ? Math.round(r * 1000) / 10 : Math.max(1, Math.min(95, Math.round(r * 100)));
+  if (r * 100 < 1) {
+    const oneDecimal = Math.round(r * 1000) / 10;
+    if (oneDecimal === 0 && r > 0) return Math.round(r * 10000) / 100;
+    return oneDecimal;
+  }
+  return Math.max(1, Math.min(95, Math.round(r * 100)));
 }
 
 function modifierNote(applied: AppliedModifier[], unadjustedPct: number, adjustedPct: number, lang: "en" | "nl"): string {
@@ -415,7 +430,33 @@ function modifierNote(applied: AppliedModifier[], unadjustedPct: number, adjuste
  *  its plain basis.
  *  Added 2026-08-28: the same cycle's `.some()` → majority-threshold fix turned
  *  this rescale from dormant into live for effectively every effect, which made
- *  an undisclosed adjustment load-bearing on a public number for the first time. */
+ *  an undisclosed adjustment load-bearing on a public number for the first time.
+ *  Drug-mix clause added 2026-09-24 (decision
+ *  `high-tier-jump-is-drug-mix-not-dose-2026-09-22`, option (a),
+ *  founder-approved): the arrow reads as a dose effect, but the tier-tagged
+ *  pool and the full pool it is rescaled from are not the same drug mix —
+ *  `derive-dose-tiers.mjs` only tags the three drugs with an approved
+ *  maintenance ladder, so orforglipron (877 of 1,166 corpus-wide eligible
+ *  rates, systematically lower reported nausea) is structurally absent from
+ *  every tier-tagged pool. Naming the drugs actually behind the tier estimate
+ *  makes that explicit without changing any published percentage. */
+function drugMixClause(drugs: string[], lang: "en" | "nl"): string {
+  if (drugs.length === 0) return "";
+  // Dutch compounds take a hyphen on every elided member ("semaglutide- of
+  // tirzepatide-armen"), not only on the last.
+  const names = lang === "nl" ? drugs.map((d, i) => (i < drugs.length - 1 ? `${d}-` : d)) : drugs;
+  const list = names.length === 1
+    ? names[0]
+    : `${names.slice(0, -1).join(", ")} ${lang === "nl" ? "of" : "or"} ${names[names.length - 1]}`;
+  // "every drug with a stated rate for this effect", not "every drug we hold":
+  // the pre-rescale pool is per effect, and some effects' pools carry only
+  // three drugs (injection_site_reaction). Verified 2026-09-24 that every
+  // effect's full pool holds at least one drug absent from its tier pool, so
+  // "reflects drug mix" is true wherever this clause fires today.
+  return lang === "nl"
+    ? `, alle ${list}-armen — het cijfer vóór de herschaling poolt elk geneesmiddel met een vermeld percentage voor deze bijwerking, dus de verandering weerspiegelt ook een andere geneesmiddel-mix, niet alleen de dosis`
+    : `, all ${list} arms — the pre-rescale figure pools every drug with a stated rate for this effect, so the change reflects drug mix as well as dose`;
+}
 function doseNote(
   pooledPct: number,
   rescaledPct: number,
@@ -424,16 +465,18 @@ function doseNote(
   poolSize: number,
   lang: "en" | "nl",
   kind: "corpus_derived" | "static_unsourced",
-  tierEstimate: { statedRates: number; distinctSources: number } | null
+  tierEstimate: { statedRates: number; distinctSources: number } | null,
+  tierDrugs: string[] = []
 ): string {
   if (kind === "corpus_derived" && tierEstimate) {
     const single = tierEstimate.distinctSources === 1;
+    const drugsClause = drugMixClause(tierDrugs, lang);
     if (lang === "nl") {
       return `. Gepoold corpuspercentage ${pooledPct}% → ${rescaledPct}% herschaald naar dosisniveau "${tier}"` +
-        ` — het corpus telt slechts ${taggedPoints} van ${poolSize} gepoolde records met een dosislabel, dus is in plaats van de statische tabel een uit dit corpus afgeleide schatting voor dosisniveau "${tier}" gebruikt: ${tierEstimate.statedRates} vermelde percentage${tierEstimate.statedRates === 1 ? "" : "s"} uit ${tierEstimate.distinctSources} afzonderlijke bron${tierEstimate.distinctSources === 1 ? "" : "nen"}${single ? " (één bron — lees met voorzichtigheid)" : ""}. De betrouwbaarheidsgradatie (sourceDiversity) volgt die ${tierEstimate.distinctSources} bron${tierEstimate.distinctSources === 1 ? "" : "nen"}, niet het grotere aantal hierboven`;
+        ` — het corpus telt slechts ${taggedPoints} van ${poolSize} gepoolde records met een dosislabel, dus is in plaats van de statische tabel een uit dit corpus afgeleide schatting voor dosisniveau "${tier}" gebruikt: ${tierEstimate.statedRates} vermelde percentage${tierEstimate.statedRates === 1 ? "" : "s"} uit ${tierEstimate.distinctSources} afzonderlijke bron${tierEstimate.distinctSources === 1 ? "" : "nen"}${single ? " (één bron — lees met voorzichtigheid)" : ""}${drugsClause}. De betrouwbaarheidsgradatie (sourceDiversity) volgt die ${tierEstimate.distinctSources} bron${tierEstimate.distinctSources === 1 ? "" : "nen"}, niet het grotere aantal hierboven`;
     }
     return `. Pooled corpus rate ${pooledPct}% → ${rescaledPct}% rescaled to the ${tier} dose tier` +
-      ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag, so a corpus-derived ${tier}-tier estimate was used in place of the static table: ${tierEstimate.statedRates} stated rate${tierEstimate.statedRates === 1 ? "" : "s"} from ${tierEstimate.distinctSources} distinct source${tierEstimate.distinctSources === 1 ? "" : "s"}${single ? " (single source — read with caution)" : ""}. The confidence grade (sourceDiversity) follows those ${tierEstimate.distinctSources} source${tierEstimate.distinctSources === 1 ? "" : "s"}, not the larger count above`;
+      ` — only ${taggedPoints} of ${poolSize} pooled records ${taggedPoints === 1 ? "carries" : "carry"} a dose tag, so a corpus-derived ${tier}-tier estimate was used in place of the static table: ${tierEstimate.statedRates} stated rate${tierEstimate.statedRates === 1 ? "" : "s"} from ${tierEstimate.distinctSources} distinct source${tierEstimate.distinctSources === 1 ? "" : "s"}${single ? " (single source — read with caution)" : ""}${drugsClause}. The confidence grade (sourceDiversity) follows ${tierEstimate.distinctSources === 1 ? "that" : "those"} ${tierEstimate.distinctSources} source${tierEstimate.distinctSources === 1 ? "" : "s"}, not the larger count above`;
   }
   if (lang === "nl") {
     return `. Gepoold corpuspercentage ${pooledPct}% → ${rescaledPct}% herschaald naar dosisniveau "${tier}"` +
@@ -546,6 +589,15 @@ export async function calculateDynamicRisk(
     let doseRescaled = false;
     let doseRescaleKind: "corpus_derived" | "static_unsourced" = "static_unsourced";
     let doseTierEstimate: PooledClinicalEstimate | null = null;
+    // Populated only on the corpus_derived high-tier path — the tier subset's
+    // own rates/effectiveN (decision `high-tier-estimate-interval-from-full-
+    // pool-2026-09-22`, so the interval can be anchored on the same evidence
+    // that produced the point estimate) and its drug composition (decision
+    // `high-tier-jump-is-drug-mix-not-dose-2026-09-22`, so the basis string
+    // can name it). Both read null/empty on every other path, where nothing
+    // about the CI or basis string changes.
+    let tierRateResult: RateSummary | null = null;
+    let tierDrugs: string[] = [];
     // `profile.doseTier === "medium"` never reaches here with an effect: the ratio
     // clinicalRates.medium/clinicalRates.medium is always 1 by construction, so the
     // `targetRate !== medianRate` guard below already skips it (medium is this
@@ -580,6 +632,8 @@ export async function calculateDynamicRisk(
           doseRescaled = true;
           doseRescaleKind = "corpus_derived";
           doseTierEstimate = tierEstimate;
+          tierRateResult = tierResult;
+          tierDrugs = drugMix(tierTaggedPoints).map((d) => d.drug).filter((d) => d !== "(unlabelled)");
         }
       }
       if (!doseRescaled) {
@@ -606,17 +660,43 @@ export async function calculateDynamicRisk(
       Math.log(clampedRate / (1 - clampedRate)),
       profile, hasSexSpecificData, getModifier, staticEffect.modifiers, appliedMods
     );
-    const adjustedRate = 1 / (1 + Math.exp(-logOdds));
+    // Decision `high-tier-subclamp-rate-published-as-clamp-floor-2026-09-22`,
+    // option (a), founder-approved: `clampedRate` exists only to keep the
+    // logit arithmetic finite — it is not itself a value to publish. When the
+    // true pooled rate is a genuine sub-clamp value (0 < rate < 0.001, e.g.
+    // pancreatitis's ~0.04%), carry the modifier shift computed at the clamp
+    // over to the TRUE rate's own logit, so the published figure is the
+    // computed rate rather than a 2.5x-inflated 0.001 floor. Left untouched
+    // when rate is 0 (logit undefined) or already >= 0.001 (displayRate ===
+    // clampedRate, byte-identical to the prior behavior).
+    let displayRate = clampedRate;
+    let adjustedRate = 1 / (1 + Math.exp(-logOdds));
+    if (rate > 0 && rate < 0.001) {
+      const modifierShift = logOdds - Math.log(clampedRate / (1 - clampedRate));
+      const trueLogOdds = Math.log(rate / (1 - rate)) + modifierShift;
+      adjustedRate = 1 / (1 + Math.exp(-trueLogOdds));
+      displayRate = rate;
+    }
     // displayPct (not a bare floor of 1): since the 2026-09-10 serious-AE
     // re-admission, pancreatitis's corpus-derived rate is 0.1% — the API and the
     // CC BY table published 0.1 while this branch floored it to 1, a 10×
     // overstatement of the one figure disclosed as a FLOOR on incidence
     // (found by RED TEAM 2026-09-16, live probe at every tier).
     const pct = displayPct(adjustedRate);
-    const unadjustedPct = displayPct(clampedRate);
+    const unadjustedPct = displayPct(displayRate);
     const pooledPct = displayPct(pooledRate);
-    // Anchor the variance at the pooled corpus rate (the evidence), centre on the adjusted one.
-    const ci = computeConfidenceInterval(adjustedRate, clinicalResult.rates, clinicalResult.effectiveN, pooledRate);
+    // Decision `high-tier-estimate-interval-from-full-pool-2026-09-22`,
+    // recommended option, founder-approved: when the corpus-derived high-tier
+    // path fired, anchor the interval on the TIER SUBSET's own rates and
+    // effective n rather than the full profile-matched pool's — the point
+    // estimate came from that subset, so the interval should describe the
+    // same evidence, not a differently-evidenced quantity. Every other path
+    // (no rescale, static-ratio rescale) is unchanged: anchor at the pooled
+    // corpus rate (the evidence), centred on the adjusted one.
+    const ciRates = tierRateResult ? tierRateResult.rates : clinicalResult.rates;
+    const ciEffectiveN = tierRateResult ? tierRateResult.effectiveN : clinicalResult.effectiveN;
+    const ciAnchor = tierRateResult ? tierRateResult.rate : pooledRate;
+    const ci = computeConfidenceInterval(adjustedRate, ciRates, ciEffectiveN, ciAnchor);
 
     const srcs = clinicalResult.sourceCount;
     // Grade the DISPLAYED number, not the pool it was selected from. When the
@@ -632,8 +712,8 @@ export async function calculateDynamicRisk(
     // `dataPointCount`, which are pool-level by definition, and the basis string
     // states both counts.
     const gradingSrcs = doseRescaleKind === "corpus_derived" && doseTierEstimate ? doseTierEstimate.distinctSources : srcs;
-    const doseNoteEn = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "en", doseRescaleKind, doseTierEstimate) : "";
-    const doseNoteNl = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "nl", doseRescaleKind, doseTierEstimate) : "";
+    const doseNoteEn = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "en", doseRescaleKind, doseTierEstimate, tierDrugs) : "";
+    const doseNoteNl = doseRescaled ? doseNote(pooledPct, unadjustedPct, profile.doseTier, doseTaggedPoints, clinicalPoints.length, "nl", doseRescaleKind, doseTierEstimate, tierDrugs) : "";
     clinical = {
       percentage: pct,
       confidenceInterval: ci,
