@@ -5,7 +5,7 @@
   "description": "Per-effect summary table only: pooled clinical rate estimate (with 95% CI, stated rates, distinct sources) and community reporting frequency (mentions, distinct reports) for each of the 15 tracked GLP-1 side effects. Computed from Magistra's underlying point-level corpus, which is NOT included here and remains under a separate attribution/no-redistribution licence (see licenseUrl). This summary table may be redistributed with attribution. Figures are pulled live from https://magistra.health/api/data?q=overview at build time — never hand-typed.",
   "version": "1.5",
   "asOf": "2026-09-24",
-  "generatedAt": "2026-09-24T14:52:56.688Z",
+  "generatedAt": "2026-09-24T23:56:44.024Z",
   "license": "https://creativecommons.org/licenses/by/4.0/",
   "licenseNote": "This aggregate table (effect, pooled rate, CI, n, distinct sources) is CC BY 4.0 — free to redistribute with attribution (Magistra, magistra.health). The underlying point-level corpus is NOT covered by this licence; see https://magistra.health/en/data#licence.",
   "licenseUrl": "https://magistra.health/en/data#licence",
@@ -23,7 +23,7 @@
     }
   ],
   "citation": "Magistra Health. \"GLP-1 Aggregate Pooled Side Effect Rates.\" magistra.health/data/glp1-aggregate-rates.json. Accessed 2026-09-24.",
-  "methodologyNote": "clinicalPooledRatePct/CI: weighted random-effects pooled rate across eligible clinical + regulatory rate points, one entry per distinct source (src/lib/side-effects-engine.ts::pooledClinicalEstimate, exposed live at /api/data?q=overview -> effectsTracked[].corpusClinical). Null when the corpus has zero eligible clinical rate points for that effect. communityReportingFrequencyPct: of N distinct community reports (the same denominator for every effect, never scoped to one effect's own reports; deduped by URL), the share mentioning this effect — NOT an incidence rate, see /en/methodology (src/lib/rate-base.ts::buildReportingFrequency). That denominator is a SCREENED subset of the community rows in the corpus, not all of them (stated here 2026-09-21; the screen itself has run since 2026-08-29): a Reddit post counts only if its subreddit is one of the 16 GLP-1, weight-management and diabetes communities the collector is configured for, and non-Reddit community hosts (Drugs.com review pages) pass through. On the 2026-09-20 corpus that takes 184 distinct non-seed community URLs down to the 26 behind these rows — 21 Reddit threads plus 5 Drugs.com per-drug review pages. Of the 158 screened out, 142 are off-topic matches on a symptom word (r/gallbladders, r/AskDocs, r/pregnant — the contamination the 2026-08-29 screen was built to remove) and 16 are posts in GLP-1-named subreddits the collector was never configured for (r/mounjarouk, r/TirzepatideRX, r/Retatrutide, r/GLP1India, r/CompoundedSemaglutide, r/Mounjaro_ForType2, r/antidietglp1, r/TirzepatidePH, r/RetatrutideTalk, r/liraglutide — ten communities; corrected 2026-09-21 from \"143 / 15 / nine\", which had omitted r/liraglutide and therefore counted its one report as off-topic contamination); whether those 16 should be admitted is an open question, not a settled exclusion. Do not describe this denominator as every community report in the corpus. clinicalIntervalBasis: \"sampling_plus_between_study\" normally; \"sampling_only_single_source\" when a single source entry contributes, in which case the between-study heterogeneity term is 0 by construction and the two CI columns describe that one study's sampling only — never read such a row's narrow interval as stronger evidence than a wider one. clinicalRateKind: \"incidence\" for an ordinary all-cause pooled rate; \"serious_ae_floor\" when every source behind the pooled rate is a rate from a trial registry’s SERIOUS adverse-events table (the registry lists non-serious events only above the trial’s reporting threshold, so such a figure is a FLOOR on all-cause incidence, not incidence); \"mixed_incidence_and_serious_ae\" when the pool contains both. Do not compare a serious_ae_floor row to a label’s all-cause figure without saying so. clinicalPhase[1-4]Sources: distinct ClinicalTrials.gov sources behind clinicalPooledRatePct, by the trial phase each ran at (parsed from the excerpt the collector wrote for every registry row, src/lib/rate-base.ts::Study.phase). A non-registry source (a paper, FAERS) counts toward none of the four, so they need not sum to clinicalDistinctSources; a large gap between their sum and clinicalDistinctSources means \"mostly non-registry evidence\", not missing data. A phase 1 study enrols healthy volunteers or a small dose-finding cohort, not the population the effect will be prescribed to — weigh a pooled rate resting mostly on clinicalPhase1Sources accordingly.",
+  "methodologyNote": "clinicalPooledRatePct/CI: weighted random-effects pooled rate across eligible clinical + regulatory rate points, one entry per distinct source (src/lib/side-effects-engine.ts::pooledClinicalEstimate, exposed live at /api/data?q=overview -> effectsTracked[].corpusClinical). Null when the corpus has zero eligible clinical rate points for that effect. communityReportingFrequencyPct: of N distinct community reports (the same denominator for every effect, never scoped to one effect's own reports; deduped by URL), the share mentioning this effect — NOT an incidence rate, see /en/methodology (src/lib/rate-base.ts::buildReportingFrequency). That denominator is a SCREENED subset of the community rows in the corpus, not all of them (stated here 2026-09-21; the screen itself has run since 2026-08-29): a Reddit post counts only if its subreddit is one of the 26 GLP-1, weight-management and diabetes communities the collector is configured for, and non-Reddit community hosts (Drugs.com review pages) pass through. Since 2026-09-25 the rows here rest on 42 reports (37 Reddit threads plus 5 Drugs.com per-drug review pages): that day the ten GLP-1 communities named below were added to the configured list on founder approval, re-derived over every excluded subreddit (they hold exactly 16 reports). The rest of this paragraph is the 2026-09-20 measurement that led to the change. On the 2026-09-20 corpus the 16-community screen took 184 distinct non-seed community URLs down to the 26 then behind these rows — 21 Reddit threads plus 5 Drugs.com per-drug review pages. Of the 158 screened out, 142 are off-topic matches on a symptom word (r/gallbladders, r/AskDocs, r/pregnant — the contamination the 2026-08-29 screen was built to remove) and 16 are posts in GLP-1-named subreddits the collector was never configured for (r/mounjarouk, r/TirzepatideRX, r/Retatrutide, r/GLP1India, r/CompoundedSemaglutide, r/Mounjaro_ForType2, r/antidietglp1, r/TirzepatidePH, r/RetatrutideTalk, r/liraglutide — ten communities; corrected 2026-09-21 from \"143 / 15 / nine\", which had omitted r/liraglutide and therefore counted its one report as off-topic contamination); those 16 were admitted on 2026-09-25. Do not describe this denominator as every community report in the corpus. clinicalIntervalBasis: \"sampling_plus_between_study\" normally; \"sampling_only_single_source\" when a single source entry contributes, in which case the between-study heterogeneity term is 0 by construction and the two CI columns describe that one study's sampling only — never read such a row's narrow interval as stronger evidence than a wider one. clinicalRateKind: \"incidence\" for an ordinary all-cause pooled rate; \"serious_ae_floor\" when every source behind the pooled rate is a rate from a trial registry’s SERIOUS adverse-events table (the registry lists non-serious events only above the trial’s reporting threshold, so such a figure is a FLOOR on all-cause incidence, not incidence); \"mixed_incidence_and_serious_ae\" when the pool contains both. Do not compare a serious_ae_floor row to a label’s all-cause figure without saying so. clinicalPhase[1-4]Sources: distinct ClinicalTrials.gov sources behind clinicalPooledRatePct, by the trial phase each ran at (parsed from the excerpt the collector wrote for every registry row, src/lib/rate-base.ts::Study.phase). A non-registry source (a paper, FAERS) counts toward none of the four, so they need not sum to clinicalDistinctSources; a large gap between their sum and clinicalDistinctSources means \"mostly non-registry evidence\", not missing data. A phase 1 study enrols healthy volunteers or a small dose-finding cohort, not the population the effect will be prescribed to — weigh a pooled rate resting mostly on clinicalPhase1Sources accordingly.",
   "disclaimer": "Data, not medical advice. Reporting frequency is not incidence — do not compare it to the clinical rate as if the two measured the same thing.",
   "evidentiaryBase": {
     "corpusPoints": 2309,
@@ -32,7 +32,7 @@
     "distinctSources": 32,
     "sourceEntries": 236,
     "effectsTracked": 15,
-    "communityDistinctReports": 26,
+    "communityDistinctReports": 42,
     "note": "Both corpusPoints and totalDataPoints are scoped to the 15 publicly-tracked effects (excluding kidney_issues/muscle_loss/weight_regain, extraction-only categories never displayed on the site); they differ only in that corpusPoints includes the April-2026 seed points retained for audit trail and totalDataPoints excludes them. Corrected 2026-09-11: until then totalDataPoints and dataPointsBySource were computed from an unscoped metadata blob, so this response published a corpus total 97 higher than the sum of its own dataPointsByEffect — totalDataPoints read 1,901 where the scoped figure is 1,804. Of the corpus, only ratePoints state a rate; after eligibility rules, eligibleRates are allowed to support a published estimate. distinctSources counts distinct STUDIES by source URL with its fragment stripped (a registry record or paper counts once however many effects it reports; re-keyed 2026-09-08 — until then this field counted one entry per source per effect, now exposed as sourceEntries). Per-effect breakdown: ?q=effect&id=<effect>, field rateBase, whose distinctSources is keyed the same way (re-keyed 2026-09-10 — it too counted one entry per source per effect until then, and still does under sourceEntries; the two differ only where one study posts more than one MedDRA preferred term for the same effect, e.g. SURMOUNT-1's Pancreatitis and Pancreatitis acute)."
   },
   "knownDefect": "Registry sampling bias, disclosed 2026-09-10 and corrected 2026-09-16: registry rows collected before 2026-09-10 through the rotation path were capped at the five highest-percentage arm rows per trial, which selects on the rate being measured (19 of the 25 trials with stored registry rows at the time; the six pinned pivotal trials — SURMOUNT-1, SELECT, STEP 1, STEP 2, SURPASS-CVOT, retatrutide phase 2 — were never affected). The collector was fixed 2026-09-10 and the 19 trials were re-collected in full between 2026-09-10 and 2026-09-16 (every tracked non-placebo arm row the registry posts is stored, verified against the live registry on 2026-09-16), so each study's entry in a pooled estimate is now the mean of every arm the registry posts for that term, not of its five highest. Method, per-trial measurements and the correction record: §4 Limitations and correction-log items 25 and 32 of the published methodology, https://github.com/saurabhgoyal75/magistra-predictor/blob/main/preprint/magistra-methodology.md.",
@@ -54,9 +54,9 @@
       "clinicalPhase2Sources": 2,
       "clinicalPhase3Sources": 16,
       "clinicalPhase4Sources": 3,
-      "communityReportingFrequencyPct": 38.5,
-      "communityMentions": 10,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 33.3,
+      "communityMentions": 14,
+      "communityTotalReports": 42
     },
     {
       "effect": "diarrhea",
@@ -74,9 +74,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 15,
       "clinicalPhase4Sources": 2,
-      "communityReportingFrequencyPct": 34.6,
-      "communityMentions": 9,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 28.6,
+      "communityMentions": 12,
+      "communityTotalReports": 42
     },
     {
       "effect": "constipation",
@@ -94,9 +94,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 15,
       "clinicalPhase4Sources": 2,
-      "communityReportingFrequencyPct": 26.9,
-      "communityMentions": 7,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 21.4,
+      "communityMentions": 9,
+      "communityTotalReports": 42
     },
     {
       "effect": "reduced_appetite",
@@ -114,9 +114,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 15,
       "clinicalPhase4Sources": 2,
-      "communityReportingFrequencyPct": 30.8,
-      "communityMentions": 8,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 31,
+      "communityMentions": 13,
+      "communityTotalReports": 42
     },
     {
       "effect": "headache",
@@ -134,9 +134,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 12,
       "clinicalPhase4Sources": 2,
-      "communityReportingFrequencyPct": 3.8,
-      "communityMentions": 1,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 9.5,
+      "communityMentions": 4,
+      "communityTotalReports": 42
     },
     {
       "effect": "pancreatitis",
@@ -156,7 +156,7 @@
       "clinicalPhase4Sources": 0,
       "communityReportingFrequencyPct": 0,
       "communityMentions": 0,
-      "communityTotalReports": 26
+      "communityTotalReports": 42
     },
     {
       "effect": "fatigue",
@@ -174,9 +174,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 8,
       "clinicalPhase4Sources": 2,
-      "communityReportingFrequencyPct": 11.5,
-      "communityMentions": 3,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 14.3,
+      "communityMentions": 6,
+      "communityTotalReports": 42
     },
     {
       "effect": "vomiting",
@@ -194,9 +194,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 16,
       "clinicalPhase4Sources": 2,
-      "communityReportingFrequencyPct": 42.3,
-      "communityMentions": 11,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 35.7,
+      "communityMentions": 15,
+      "communityTotalReports": 42
     },
     {
       "effect": "abdominal_pain",
@@ -214,9 +214,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 10,
       "clinicalPhase4Sources": 1,
-      "communityReportingFrequencyPct": 15.4,
-      "communityMentions": 4,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 19,
+      "communityMentions": 8,
+      "communityTotalReports": 42
     },
     {
       "effect": "acid_reflux",
@@ -234,9 +234,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 12,
       "clinicalPhase4Sources": 1,
-      "communityReportingFrequencyPct": 23.1,
-      "communityMentions": 6,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 19,
+      "communityMentions": 8,
+      "communityTotalReports": 42
     },
     {
       "effect": "gallstones",
@@ -254,9 +254,9 @@
       "clinicalPhase2Sources": 0,
       "clinicalPhase3Sources": 6,
       "clinicalPhase4Sources": 0,
-      "communityReportingFrequencyPct": 11.5,
-      "communityMentions": 3,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 9.5,
+      "communityMentions": 4,
+      "communityTotalReports": 42
     },
     {
       "effect": "hair_loss",
@@ -274,9 +274,9 @@
       "clinicalPhase2Sources": 0,
       "clinicalPhase3Sources": 3,
       "clinicalPhase4Sources": 1,
-      "communityReportingFrequencyPct": 3.8,
+      "communityReportingFrequencyPct": 2.4,
       "communityMentions": 1,
-      "communityTotalReports": 26
+      "communityTotalReports": 42
     },
     {
       "effect": "injection_site_reaction",
@@ -294,9 +294,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 2,
       "clinicalPhase4Sources": 0,
-      "communityReportingFrequencyPct": 23.1,
-      "communityMentions": 6,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 28.6,
+      "communityMentions": 12,
+      "communityTotalReports": 42
     },
     {
       "effect": "dizziness",
@@ -314,9 +314,9 @@
       "clinicalPhase2Sources": 1,
       "clinicalPhase3Sources": 12,
       "clinicalPhase4Sources": 1,
-      "communityReportingFrequencyPct": 7.7,
-      "communityMentions": 2,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 7.1,
+      "communityMentions": 3,
+      "communityTotalReports": 42
     },
     {
       "effect": "emotional_blunting",
@@ -334,9 +334,9 @@
       "clinicalPhase2Sources": 0,
       "clinicalPhase3Sources": 0,
       "clinicalPhase4Sources": 0,
-      "communityReportingFrequencyPct": 0,
-      "communityMentions": 0,
-      "communityTotalReports": 26
+      "communityReportingFrequencyPct": 2.4,
+      "communityMentions": 1,
+      "communityTotalReports": 42
     }
   ]
 }
