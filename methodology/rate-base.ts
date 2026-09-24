@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-23.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-24.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -416,7 +416,7 @@ export function buildRateBase(points: RatePoint[]): RateBase {
     }
     eligiblePoints++;
 
-    const key = (p.sourceName || p.sourceUrl).trim().toLowerCase();
+    const key = sourceEntryKey(p);
     const existing = bySource.get(key);
     if (!existing) {
       const excerpt = (p as RatePoint & { rawExcerpt?: string }).rawExcerpt || "";
@@ -491,6 +491,20 @@ export function buildRateBase(points: RatePoint[]): RateBase {
  * fragment stripped — the NCT page, the PMID page — is the entity a reader
  * means by "a distinct study".
  */
+/** The key one source entry collapses on: its name AND its study URL.
+ *  Name alone was the key until 2026-09-24, and two different trials can
+ *  share a name — the collector truncates CT.gov titles, and SURMOUNT-1
+ *  (NCT04184622) and SURMOUNT-5 (NCT05822830) both truncate to "A Study of
+ *  Tirzepatide (LY3298176) in Participants With Obes". SURMOUNT-5's rows on
+ *  11 effects were averaged into SURMOUNT-1's entry and published under its
+ *  URL, and each of those effects counted one distinct study too few. That
+ *  pair was the only name spanning more than one study URL, measured over
+ *  every eligible row. Adding the study URL splits exactly such pairs; rows
+ *  of one study (any #fragment) still collapse together. */
+export function sourceEntryKey(p: Pick<RatePoint, "sourceName" | "sourceUrl">): string {
+  return `${(p.sourceName || p.sourceUrl).trim().toLowerCase()}::${studyKey(p.sourceUrl)}`;
+}
+
 export function studyKey(url: string): string {
   try {
     const u = new URL(url);
