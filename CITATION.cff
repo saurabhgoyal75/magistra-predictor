@@ -9,7 +9,7 @@ authors:
     affiliation: "Phlo Systems BV"
 type: software
 version: "5.36"
-date-released: "2026-09-18"
+date-released: "2026-09-25"
 license: Apache-2.0
 repository-code: "https://github.com/saurabhgoyal75/magistra-predictor"
 url: "https://magistra.health"
