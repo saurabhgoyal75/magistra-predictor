@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-24.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-28.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -602,6 +602,65 @@ export function drugMix(points: (RatePoint & { extractedDrug?: string | null })[
     const weight = weightByDrug.get(drug) ?? 0;
     rows.push({
       drug,
+      statedRates: sub.eligiblePoints,
+      distinctStudies: distinctStudies(sub.studies),
+      sourceEntries: sub.studies.length,
+      pooledWeightPct: Math.round((weight / totalWeight) * 1000) / 10,
+    });
+  }
+  return rows.sort((a, b) => b.statedRates - a.statedRates);
+}
+
+export type IndicationMixEntry = {
+  indication: string;
+  statedRates: number;
+  distinctStudies: number;
+  sourceEntries: number;
+  pooledWeightPct: number;
+};
+
+/**
+ * Which POPULATION a pooled estimate's rows were trialled in — same shape as
+ * drugMix above, keyed by `extractedIndication` instead of `extractedDrug`.
+ * Added 2026-09-27 (decision registry-indication-mix-undisclosed-2026-09-27):
+ * the registry-coverage clean-batch census admits any trial naming exactly
+ * one taxonomy drug, which says nothing about which indication that drug was
+ * trialled in — batch 2 pooled ADJUNCT ONE/TWO (liraglutide as an adjunct to
+ * insulin in type 1 diabetes) into the same whole-class rate as obesity and
+ * T2D trials with no disclosed axis for it. `(unspecified)` covers every row
+ * stored before this field existed and every non-registry source, which
+ * carries no structured conditions module to derive from — this is expected
+ * to be the majority entry for some time, not a defect in the function.
+ */
+export function indicationMix(points: (RatePoint & { extractedIndication?: string | null })[]): IndicationMixEntry[] {
+  const base = buildRateBase(points);
+  if (base.studies.length === 0) return [];
+
+  const totalWeight = base.studies.reduce((sum, s) => sum + poolingWeight(s), 0);
+  const weightByIndication = new Map<string, number>();
+  for (const s of base.studies) {
+    const counts = new Map<string, number>();
+    let rows = 0;
+    for (const p of points) {
+      if (p.sourceName !== s.source || classifyRatePoint(p)) continue;
+      const ind = p.extractedIndication || "(unspecified)";
+      counts.set(ind, (counts.get(ind) ?? 0) + 1);
+      rows++;
+    }
+    for (const [ind, n] of counts) {
+      weightByIndication.set(ind, (weightByIndication.get(ind) ?? 0) + (poolingWeight(s) * n) / rows);
+    }
+  }
+
+  const indications = [...new Set(points.map((p) => p.extractedIndication || "(unspecified)"))];
+  const rows: IndicationMixEntry[] = [];
+  for (const indication of indications) {
+    const subset = points.filter((p) => (p.extractedIndication || "(unspecified)") === indication);
+    const sub = buildRateBase(subset);
+    if (sub.eligiblePoints === 0) continue;
+    const weight = weightByIndication.get(indication) ?? 0;
+    rows.push({
+      indication,
       statedRates: sub.eligiblePoints,
       distinctStudies: distinctStudies(sub.studies),
       sourceEntries: sub.studies.length,
