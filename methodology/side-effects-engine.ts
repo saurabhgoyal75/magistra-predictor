@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/side-effects-engine.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-24.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-29.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -345,6 +345,13 @@ function computeConfidenceInterval(
 
   // Simplified (unweighted) random-effects tau-squared — inspired by DerSimonian-Laird
   // but does not use inverse-variance weights. See decision dersimonian-laird-method-claim-2026-08-27.
+  // Q is centred on the UNWEIGHTED mean of the entry rates while the point estimate is
+  // the weighted pooled rate (daily peer review 2026-09-28, Issue 1). Measured 2026-09-28
+  // (LOCAL 0643) against the repo corpus for all 14 corpus-derived effects: re-centring Q
+  // on the pooled rate moves no published bound by more than 1 point except gallstones
+  // (1–5% → 0–8%); textbook inverse-variance DL would NARROW 12 of 14 intervals (e.g.
+  // reduced appetite 1–48% → 4–17%). So this estimator is the conservative one, and the
+  // centring choice is immaterial. Not changed: every interval on the site would move.
   let tauSq = 0;
   if (k > 1) {
     const mean = studyRates.reduce((a, b) => a + b, 0) / k;
