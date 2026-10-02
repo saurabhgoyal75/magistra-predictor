@@ -1,5 +1,5 @@
 // SNAPSHOT — do not edit here. Copied from `src/lib/rate-base.ts` in the Magistra
-// platform repo by `scripts/sync-github-mirror.mjs` on 2026-09-28.
+// platform repo by `scripts/sync-github-mirror.mjs` on 2026-10-02.
 // Published for peer review: this is the code that computes what the live
 // API returns. It is not runnable standalone — import paths assume the
 // application tree. Report a defect at https://magistra.health/en/contact.
@@ -619,6 +619,14 @@ export type IndicationMixEntry = {
   pooledWeightPct: number;
 };
 
+// The collector stores "unspecified" when a registry row's conditions text
+// matches no tag; rows stored before the field existed carry none. Both mean
+// the same thing, so they share one entry (until 2026-10-02 they published as
+// two, "unspecified" and "(unspecified)").
+function indicationKey(indication: string | null | undefined): string {
+  return !indication || indication === "unspecified" ? "(unspecified)" : indication;
+}
+
 /**
  * Which POPULATION a pooled estimate's rows were trialled in — same shape as
  * drugMix above, keyed by `extractedIndication` instead of `extractedDrug`.
@@ -643,7 +651,7 @@ export function indicationMix(points: (RatePoint & { extractedIndication?: strin
     let rows = 0;
     for (const p of points) {
       if (p.sourceName !== s.source || classifyRatePoint(p)) continue;
-      const ind = p.extractedIndication || "(unspecified)";
+      const ind = indicationKey(p.extractedIndication);
       counts.set(ind, (counts.get(ind) ?? 0) + 1);
       rows++;
     }
@@ -652,10 +660,10 @@ export function indicationMix(points: (RatePoint & { extractedIndication?: strin
     }
   }
 
-  const indications = [...new Set(points.map((p) => p.extractedIndication || "(unspecified)"))];
+  const indications = [...new Set(points.map((p) => indicationKey(p.extractedIndication)))];
   const rows: IndicationMixEntry[] = [];
   for (const indication of indications) {
-    const subset = points.filter((p) => (p.extractedIndication || "(unspecified)") === indication);
+    const subset = points.filter((p) => indicationKey(p.extractedIndication) === indication);
     const sub = buildRateBase(subset);
     if (sub.eligiblePoints === 0) continue;
     const weight = weightByIndication.get(indication) ?? 0;
@@ -668,6 +676,124 @@ export function indicationMix(points: (RatePoint & { extractedIndication?: strin
     });
   }
   return rows.sort((a, b) => b.statedRates - a.statedRates);
+}
+
+export type WindowMixEntry = {
+  window: string;
+  statedRates: number;
+  distinctStudies: number;
+  sourceEntries: number;
+  pooledWeightPct: number;
+};
+
+export const WINDOW_NOT_STATED = "(window not stated)";
+
+/** The bucket a row's registry adverse-event counting window falls in. */
+export function windowBucket(weeks: number | null | undefined): string {
+  if (weeks == null) return WINDOW_NOT_STATED;
+  if (weeks <= 26) return "<=26w";
+  if (weeks <= 52) return "27-52w";
+  if (weeks <= 104) return "53-104w";
+  return ">104w";
+}
+
+/**
+ * Over which COUNTING WINDOW a pooled estimate's rows were recorded — same
+ * shape and weighting as drugMix/indicationMix, keyed by the bucket of
+ * `extractedWeeks`. Added 2026-10-02 (decision
+ * registry-ae-window-threshold-undisclosed-2026-09-27): registry windows run
+ * from 12 days to 7 years, 44% of eligible registry rows (755 of 1,727 on
+ * 2026-10-02, mostly Phase 1) come from studies of 26 weeks or less, yet by
+ * weight the pooled figure is mostly a figure over a year or more, and the
+ * median stated nausea rate is 8% at <=26 w vs about 25% at >52 w. A record
+ * stating several windows is filed under the longest (ae-window.mjs). `(window not stated)` covers every non-registry source and the
+ * registry records that post no adverse-event timeFrame — an honest null,
+ * never read as zero weeks.
+ */
+export function windowMix(points: (RatePoint & { extractedWeeks?: number | null })[]): WindowMixEntry[] {
+  const base = buildRateBase(points);
+  if (base.studies.length === 0) return [];
+
+  const totalWeight = base.studies.reduce((sum, s) => sum + poolingWeight(s), 0);
+  const weightByWindow = new Map<string, number>();
+  for (const s of base.studies) {
+    const counts = new Map<string, number>();
+    let rows = 0;
+    for (const p of points) {
+      if (p.sourceName !== s.source || classifyRatePoint(p)) continue;
+      const w = windowBucket(p.extractedWeeks);
+      counts.set(w, (counts.get(w) ?? 0) + 1);
+      rows++;
+    }
+    for (const [w, n] of counts) {
+      weightByWindow.set(w, (weightByWindow.get(w) ?? 0) + (poolingWeight(s) * n) / rows);
+    }
+  }
+
+  const rows: WindowMixEntry[] = [];
+  for (const window of ["<=26w", "27-52w", "53-104w", ">104w", WINDOW_NOT_STATED]) {
+    const subset = points.filter((p) => windowBucket(p.extractedWeeks) === window);
+    const sub = buildRateBase(subset);
+    if (sub.eligiblePoints === 0) continue;
+    const weight = weightByWindow.get(window) ?? 0;
+    rows.push({
+      window,
+      statedRates: sub.eligiblePoints,
+      distinctStudies: distinctStudies(sub.studies),
+      sourceEntries: sub.studies.length,
+      pooledWeightPct: Math.round((weight / totalWeight) * 1000) / 10,
+    });
+  }
+  return rows;
+}
+
+/** Median counting window in weeks across the distinct studies behind eligible rows that state one. */
+export function medianWindowWeeks(points: (RatePoint & { extractedWeeks?: number | null })[]): number | null {
+  const byStudy = new Map<string, number>();
+  for (const p of points) {
+    if (p.extractedWeeks == null || classifyRatePoint(p)) continue;
+    byStudy.set(studyKey(p.sourceUrl), p.extractedWeeks);
+  }
+  const w = [...byStudy.values()].sort((a, b) => a - b);
+  if (w.length === 0) return null;
+  const mid = Math.floor(w.length / 2);
+  return w.length % 2 ? w[mid] : (w[mid - 1] + w[mid]) / 2;
+}
+
+export type ThresholdMix = {
+  /** eligible rows read from a registry SERIOUS adverse-events table (rateKind "serious_ae"), which has no listing threshold */
+  seriousTableRows: number;
+  /** eligible rows from registry trials that list a non-serious event only when it exceeded 5% (or more) in some arm */
+  atLeast5PctThresholdRows: number;
+  /** eligible rows from registry trials that list every non-serious event (threshold 0) */
+  allEventRows: number;
+  /** eligible non-serious rows from registry trials with another posted threshold (between 0 and 5%) */
+  otherThresholdRows: number;
+  /** eligible rows with no listing threshold on file (non-registry sources) */
+  notStatedRows: number;
+};
+
+/**
+ * Which LISTING THRESHOLD the trials behind a pooled estimate used (decision
+ * registry-ae-window-threshold-undisclosed-2026-09-27). A trial listing
+ * non-serious events only above 5% contributes no row for a term that stayed
+ * at or under 5% in every arm; serious-table rows are counted apart, since
+ * that table has no threshold, so for effects pooled near or below 5% the eligible
+ * base is censored from below. Counts eligible rows only — the same rows the
+ * n beside each estimate reports.
+ */
+export function thresholdMix(points: (RatePoint & { extractedFrequencyThreshold?: number | null })[]): ThresholdMix {
+  const mix: ThresholdMix = { seriousTableRows: 0, atLeast5PctThresholdRows: 0, allEventRows: 0, otherThresholdRows: 0, notStatedRows: 0 };
+  for (const p of points) {
+    if (classifyRatePoint(p)) continue;
+    const t = p.extractedFrequencyThreshold;
+    if (p.rateKind === "serious_ae") mix.seriousTableRows++;
+    else if (t == null) mix.notStatedRows++;
+    else if (t >= 5) mix.atLeast5PctThresholdRows++;
+    else if (t === 0) mix.allEventRows++;
+    else mix.otherThresholdRows++;
+  }
+  return mix;
 }
 
 /** Confidence follows the number of DISTINCT sources, never the corpus size. */
