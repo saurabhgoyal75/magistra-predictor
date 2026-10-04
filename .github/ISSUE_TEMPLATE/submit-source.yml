@@ -1,0 +1,127 @@
+name: Submit a source
+description: Point us to a published trial result or paper that the GLP-1 evidence base is missing.
+title: "[Source] "
+labels: ["source-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Published sources only.** Please don't send information about yourself or any patient.
+        Give the source and the numbers for one arm and one side effect. We check every submission
+        against the published record before it can be used; nothing reaches a published rate unverified.
+        You can also submit at https://magistra.health/en/methodology#submit-source.
+  - type: dropdown
+    id: source_type
+    attributes:
+      label: Source type
+      options:
+        - ClinicalTrials.gov (NCT ID)
+        - DOI
+        - PubMed ID
+    validations:
+      required: true
+  - type: input
+    id: source_id
+    attributes:
+      label: Source identifier
+      description: "NCT followed by 8 digits (NCT01234567), a DOI (10.xxxx/...), or a PubMed ID (digits only)."
+      placeholder: NCT01234567
+    validations:
+      required: true
+  - type: dropdown
+    id: drug
+    attributes:
+      label: Drug
+      options:
+        - Semaglutide (oral)
+        - Semaglutide (injectable)
+        - Tirzepatide
+        - Liraglutide
+        - Dulaglutide
+        - Exenatide
+        - Lixisenatide
+        - Other GLP-1/incretin (name it below)
+    validations:
+      required: true
+  - type: input
+    id: drug_other
+    attributes:
+      label: Other drug (if "Other" above)
+  - type: dropdown
+    id: side_effect
+    attributes:
+      label: Side effect
+      options:
+        - Nausea
+        - Diarrhoea
+        - Constipation
+        - Reduced appetite
+        - Headache
+        - Pancreatitis (rare)
+        - Fatigue / Low energy
+        - Vomiting
+        - Abdominal pain
+        - Acid reflux (GERD)
+        - Gallstones (cholelithiasis)
+        - Hair loss (thinning)
+        - Injection site reaction
+        - Dizziness
+        - Emotional blunting / Reduced pleasure
+        - Other (name the term as published below)
+    validations:
+      required: true
+  - type: input
+    id: side_effect_other
+    attributes:
+      label: Other side effect (if "Other" above)
+  - type: input
+    id: arm_label
+    attributes:
+      label: Arm label (as published)
+      placeholder: Semaglutide 2.4 mg
+    validations:
+      required: true
+  - type: input
+    id: n_at_risk
+    attributes:
+      label: n at risk
+      description: Whole number of participants in the arm at risk for the event.
+    validations:
+      required: true
+  - type: input
+    id: n_affected
+    attributes:
+      label: n affected
+      description: Give n affected or the rate (one is required). n affected cannot exceed n at risk.
+  - type: input
+    id: rate_pct
+    attributes:
+      label: Rate (%)
+      description: Between 0 and 100.
+  - type: textarea
+    id: note
+    attributes:
+      label: Note (optional)
+      description: E.g. the table or page the number is on.
+  - type: input
+    id: name
+    attributes:
+      label: Name (optional)
+  - type: input
+    id: affiliation
+    attributes:
+      label: Affiliation (optional)
+  - type: checkboxes
+    id: credit
+    attributes:
+      label: Credit
+      options:
+        - label: Credit me by name if accepted
+          required: false
+  - type: checkboxes
+    id: confirm
+    attributes:
+      label: Confirmation
+      options:
+        - label: This is a published source and contains no information about me or any patient.
+          required: true
