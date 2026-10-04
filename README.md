@@ -171,9 +171,9 @@ Substantive contributors are acknowledged in the public changelog on the [method
 
 If you use this methodology or data in research, please cite:
 
-**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.41). Magistra, Phlo Systems BV. https://magistra.health/en/methodology
+**Goyal, S.** (2026). *A Dual-Track Framework for GLP-1 Side Effect Estimation: Separating Clinical Evidence from Real-World Patient Reports* (v5.41). Magistra, Phlo Systems BV. https://doi.org/10.5281/zenodo.23138788
 
-No DOI is registered for this work — the methodology is self-published at the URL above, not deposited with a repository that mints permanent identifiers. (A DOI, 10.5281/zenodo.19559749, was asserted on this page and elsewhere until 2026-08-18; it was never actually registered and has been withdrawn.)
+Archived on Zenodo: DOI [10.5281/zenodo.23138788](https://doi.org/10.5281/zenodo.23138788) (all versions; v5.41 is [10.5281/zenodo.23138789](https://doi.org/10.5281/zenodo.23138789)). The live methodology at the URL above remains canonical. (A different DOI, 10.5281/zenodo.19559749, was asserted on this page until 2026-08-18; it was never registered and is not this record.)
 
 ```bibtex
 @misc{goyal2026magistra,
@@ -182,7 +182,8 @@ No DOI is registered for this work — the methodology is self-published at the 
   year         = {2026},
   publisher    = {Magistra, Phlo Systems BV},
   version      = {5.41},
-  url          = {https://magistra.health/en/methodology}
+  url          = {https://magistra.health/en/methodology},
+  doi          = {10.5281/zenodo.23138788}
 }
 ```
 
