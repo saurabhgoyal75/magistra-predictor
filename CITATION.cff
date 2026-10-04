@@ -13,10 +13,18 @@ date-released: "2026-10-02"
 license: Apache-2.0
 repository-code: "https://github.com/saurabhgoyal75/magistra-predictor"
 url: "https://magistra.health"
-# No DOI: not deposited with a repository that mints permanent identifiers.
-# A DOI (10.5281/zenodo.19559749) was asserted here until 2026-08-18; it was
-# never actually registered and has been withdrawn. Re-add a doi/identifiers
-# block only once a real deposit exists.
+# DOI minted by Zenodo from the v5.41 GitHub release on 2026-10-04 and verified
+# at doi.org and DataCite the same day. The concept DOI always resolves to the
+# latest version. (10.5281/zenodo.19559749, asserted until 2026-08-18, was
+# never registered and is not this record.)
+doi: "10.5281/zenodo.23138788"
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.23138788"
+    description: "Concept DOI (all versions)"
+  - type: doi
+    value: "10.5281/zenodo.23138789"
+    description: "Version v5.41"
 keywords:
   - "GLP-1"
   - "semaglutide"
