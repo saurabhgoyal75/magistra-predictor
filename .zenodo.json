@@ -1,0 +1,34 @@
+{
+  "title": "Magistra Predictor: A Dual-Track Framework for GLP-1 Side Effect Estimation",
+  "upload_type": "software",
+  "access_right": "open",
+  "license": "Apache-2.0",
+  "creators": [
+    {
+      "name": "Goyal, Saurabh",
+      "affiliation": "Magistra, Phlo Systems B.V."
+    }
+  ],
+  "description": "<p>Methodology code, model configuration and preprint behind Magistra (magistra.health), an open, continuously updated system that estimates GLP-1 medication side-effect rates by reporting two parallel signals per effect: a clinical incidence estimate pooled from clinical-trial registry results, papers and regulatory reports, and a community reporting frequency. The two are displayed side by side and never blended or treated as comparable quantities.</p><p>Contents: read-only dated snapshots of the live estimation code (random-effects pooling with a between-study heterogeneity term, rate-eligibility rules, FDR-corrected empirical modifier estimation), the live model configuration, the full methodology preprint with its correction log, API examples, and the per-effect aggregate pooled-rates table (data/glp1-aggregate-rates.csv and .json).</p><p>Licences: code under Apache-2.0. The aggregate table in data/ is separately licensed CC BY 4.0 (attribution: Magistra, magistra.health). Magistra's underlying point-level corpus is not included in this archive and is not covered by either licence. The canonical, continuously updated methodology is at https://magistra.health/en/methodology; this archive is a dated snapshot of the repository at the tagged release.</p><p>Data, not medical advice.</p>",
+  "keywords": [
+    "GLP-1",
+    "semaglutide",
+    "tirzepatide",
+    "side effects",
+    "adverse events",
+    "pharmacovigilance",
+    "real-world evidence",
+    "meta-analysis",
+    "random-effects",
+    "ClinicalTrials.gov",
+    "obesity",
+    "open methodology"
+  ],
+  "related_identifiers": [
+    {
+      "identifier": "https://magistra.health/en/methodology",
+      "relation": "isDocumentedBy",
+      "scheme": "url"
+    }
+  ]
+}
