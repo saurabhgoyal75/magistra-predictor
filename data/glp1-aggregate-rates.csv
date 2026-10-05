@@ -1,16 +1,16 @@
 effect,effectName,severity,clinicalPooledRatePct,clinicalCiLowPct,clinicalCiHighPct,clinicalStatedRates,clinicalDistinctSources,clinicalSourceDiversity,clinicalRateKind,clinicalIntervalBasis,clinicalPhase1Sources,clinicalPhase2Sources,clinicalPhase3Sources,clinicalPhase4Sources,communityReportingFrequencyPct,communityMentions,communityTotalReports
-nausea,Nausea,mild,20.4,6,51,232,75,very_high,incidence,sampling_plus_between_study,7,2,61,3,33.3,14,42
-diarrhea,Diarrhoea,mild,14.8,5,36,221,66,very_high,incidence,sampling_plus_between_study,6,1,57,2,28.6,12,42
-constipation,Constipation,mild,11.6,3,38,209,59,very_high,incidence,sampling_plus_between_study,6,1,49,2,21.4,9,42
-reduced_appetite,Reduced appetite,mild,8.6,2,30,205,58,very_high,incidence,sampling_plus_between_study,6,1,48,2,31,13,42
-headache,Headache,mild,8.5,3,20,184,51,very_high,incidence,sampling_plus_between_study,6,1,42,2,9.5,4,42
+nausea,Nausea,mild,20.5,6,50,244,82,very_high,incidence,sampling_plus_between_study,7,2,67,4,33.3,14,42
+diarrhea,Diarrhoea,mild,14.7,5,35,231,72,very_high,incidence,sampling_plus_between_study,6,1,62,3,28.6,12,42
+constipation,Constipation,mild,11.7,3,36,214,62,very_high,incidence,sampling_plus_between_study,6,1,52,2,21.4,9,42
+reduced_appetite,Reduced appetite,mild,8.6,3,23,211,61,very_high,incidence,sampling_plus_between_study,6,1,50,3,31,13,42
+headache,Headache,mild,8.5,3,19,194,57,very_high,incidence,sampling_plus_between_study,6,1,48,2,9.5,4,42
 pancreatitis,Pancreatitis (rare),severe,0.1,0,1,13,4,moderate,mixed_incidence_and_serious_ae,sampling_plus_between_study,0,0,4,0,0,0,42
-fatigue,Fatigue / Low energy,mild,6.5,2,18,104,30,very_high,incidence,sampling_plus_between_study,2,1,25,2,14.3,6,42
-vomiting,Vomiting,moderate,10.4,3,27,222,67,very_high,incidence,sampling_plus_between_study,7,1,56,2,35.7,15,42
-abdominal_pain,Abdominal pain,moderate,5.8,2,18,162,37,very_high,incidence,sampling_plus_between_study,6,1,29,1,19,8,42
-acid_reflux,Acid reflux (GERD),mild,5.2,3,10,80,26,very_high,incidence,sampling_plus_between_study,1,1,23,1,19,8,42
-gallstones,Gallstones (cholelithiasis),severe,1.7,1,4,33,12,high,mixed_incidence_and_serious_ae,sampling_plus_between_study,0,0,11,0,9.5,4,42
+fatigue,Fatigue / Low energy,mild,6.5,2,18,108,32,very_high,incidence,sampling_plus_between_study,2,1,27,2,14.3,6,42
+vomiting,Vomiting,moderate,10.4,4,27,230,72,very_high,incidence,sampling_plus_between_study,7,1,60,3,35.7,15,42
+abdominal_pain,Abdominal pain,moderate,5.8,2,18,166,39,very_high,incidence,sampling_plus_between_study,6,1,31,1,19,8,42
+acid_reflux,Acid reflux (GERD),mild,5.1,3,10,83,27,very_high,incidence,sampling_plus_between_study,1,1,24,1,19,8,42
+gallstones,Gallstones (cholelithiasis),severe,1.7,1,4,36,13,high,mixed_incidence_and_serious_ae,sampling_plus_between_study,0,0,12,0,9.5,4,42
 hair_loss,Hair loss (thinning),mild,5,2,11,22,11,high,incidence,sampling_plus_between_study,0,0,9,1,2.4,1,42
-injection_site_reaction,Injection site reaction,mild,4.6,1,16,16,7,moderate,incidence,sampling_plus_between_study,0,0,7,0,28.6,12,42
-dizziness,Dizziness,mild,6.8,3,14,129,36,very_high,incidence,sampling_plus_between_study,4,1,30,1,7.1,3,42
+injection_site_reaction,Injection site reaction,mild,4.4,1,15,19,8,moderate,incidence,sampling_plus_between_study,0,0,8,0,28.6,12,42
+dizziness,Dizziness,mild,6.8,3,14,134,39,very_high,incidence,sampling_plus_between_study,4,1,33,1,7.1,3,42
 emotional_blunting,Emotional blunting / Reduced pleasure,moderate,,,,0,0,,,,0,0,0,0,2.4,1,42
